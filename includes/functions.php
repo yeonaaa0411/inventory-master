@@ -95,9 +95,14 @@ function read_date($str){
 /*--------------------------------------------------------------*/
 /* Function for  Readable Make date time
 /*--------------------------------------------------------------*/
-function make_date(){
-  return strftime("%Y-%m-%d %H:%M:%S", time());
+/*--------------------------------------------------------------*/
+/* Function for  Readable Make date time
+/*--------------------------------------------------------------*/
+function make_date() {
+  return date("Y-m-d H:i:s");
 }
+date_default_timezone_set('Asia/Manila');
+
 /*--------------------------------------------------------------*/
 /* Function for  Readable date time
 /*--------------------------------------------------------------*/

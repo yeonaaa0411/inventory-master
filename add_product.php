@@ -125,37 +125,43 @@ if (isset($_POST['add_product'])) {
 
                         <!--     *************************     -->
 
-                        <div class="form-group">
+                                                <div class="form-group">
                             <div class="row">
                                 <!--     *************************     -->
                                 <div class="col-md-4">
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="glyphicon glyphicon-shopping-cart"></i>
-                                    </span>
-                                    <input type="number" class="form-control" name="product-quantity" placeholder="Product Quantity">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="glyphicon glyphicon-shopping-cart"></i>
+                                        </span>
+                                        <input type="number" class="form-control" name="product-quantity" placeholder="Product Quantity">
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="col-md-4">
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        ₱ <!-- Directly using the peso sign -->
-                                    </span>
-                                    <input type="number" class="form-control" name="cost-price" placeholder="Cost Price">
-                                    <span class="input-group-addon">.00</span>
+                                <!-- Cost Price Input (Allowing decimal values) -->
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            ₱ <!-- Directly using the peso sign -->
+                                        </span>
+                                        <input type="number" step="0.01" class="form-control" name="cost-price" placeholder="Cost Price">
+                                        <span class="input-group-addon">.00</span>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="col-md-4">
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        ₱ <!-- Directly using the peso sign -->
-                                    </span>
-                                    <input type="number" class="form-control" name="sale-price" placeholder="Selling Price">
-                                    <span class="input-group-addon">.00</span>
+                                <!-- Selling Price Input (Allowing decimal values) -->
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            ₱ <!-- Directly using the peso sign -->
+                                        </span>
+                                        <input type="number" step="0.01" class="form-control" name="sale-price" placeholder="Selling Price">
+                                        <span class="input-group-addon">.00</span>
+                                    </div>
                                 </div>
+                                <!--     *************************     -->
                             </div>
+                        </div>
+
 
                                 <!--     *************************     -->
 
