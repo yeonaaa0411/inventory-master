@@ -24,7 +24,7 @@ if (isset($_POST['product'])) {
         $p_qty   = remove_junk($db->escape($_POST['product-quantity']));
         $p_buy   = remove_junk($db->escape($_POST['cost-price']));
         $p_sale  = remove_junk($db->escape($_POST['sale-price']));
-        
+
         // Check if product-photo is set and not empty
         if (isset($_POST['product-photo']) && $_POST['product-photo'] !== "") {
             $media_id = remove_junk($db->escape($_POST['product-photo']));
@@ -36,7 +36,7 @@ if (isset($_POST['product'])) {
         $query  .= " name ='{$p_name}', quantity ='{$p_qty}',";
         $query  .= " buy_price ='{$p_buy}', sale_price ='{$p_sale}', category_id ='{$p_cat}', media_id ='{$media_id}'";
         $query  .= " WHERE id ='{$product['id']}'";
-        
+
         $result = $db->query($query);
         if ($result && $db->affected_rows() === 1) {
             $session->msg('s', "Product updated ");
@@ -52,7 +52,6 @@ if (isset($_POST['product'])) {
 }
 ?>
 
-?>
 <?php include_once('layouts/header.php'); ?>
 <div class="row">
     <div class="col-md-12">
@@ -60,29 +59,29 @@ if (isset($_POST['product'])) {
     </div>
 </div>
 <div class="row">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <strong>
-                <span class="glyphicon glyphicon-th"></span>
-                <span>Edit Product</span>
-            </strong>
-        </div>
-        <div class="panel-body">
-            <div class="col-md-7">
-                <form method="post" action="edit_product.php?id=<?php echo (int)$product['id'] ?>">
+    <div class="col-md-8 offset-md-2"> <!-- Center the form on the page -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong>
+                    <span class="glyphicon glyphicon-th"></span>
+                    <span>Edit Product</span>
+                </strong>
+            </div>
+            <div class="panel-body">
+                <form method="post" action="edit_product.php?id=<?php echo (int)$product['id'] ?>" class="clearfix">
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon">
                                 <i class="glyphicon glyphicon-th-large"></i>
                             </span>
-                            <input type="text" class="form-control" name="product-title" value="<?php echo remove_junk($product['name']); ?>">
+                            <input type="text" class="form-control" name="product-title" value="<?php echo remove_junk($product['name']); ?>" placeholder="Product Name" required>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-6">
-                                <select class="form-control" name="product-category">
+                                <select class="form-control" name="product-category" required>
                                     <option value="">Select Product Category</option>
                                     <?php foreach ($all_categories as $cat): ?>
                                         <option value="<?php echo (int)$cat['id'] ?>" <?php if ($cat['id'] === $product['category_id']) echo 'selected'; ?>>
@@ -110,26 +109,22 @@ if (isset($_POST['product'])) {
                                     <span class="input-group-addon">
                                         <i class="glyphicon glyphicon-shopping-cart"></i>
                                     </span>
-                                    <input type="number" class="form-control" name="product-quantity" value="<?php echo remove_junk($product['quantity']); ?>" placeholder="Product Quantity">
+                                    <input type="number" class="form-control" name="product-quantity" value="<?php echo remove_junk($product['quantity']); ?>" placeholder="Product Quantity" required>
                                 </div>
                             </div>
 
                             <div class="col-md-4">
                                 <div class="input-group">
-                                    <span class="input-group-addon">
-                                        ₱ <!-- Peso sign -->
-                                    </span>
-                                    <input type="number" class="form-control" name="cost-price" value="<?php echo remove_junk($product['buy_price']); ?>" placeholder="Cost Price">
+                                    <span class="input-group-addon">₱</span>
+                                    <input type="number" class="form-control" name="cost-price" value="<?php echo remove_junk($product['buy_price']); ?>" placeholder="Cost Price" required>
                                     <span class="input-group-addon">.00</span>
                                 </div>
                             </div>
 
                             <div class="col-md-4">
                                 <div class="input-group">
-                                    <span class="input-group-addon">
-                                        ₱ <!-- Peso sign -->
-                                    </span>
-                                    <input type="number" class="form-control" name="sale-price" value="<?php echo remove_junk($product['sale_price']); ?>" placeholder="Selling Price">
+                                    <span class="input-group-addon">₱</span>
+                                    <input type="number" class="form-control" name="sale-price" value="<?php echo remove_junk($product['sale_price']); ?>" placeholder="Selling Price" required>
                                     <span class="input-group-addon">.00</span>
                                 </div>
                             </div>
