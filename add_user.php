@@ -36,49 +36,72 @@ if (isset($_POST['add_user'])) {
 }
 ?>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo isset($page_title) ? remove_junk($page_title) : "Admin"; ?></title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        .custom-header {
+            background-color: #eaf5e9; /* Light green color */
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
 <?php include_once('layouts/header.php'); ?>
 <?php echo display_msg($msg); ?>
 
-<div class="row">
-    <div class="panel panel-default" style="width: 400px; overflow: hidden;"> <!-- Set a specific width and hide overflow -->
-        <div class="panel-heading">
-            <strong>
-                <span class="glyphicon glyphicon-th"></span>
-                <span>Add New User</span>
-            </strong>
-        </div>
-        <div class="panel-body">
-            <form method="post" action="add_user.php">
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" class="form-control" name="full-name" placeholder="Full Name">
+<div class="mt-6 ml-6">
+    <div class="w-2/6">
+        <div class="bg-white shadow-md rounded-lg">
+            <div class="custom-header p-4">
+                <div class="flex items-center">
+                    <span class="glyphicon glyphicon-th" style="font-size: 20px;"></span>
+                    <h2 class="text-3xl font-bold ml-2">ADD NEW USER</h2>
                 </div>
+            </div>
+            <div class="p-4">
+                <form method="post" action="add_user.php">
+                    <div class="mb-4">
+                        <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
+                        <input type="text" class="form-control border rounded w-full py-2 px-3" name="full-name" placeholder="Full Name" required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" class="form-control" name="username" placeholder="Username">
-                </div>
+                    <div class="mb-4">
+                        <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username</label>
+                        <input type="text" class="form-control border rounded w-full py-2 px-3" name="username" placeholder="Username" required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control" name="password" placeholder="Password">
-                </div>
+                    <div class="mb-4">
+                        <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                        <input type="password" class="form-control border rounded w-full py-2 px-3" name="password" placeholder="Password" required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="level">User Role</label>
-                    <select class="form-control" name="level">
-                        <?php foreach ($groups as $group) : ?>
-                            <option value="<?php echo $group['group_level']; ?>"><?php echo ucwords($group['group_name']); ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+                    <div class="mb-4">
+                        <label for="level" class="block text-gray-700 text-sm font-bold mb-2">User Role</label>
+                        <select class="form-control border rounded w-full py-2 px-3" name="level" required>
+                            <?php foreach ($groups as $group) : ?>
+                                <option value="<?php echo $group['group_level']; ?>"><?php echo ucwords($group['group_name']); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
-                <div class="form-group clearfix">
-                    <button type="submit" name="add_user" class="btn btn-primary">Add User</button>
-                </div>
-            </form>
+                    <div class="flex justify-center">
+                        <button type="submit" name="add_user" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                            Add User
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
 <?php include_once('layouts/footer.php'); ?>
+</body>
+</html>

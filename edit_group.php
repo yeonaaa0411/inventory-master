@@ -43,43 +43,65 @@ if (isset($_POST['update'])) {
 }
 ?>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><?php echo isset($page_title) ? remove_junk($page_title) : "Admin"; ?></title>
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <style>
+    .custom-class { color: #eaf5e9; }
+  </style>
+</head>
+<body class="bg-gray-100">
+
 <?php include_once('layouts/header.php'); ?>
 <?php echo display_msg($msg); ?>
 
-<div class="row">
-    <div class="panel panel-default" style="width: 400px; overflow: hidden;"> <!-- Set a specific width and hide overflow -->
-        <div class="panel-heading">
-            <strong>
-                <span class="glyphicon glyphicon-pencil"></span>
-                <span>Edit Group</span>
-            </strong>
-        </div>
-        <div class="panel-body">
-            <form method="post" action="edit_group.php?id=<?php echo (int)$e_group['id']; ?>">
-                <div class="form-group">
-                    <label for="name" class="control-label">Group Name</label>
-                    <input type="text" class="form-control" name="group-name" value="<?php echo remove_junk(ucwords($e_group['group_name'])); ?>">
-                </div>
+<div class="mt-6 ml-6"> <!-- Removed justify-center, added ml-8 to move it left -->
+    <div class="w-2/6"> <!-- Reduced width to 2/3 -->
+        <div class="bg-white shadow-md rounded-lg">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h2 class="text-3xl font-bold">
+                    <span class="glyphicon glyphicon-pencil" style="font-size: 20px;"></span>
+                    Edit Group
+                </h2>
+            </div>
+            <div class="p-4">
+                <form method="post" action="edit_group.php?id=<?php echo (int)$e_group['id']; ?>">
+                    <div class="mb-4">
+                        <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Group Name</label>
+                        <input type="text" class="form-control border rounded w-full py-2 px-3" name="group-name" value="<?php echo remove_junk(ucwords($e_group['group_name'])); ?>">
+                    </div>
 
-                <div class="form-group">
-                    <label for="level" class="control-label">Group Level</label>
-                    <input type="number" class="form-control" name="group-level" value="<?php echo (int)$e_group['group_level']; ?>">
-                </div>
+                    <div class="mb-4">
+                        <label for="level" class="block text-gray-700 text-sm font-bold mb-2">Group Level</label>
+                        <input type="number" class="form-control border rounded w-full py-2 px-3" name="group-level" value="<?php echo (int)$e_group['group_level']; ?>">
+                    </div>
 
-                <div class="form-group">
-                    <label for="status">Status</label>
-                    <select class="form-control" name="status">
-                        <option <?php if ($e_group['group_status'] === '1') echo 'selected="selected"'; ?> value="1">Active</option>
-                        <option <?php if ($e_group['group_status'] === '0') echo 'selected="selected"'; ?> value="0">Deactive</option>
-                    </select>
-                </div>
+                    <div class="mb-4">
+                        <label for="status" class="block text-gray-700 text-sm font-bold mb-2">Status</label>
+                        <select class="form-control border rounded w-full py-2 px-3" name="status">
+                            <option <?php if ($e_group['group_status'] === '1') echo 'selected="selected"'; ?> value="1">Active</option>
+                            <option <?php if ($e_group['group_status'] === '0') echo 'selected="selected"'; ?> value="0">Deactive</option>
+                        </select>
+                    </div>
 
-                <div class="form-group clearfix">
-                    <button type="submit" name="update" class="btn btn-info">Update</button>
-                </div>
-            </form>
+                    <div class="flex justify-center">
+                        <button type="submit" name="update" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                            Update
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
+
 <?php include_once('layouts/footer.php'); ?>
+</body>
+</html>

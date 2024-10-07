@@ -12,8 +12,8 @@ if(empty($errors)){
      $session->login($user_id);
     //Update Sign in time
      updateLastLogIn($user_id);
-     $session->msg("s", "Welcome to Inventory.");
-     redirect('home.php',false);
+
+     redirect('admin.php',false);
 
   } else {
     $session->msg("d", "Sorry Username/Password incorrect.");
