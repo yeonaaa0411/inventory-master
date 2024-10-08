@@ -1,7 +1,7 @@
 <?php
   $page_title = 'All orders';
   require_once('includes/load.php');
-  // Checkin What level user has permission to view this page
+  // Check what level user has permission to view this page
   page_require_level(2);
   
   $all_orders = find_all('orders');
@@ -64,9 +64,7 @@
               <select class="form-control" name="paymethod" required>
                 <option value="">Select Payment Method</option>
                 <option value="Cash">Cash</option>
-                <option value="Check">Check</option>
-                <option value="Credit">Credit</option>
-                <option value="Charge">Charge to Account</option>
+                <option value="Gcash">Gcash</option>
               </select>
             </div>
 
