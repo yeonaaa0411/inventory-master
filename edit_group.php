@@ -54,6 +54,9 @@ if (isset($_POST['update'])) {
   <!-- Custom CSS -->
   <style>
     .custom-class { color: #eaf5e9; }
+    .header-bg {
+        background-color: #eaf5e9; /* Light green color */
+    }
   </style>
 </head>
 <body class="bg-gray-100">
@@ -61,13 +64,13 @@ if (isset($_POST['update'])) {
 <?php include_once('layouts/header.php'); ?>
 <?php echo display_msg($msg); ?>
 
-<div class="mt-6 ml-6"> <!-- Removed justify-center, added ml-8 to move it left -->
-    <div class="w-2/6"> <!-- Reduced width to 2/3 -->
+<div class="mt-6 ml-6">
+    <div class="w-2/6">
         <div class="bg-white shadow-md rounded-lg">
-            <div class="flex justify-between items-center p-4 border-b">
+            <div class="flex justify-between items-center p-4 header-bg">
                 <h2 class="text-3xl font-bold">
-                    <span class="glyphicon glyphicon-pencil" style="font-size: 20px;"></span>
-                    Edit Group
+                    <span class="glyphicon glyphicon-th" style="font-size: 20px;"></span>
+                    ADD NEW GROUP
                 </h2>
             </div>
             <div class="p-4">
