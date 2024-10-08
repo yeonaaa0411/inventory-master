@@ -1,3 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo isset($page_title) ? remove_junk($page_title) : "Admin"; ?></title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        .custom-header {
+            background-color: #eaf5e9; /* Light green color */
+        }
+    </style>
+</head>
+<body class="bg-gray-100"></body>
 <?php
 $page_title = 'Add Stock';
 require_once('includes/load.php');
@@ -32,26 +48,26 @@ if (isset($_POST['add_stock'])) {
     }
 }
 
+
+
 include_once('layouts/header.php');
 ?>
 
-<div class="row">
-    <div class="col-md-12">
-        <?php echo display_msg($msg); ?>
-    </div>
-    <div class="col-md-5">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <strong>
-                    <span class="glyphicon glyphicon-th"></span>
-                    <span>Add Stock</span>
-                </strong>
+<div class="mt-6 ml-6">
+    <div class="w-2/6">
+        <div class="bg-white shadow-md rounded-lg">
+            <div class="custom-header p-4">
+                <div class="flex items-center">
+                    <span class="glyphicon glyphicon-th" style="font-size: 20px;"></span>
+                    <h2 class="text-3xl font-bold ml-2">ADD STOCK</h2>
+                </div>
             </div>
-            <div class="panel-body">
+            <div class="p-4">
+                <?php echo display_msg($msg); ?>
                 <form method="post" action="">
-                    <div class="form-group">
-                        <label for="product_id" class="control-label">Select Product</label>
-                        <select class="form-control" name="product_id" id="product_id">
+                    <div class="mb-4">
+                        <label for="product_id" class="block text-gray-700 text-sm font-bold mb-2">Select Product</label>
+                        <select class="form-control border rounded w-full py-2 px-3" name="product_id" id="product_id" required>
                             <option value="0">Select Product</option>
                             <?php foreach ($all_products as $product): ?>
                                 <option value="<?php echo $product['id']; ?>">
@@ -61,20 +77,21 @@ include_once('layouts/header.php');
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="glyphicon glyphicon-shopping-cart"></i>
-                            </span>
-                            <input type="number" class="form-control" name="quantity" placeholder="Product Quantity" required>
-                        </div>
+                    <div class="mb-4">
+                        <label for="quantity" class="block text-gray-700 text-sm font-bold mb-2">Product Quantity</label>
+                        <input type="number" class="form-control border rounded w-full py-2 px-3" name="quantity" placeholder="Product Quantity" required>
                     </div>
 
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="comments" placeholder="Comments">
+                    <div class="mb-4">
+                        <label for="comments" class="block text-gray-700 text-sm font-bold mb-2">Comments</label>
+                        <input type="text" class="form-control border rounded w-full py-2 px-3" name="comments" placeholder="Comments">
                     </div>
 
-                    <button type="submit" name="add_stock" class="btn btn-primary">Add to Inventory</button>
+                    <div class="flex justify-center">
+                        <button type="submit" name="add_stock" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                            Add to Inventory
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
