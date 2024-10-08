@@ -5,33 +5,36 @@ page_require_level(2);
 
 // Handle form submission
 if (isset($_POST['add_cat'])) {
-  $req_field = array('category-name');
-  validate_fields($req_field);
-  
-  $cat_name = remove_junk($db->escape($_POST['category-name']));
-  
-  // Check if the category name already exists
-  $query = "SELECT * FROM categories WHERE name = '{$cat_name}' LIMIT 1";
-  $result = $db->query($query);
-  
-  if ($result->num_rows > 0) {
-    // Category already exists
-    $session->msg('d', "Category '{$cat_name}' already exists. Please choose a different name.");
-    redirect('categories.php', false);
-  } elseif (empty($errors)) {
-    $sql  = "INSERT INTO categories (name)";
-    $sql .= " VALUES ('{$cat_name}')";
-    if ($db->query($sql)) {
-      $session->msg('s', "Category added successfully.");
-      redirect('categories.php', false);
+    $req_field = array('category-name');
+    validate_fields($req_field);
+    
+    $cat_name = remove_junk($db->escape($_POST['category-name']));
+    
+    // Prepared statement to check for existing category
+    $stmt = $db->prepare("SELECT * FROM categories WHERE name = ? LIMIT 1");
+    $stmt->bind_param('s', $cat_name);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        // Category already exists
+        $session->msg('d', "Category '{$cat_name}' already exists. Please choose a different name.");
+        redirect('categories.php', false);
+    } elseif (empty($errors)) {
+        // Prepared statement to insert a new category
+        $insert_stmt = $db->prepare("INSERT INTO categories (name) VALUES (?)");
+        $insert_stmt->bind_param('s', $cat_name);
+        if ($insert_stmt->execute()) {
+            $session->msg('s', "Category added successfully.");
+            redirect('categories.php', false);
+        } else {
+            $session->msg('d', 'Failed to add the category.');
+            redirect('categories.php', false);
+        }
     } else {
-      $session->msg('d', 'Failed to add the category.');
-      redirect('categories.php', false);
+        $session->msg("d", $errors);
+        redirect('categories.php', false);
     }
-  } else {
-    $session->msg("d", $errors);
-    redirect('categories.php', false);
-  }
 }
 
 $all_categories = find_all('categories');
@@ -70,14 +73,14 @@ $all_categories = find_all('categories');
   <div class="bg-white shadow-md rounded-lg">
     <div class="flex justify-between items-center p-4 border-b">
       <h2 class="text-3xl font-bold">
-        <i class="fas fa-tag mr-2"></i> <!-- Icon added here -->
+        <i class="fas fa-tag mr-2"></i>
         CATEGORIES
       </h2>
     </div>
     <div class="p-4">
       <form method="post" action="categories.php">
         <div class="flex space-x-4">
-          <input type="text" class="form-control border border-gray-300 rounded-md px-4 py-2 w-full" name="category-name" placeholder="Category Name">
+          <input type="text" class="form-control border border-gray-300 rounded-md px-4 py-2 w-full" name="category-name" placeholder="Category Name" required>
           <button type="submit" name="add_cat" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Add Category</button>
         </div>
       </form>
@@ -85,42 +88,52 @@ $all_categories = find_all('categories');
   </div>
 </div>
 
-
 <div class="grid grid-cols-1 mt-6 mx-5">
   <div class="bg-white shadow-md rounded-lg">
     <div class="p-4">
-      <table class="min-w-full border-collapse">
-        <thead>
-          <tr>
-            <th class="text-center border px-4 py-2" style="width: 50px;">#</th>
-            <th class="border px-4 py-2">Category Name</th>
-            <th class="text-center border px-4 py-2" style="width: 100px;">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-        <?php foreach($all_categories as $cat): ?>
-          <tr>
-            <td class="text-center border px-4 py-2"><?php echo count_id(); ?></td>
-            <td class="border px-4 py-2"><?php echo remove_junk(ucfirst($cat['name'])); ?></td>
-            <td class="text-center border px-4 py-2">
-              <div class="flex justify-center space-x-2">
-                <a href="edit_category.php?id=<?php echo (int)$cat['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Edit">
-                  <i class="glyphicon glyphicon-pencil"></i>
-                </a>
-                <a href="delete_category.php?id=<?php echo (int)$cat['id']; ?>" onClick="return confirm('Are you sure you want to delete?');" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" title="Delete">
-                  <i class="glyphicon glyphicon-trash"></i>
-                </a>
-              </div>
-            </td>
-          </tr>
-        <?php endforeach; ?>
-        </tbody>
-      </table>
+      <div class="overflow-x-auto">
+        <table class="min-w-full border-collapse">
+          <thead>
+            <tr>
+              <th class="text-center border px-4 py-2" style="width: 50px;">#</th>
+              <th class="border px-4 py-2">Category Name</th>
+              <th class="text-center border px-4 py-2" style="width: 100px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+          <?php foreach($all_categories as $cat): ?>
+            <tr>
+              <td class="text-center border px-4 py-2"><?php echo count_id(); ?></td>
+              <td class="border px-4 py-2"><?php echo remove_junk(ucfirst($cat['name'])); ?></td>
+              <td class="text-center border px-4 py-2">
+                <div class="flex justify-center space-x-2">
+                  <a href="edit_category.php?id=<?php echo (int)$cat['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Edit">
+                    <i class="fas fa-pencil-alt"></i>
+                  </a>
+                  <a href="delete_category.php?id=<?php echo (int)$cat['id']; ?>" onClick="return confirm('Are you sure you want to delete?');" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" title="Delete">
+                    <i class="fas fa-trash-alt"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
 
 <?php include_once('layouts/footer.php'); ?>
+
+<!-- JavaScript for auto-dismiss pop-ups -->
+<script>
+  // Auto-dismiss alerts after 3 seconds
+  setTimeout(() => {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => alert.remove());
+  }, 3000);
+</script>
 
 </body>
 </html>

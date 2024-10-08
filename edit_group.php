@@ -70,7 +70,7 @@ if (isset($_POST['update'])) {
             <div class="flex justify-between items-center p-4 header-bg">
                 <h2 class="text-3xl font-bold">
                     <span class="glyphicon glyphicon-th" style="font-size: 20px;"></span>
-                    ADD NEW GROUP
+                    EDIT NEW GROUP
                 </h2>
             </div>
             <div class="p-4">
