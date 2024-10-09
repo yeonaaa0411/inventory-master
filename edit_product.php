@@ -62,8 +62,24 @@ if (isset($_POST['product'])) {
     <title><?php echo isset($page_title) ? remove_junk($page_title) : "Admin"; ?></title>
     <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Custom CSS -->
     <style>
+        th, td {
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+        }
+        th {
+            background-color: #eaf5e9;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        tr:hover {
+            background-color: #f7fafc;
+        }
         .custom-header {
             background-color: #eaf5e9; /* Light green color */
         }
@@ -71,81 +87,66 @@ if (isset($_POST['product'])) {
 </head>
 <body class="bg-gray-100">
 
-<?php include_once('layouts/header.php'); ?>
-<?php echo display_msg($msg); ?>
+    <!-- Include header -->
+    <?php include_once('layouts/header.php'); ?>
+    <?php echo display_msg($msg); ?>
 
-<div class="mt-6 ml-6">
-    <div class="w-3/6">
-        <div class="bg-white shadow-md rounded-lg">
-            <div class="custom-header p-4">
-                <div class="flex items-center">
-                    <span class="glyphicon glyphicon-th" style="font-size: 20px;"></span>
-                    <h2 class="text-3xl font-bold ml-2">EDIT PRODUCT</h2>
+    <div class="flex justify-start mt-10">
+        <div class="w-full sm:w-3/5 lg:w-3/5">
+            <div class="bg-white shadow-md rounded-lg">
+                <div class="custom-header p-10 border-b">
+                    <div class="flex items-center">
+                        <i class="fas fa-box mr-2" style="font-size: 20px;"></i>
+                        <strong class="text-3xl font-bold">EDIT PRODUCT</strong>
+                    </div>
                 </div>
-            </div>
-            <div class="p-4">
-                <form method="post" action="edit_product.php?id=<?php echo (int)$product['id'] ?>" class="clearfix">
-                    <div class="mb-4">
-                        <label for="product-title" class="block text-gray-700 text-sm font-bold mb-2">Product Name</label>
-                        <input type="text" class="form-control border rounded w-full py-2 px-3" name="product-title" value="<?php echo remove_junk($product['name']); ?>" placeholder="Product Name" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="product-category" class="block text-gray-700 text-sm font-bold mb-2">Product Category</label>
-                        <select class="form-control border rounded w-full py-2 px-3" name="product-category" required>
-                            <option value="">Select Product Category</option>
-                            <?php foreach ($all_categories as $cat): ?>
-                                <option value="<?php echo (int)$cat['id'] ?>" <?php if ($cat['id'] === $product['category_id']) echo 'selected'; ?>>
-                                    <?php echo $cat['name'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="product-photo" class="block text-gray-700 text-sm font-bold mb-2">Product Photo</label>
-                        <select class="form-control border rounded w-full py-2 px-3" name="product-photo">
-                            <option value="">Select Product Photo</option>
-                            <?php foreach ($all_photo as $photo): ?>
-                                <option value="<?php echo (int)$photo['id'] ?>" <?php if ($photo['id'] === $product['media_id']) echo 'selected'; ?>>
-                                    <?php echo $photo['file_name'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="product-quantity" class="block text-gray-700 text-sm font-bold mb-2">Product Quantity</label>
-                        <input type="number" class="form-control border rounded w-full py-2 px-3" name="product-quantity" value="<?php echo remove_junk($product['quantity']); ?>" placeholder="Product Quantity" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="cost-price" class="block text-gray-700 text-sm font-bold mb-2">Cost Price</label>
-                        <div class="flex">
-                            <span class="input-group-addon">₱</span>
-                            <input type="number" class="form-control border rounded w-full py-2 px-5" name="cost-price" value="<?php echo remove_junk($product['buy_price']); ?>" placeholder="Cost Price" required>
-                            <span class="input-group-addon">.00</span>
+                <div class="p-10"> <!-- Increased padding for more vertical space -->
+                    <form method="post" action="edit_product.php?id=<?php echo (int)$product['id'] ?>" class="clearfix">
+                        <div class="mb-8"> <!-- Increased bottom margin -->
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-th-large"></i>
+                                </span>
+                                <input type="text" class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="product-title" value="<?php echo remove_junk($product['name']); ?>" placeholder="Product Name" required>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="mb-4">
-                        <label for="sale-price" class="block text-gray-700 text-sm font-bold mb-2">Selling Price</label>
-                        <div class="flex">
-                            <span class="input-group-addon">₱</span>
-                            <input type="number" class="form-control border rounded w-full py-2 px-3" name="sale-price" value="<?php echo remove_junk($product['sale_price']); ?>" placeholder="Selling Price" required>
-                            <span class="input-group-addon">.00</span>
+                        <div class="mb-8 flex space-x-4"> <!-- Increased bottom margin -->
+                            <select class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="product-category" required>
+                                <option value="">Select Product Category</option>
+                                <?php foreach ($all_categories as $cat): ?>
+                                    <option value="<?php echo (int)$cat['id'] ?>" <?php if ($cat['id'] === $product['category_id']) echo 'selected'; ?>>
+                                        <?php echo $cat['name'] ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+
+                            <select class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="product-photo">
+                                <option value="">Select Product Photo</option>
+                                <?php foreach ($all_photo as $photo): ?>
+                                    <option value="<?php echo (int)$photo['id'] ?>" <?php if ($photo['id'] === $product['media_id']) echo 'selected'; ?>>
+                                        <?php echo $photo['file_name'] ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
-                    </div>
 
-                    <div class="flex justify-center">
-                        <button type="submit" name="product" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                            Update Product
-                        </button>
-                    </div>
-                </form>
+                        <div class="mb-8 flex space-x-4"> <!-- Increased bottom margin -->
+                            <input type="number" class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="product-quantity" value="<?php echo remove_junk($product['quantity']); ?>" placeholder="Product Quantity" required>
+                            <input type="number" step="0.01" class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="cost-price" value="<?php echo remove_junk($product['buy_price']); ?>" placeholder="Cost Price" required>
+                            <input type="number" step="0.01" class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="sale-price" value="<?php echo remove_junk($product['sale_price']); ?>" placeholder="Sale Price" required>
+                        </div>
+
+                        <div class="text-right">
+                            <button type="submit" name="product" class="bg-blue-500 text-white px-6 py-4 rounded hover:bg-blue-600">Update Product</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<?php include_once('layouts/footer.php'); ?>
+    <!-- Include footer -->
+    <?php include_once('layouts/footer.php'); ?>
 </body>
 </html>
