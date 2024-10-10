@@ -9,7 +9,7 @@
     <!-- Custom CSS -->
     <style>
         .custom-header {
-            background-color: #eaf5e9; /* Light green color */
+            background-color: #eaf5e9;
         }
     </style>
 </head>
@@ -21,6 +21,7 @@ require_once('includes/load.php');
 page_require_level(2);
 
 $all_products = find_all('products');
+$product_id_from_url = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 if (isset($_POST['add_stock'])) {
     $req_field = array('product_id', 'quantity');
@@ -48,8 +49,6 @@ if (isset($_POST['add_stock'])) {
     }
 }
 
-
-
 include_once('layouts/header.php');
 ?>
 
@@ -70,7 +69,7 @@ include_once('layouts/header.php');
                         <select class="form-control border rounded w-full py-2 px-3" name="product_id" id="product_id" required>
                             <option value="0">Select Product</option>
                             <?php foreach ($all_products as $product): ?>
-                                <option value="<?php echo $product['id']; ?>">
+                                <option value="<?php echo $product['id']; ?>" <?php echo ($product['id'] === $product_id_from_url) ? 'selected' : ''; ?>>
                                     <?php echo $product['name']; ?>
                                 </option>
                             <?php endforeach; ?>

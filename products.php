@@ -29,21 +29,20 @@ if (isset($_POST['update_category'])) {
         th,
         td {
             padding: 20px;
-            border: 1px solid #e2e8f0; /* Change border to 1px for better visibility */
+            border-bottom: 1px solid #e2e8f0; /* Match categories.php style */
         }
 
         th {
-            background-color: #eaf5e9;
+            background-color: #eaf5e9; /* Match categories.php style */
         }
 
-        /* Optional: Change the border color for better visibility */
         table {
-            border-collapse: collapse; /* Ensure borders collapse */
-            width: 100%; /* Ensure table takes full width */
+            border-collapse: collapse;
+            width: 100%;
         }
 
         tr:hover {
-            background-color: #f7fafc; /* Light hover effect for rows */
+            background-color: #f7fafc;
         }
     </style>
 </head>
@@ -61,7 +60,7 @@ if (isset($_POST['update_category'])) {
     <div class="grid grid-cols-1 mt-6 mx-5">
         <div class="bg-white shadow-md rounded-lg">
             <div class="flex justify-between items-center p-4 border-b">
-                <strong class="text-3xl font-bold">
+                <h2 class="text-3xl font-bold">
                     <i class="fas fa-box mr-2"></i> <!-- Icon for products -->
                     <?php
                     if (isset($_POST['update_category'])) {
@@ -70,7 +69,7 @@ if (isset($_POST['update_category'])) {
                         echo "All Products";
                     }
                     ?>
-                </strong>
+                </h2>
             </div>
             <div class="p-4">
                 <form method="post" action="">
@@ -83,7 +82,7 @@ if (isset($_POST['update_category'])) {
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <button type="submit" name="update_category" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Filter Category</button>
+                        <button type="submit" name="update_category" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Filter Category</button>
                     </div>
                 </form>
             </div>
@@ -93,64 +92,61 @@ if (isset($_POST['update_category'])) {
     <div class="grid grid-cols-1 mt-6 mx-5">
         <div class="bg-white shadow-md rounded-lg">
             <div class="p-4">
-                <table class="min-w-full border-collapse">
-                    <thead>
-                        <tr>
-                            <th class="text-center border px-4 py-2" style="width: 50px;">#</th>
-                            <th class="text-center border px-4 py-2" style="width: 10%;">Category</th>
-                            <th class="text-center border px-4 py-2">Product Name</th>
-                            <th class="text-center border px-4 py-2">Photo</th>
-                            <th class="text-center border px-4 py-2" style="width: 10%;">Available Stock</th>
-                            <th class="text-center border px-4 py-2" style="width: 10%;">Cost Price</th>
-                            <th class="text-center border px-4 py-2" style="width: 10%;">Sale Price</th>
-                            <th class="text-center border px-4 py-2" style="width: 10%;">Product Added</th>
-                            <th class="text-center border px-4 py-2" style="width: 100px;">Actions</th>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="text-center border px-4 py-2" style="width: 50px;">#</th>
+                                <th class="text-center border px-4 py-2" style="width: 10%;">Category</th>
+                                <th class="text-center border px-4 py-2">Product Name</th>
+                                <th class="text-center border px-4 py-2">Photo</th>
+                                <th class="text-center border px-4 py-2" style="width: 10%;">Available Stock</th>
+                                <th class="text-center border px-4 py-2" style="width: 10%;">Cost Price</th>
+                                <th class="text-center border px-4 py-2" style="width: 10%;">Sale Price</th>
+                                <th class="text-center border px-4 py-2" style="width: 10%;">Product Added</th>
+                                <th class="text-center border px-4 py-2" style="width: 100px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          <?php foreach ($products as $product): ?>
+                            <tr>
+                            <td class="text-center border px-4 py-2"><?php echo count_id(); ?></td>
+                            <td class="text-center border px-4 py-2"><?php echo remove_junk($product['category']); ?></td>
+                            <td class="text-center border px-4 py-2">
+                                <a href="view_product.php?id=<?php echo (int)$product['id']; ?>">
+                                    <?php echo remove_junk($product['name']); ?>
+                                </a>
+                            </td>
+                            <td class="text-center border px-4 py-2">
+                                <div class="flex justify-center">
+                                    <?php if ($product['media_id'] === '0'): ?>
+                                        <img class="img-avatar img-circle" src="uploads/products/no_image.jpg" alt="">
+                                    <?php else: ?>
+                                        <img class="img-avatar img-circle" src="uploads/products/<?php echo $product['image']; ?>" alt="">
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                            <td class="text-center border px-4 py-2" style="<?php echo ($product['quantity'] == 0) ? 'color: red;' : ''; ?>">
+                                <?php echo remove_junk($product['quantity']); ?>
+                            </td>
+                            <td class="text-center border px-4 py-2"><?php echo remove_junk($product['buy_price']); ?></td>
+                            <td class="text-center border px-4 py-2"><?php echo remove_junk($product['sale_price']); ?></td>
+                            <td class="text-center border px-4 py-2"><?php echo read_date($product['date']); ?></td>
+                            <td class="text-center border px-4 py-2">
+                                <div class="flex justify-center space-x-2">
+                                    <a href="edit_product.php?id=<?php echo (int)$product['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Edit">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </a>
+                                    <a href="delete_product.php?id=<?php echo (int)$product['id']; ?>" onClick="return confirm('Are you sure you want to delete?')" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" title="Delete">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </div>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                      <?php foreach ($products as $product): ?>
-                        <tr>
-                        <td class="text-center"><?php echo count_id(); ?></td>
-                        <td class="text-center"><?php echo remove_junk($product['category']); ?></td>
-                        <td class="text-center">
-                            <a href="view_product.php?id=<?php echo (int)$product['id']; ?>">
-                                <?php echo remove_junk($product['name']); ?>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <div class="flex justify-center">
-                                <?php if ($product['media_id'] === '0'): ?>
-                                    <img class="img-avatar img-circle" src="uploads/products/no_image.jpg" alt="">
-                                <?php else: ?>
-                                    <img class="img-avatar img-circle" src="uploads/products/<?php echo $product['image']; ?>" alt="">
-                                <?php endif; ?>
-                            </div>
-                        </td>
-                        <td class="text-center" style="<?php echo ($product['quantity'] == 0) ? 'color: red;' : ''; ?>">
-                            <?php echo remove_junk($product['quantity']); ?>
-                        </td>
-                        <td class="text-center"><?php echo remove_junk($product['buy_price']); ?></td>
-                        <td class="text-center"><?php echo remove_junk($product['sale_price']); ?></td>
-                        <td class="text-center"><?php echo read_date($product['date']); ?></td>
-                        <td class="text-center">
-                            <div class="btn-group">
-                                <a href="add_stock.php?id=<?php echo (int)$product['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Add">
-                                    <i class="glyphicon glyphicon-edit"></i>
-                                </a>
-                                <a href="edit_product.php?id=<?php echo (int)$product['id']; ?>" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600" title="Edit">
-                                    <i class="glyphicon glyphicon-edit"></i>
-                                </a>
-                                <a href="delete_product.php?id=<?php echo (int)$product['id']; ?>" onClick="return confirm('Are you sure you want to delete?')" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" title="Delete">
-                                    <i class="glyphicon glyphicon-trash"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-
-                      <?php endforeach; ?>
-                  </tbody>
-
-                </table>
+                          <?php endforeach; ?>
+                      </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
