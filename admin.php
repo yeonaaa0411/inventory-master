@@ -166,11 +166,19 @@ function closePanel() {
            <td class="text-center"><?php echo count_id();?></td>
            <td>
             <a href="edit_sale.php?id=<?php echo (int)$recent_sale['id']; ?>">
+<<<<<<< Updated upstream
              <?php echo remove_junk(first_character($recent_sale['name'])); ?>
            </a>
            </td>
            <td><?php echo remove_junk(ucfirst($recent_sale['date'])); ?></td>
            <td>₱<?php echo remove_junk(first_character($recent_sale['price'])); ?></td> <!-- Changed to Peso sign -->
+=======
+              <?php echo remove_junk(first_character($recent_sale['name'])); ?>
+            </a>
+          </td>
+          <td><?php echo remove_junk(ucfirst($recent_sale['date'])); ?></td>
+          <td>₱<?php echo remove_junk(first_character($recent_sale['price'])); ?></td>
+>>>>>>> Stashed changes
         </tr>
        <?php endforeach; ?>
        </tbody>

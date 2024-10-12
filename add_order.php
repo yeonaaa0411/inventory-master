@@ -53,6 +53,7 @@
               <input type="text" class="form-control" name="customer" value="" placeholder="Customer">
         </div>
 
+<<<<<<< Updated upstream
         <div class="form-group">
           <select class="form-control" name="paymethod">
               <option value="">Select Payment Method</option>
@@ -62,6 +63,18 @@
               <option value="Charge">Charge to Account</option>
           </select>
         </div>
+=======
+            <div class="form-group">
+              <label for="paymethod" class="control-label">Payment Method</label>
+              <select class="form-control" name="paymethod" required>
+                <option value="">Select Payment Method</option>
+                <option value="Cash">Cash</option>
+                <option value="Check">Check</option>
+                <option value="Credit">Credit</option>
+                <option value="Charge">Charge to Account</option>
+              </select>
+            </div>
+>>>>>>> Stashed changes
 
         <div class="form-group">
           <input type="text" class="form-control" name="notes" value="" placeholder="Notes">

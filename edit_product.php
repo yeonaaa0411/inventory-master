@@ -52,7 +52,10 @@ if (isset($_POST['product'])) {
 }
 ?>
 
+<<<<<<< Updated upstream
 ?>
+=======
+>>>>>>> Stashed changes
 <?php include_once('layouts/header.php'); ?>
 <div class="row">
     <div class="col-md-12">
@@ -60,6 +63,7 @@ if (isset($_POST['product'])) {
     </div>
 </div>
 <div class="row">
+<<<<<<< Updated upstream
     <div class="panel panel-default">
         <div class="panel-heading">
             <strong>
@@ -70,19 +74,39 @@ if (isset($_POST['product'])) {
         <div class="panel-body">
             <div class="col-md-7">
                 <form method="post" action="edit_product.php?id=<?php echo (int)$product['id'] ?>">
+=======
+    <div class="col-md-8 offset-md-2"> <!-- Center the form on the page -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong>
+                    <span class="glyphicon glyphicon-th"></span>
+                    <span>Edit Product</span>
+                </strong>
+            </div>
+            <div class="panel-body">
+                <form method="post" action="edit_product.php?id=<?php echo (int)$product['id'] ?>" class="clearfix">
+>>>>>>> Stashed changes
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon">
                                 <i class="glyphicon glyphicon-th-large"></i>
                             </span>
+<<<<<<< Updated upstream
                             <input type="text" class="form-control" name="product-title" value="<?php echo remove_junk($product['name']); ?>">
+=======
+                            <input type="text" class="form-control" name="product-title" value="<?php echo remove_junk($product['name']); ?>" placeholder="Product Name" required>
+>>>>>>> Stashed changes
                         </div>
                     </div>
 
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-6">
+<<<<<<< Updated upstream
                                 <select class="form-control" name="product-category">
+=======
+                                <select class="form-control" name="product-category" required>
+>>>>>>> Stashed changes
                                     <option value="">Select Product Category</option>
                                     <?php foreach ($all_categories as $cat): ?>
                                         <option value="<?php echo (int)$cat['id'] ?>" <?php if ($cat['id'] === $product['category_id']) echo 'selected'; ?>>
@@ -110,26 +134,40 @@ if (isset($_POST['product'])) {
                                     <span class="input-group-addon">
                                         <i class="glyphicon glyphicon-shopping-cart"></i>
                                     </span>
+<<<<<<< Updated upstream
                                     <input type="number" class="form-control" name="product-quantity" value="<?php echo remove_junk($product['quantity']); ?>" placeholder="Product Quantity">
+=======
+                                    <input type="number" class="form-control" name="product-quantity" value="<?php echo remove_junk($product['quantity']); ?>" placeholder="Product Quantity" required>
+>>>>>>> Stashed changes
                                 </div>
                             </div>
 
                             <div class="col-md-4">
                                 <div class="input-group">
+<<<<<<< Updated upstream
                                     <span class="input-group-addon">
                                         ₱ <!-- Peso sign -->
                                     </span>
                                     <input type="number" class="form-control" name="cost-price" value="<?php echo remove_junk($product['buy_price']); ?>" placeholder="Cost Price">
+=======
+                                    <span class="input-group-addon">₱</span>
+                                    <input type="number" class="form-control" name="cost-price" value="<?php echo remove_junk($product['buy_price']); ?>" placeholder="Cost Price" required>
+>>>>>>> Stashed changes
                                     <span class="input-group-addon">.00</span>
                                 </div>
                             </div>
 
                             <div class="col-md-4">
                                 <div class="input-group">
+<<<<<<< Updated upstream
                                     <span class="input-group-addon">
                                         ₱ <!-- Peso sign -->
                                     </span>
                                     <input type="number" class="form-control" name="sale-price" value="<?php echo remove_junk($product['sale_price']); ?>" placeholder="Selling Price">
+=======
+                                    <span class="input-group-addon">₱</span>
+                                    <input type="number" class="form-control" name="sale-price" value="<?php echo remove_junk($product['sale_price']); ?>" placeholder="Selling Price" required>
+>>>>>>> Stashed changes
                                     <span class="input-group-addon">.00</span>
                                 </div>
                             </div>

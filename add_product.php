@@ -1,8 +1,15 @@
 <?php
+<<<<<<< Updated upstream
   $page_title = 'Add Product';
   require_once('includes/load.php');
   // Checkin What level user has permission to view this page
   page_require_level(2);
+=======
+$page_title = 'Add Product';
+require_once('includes/load.php');
+// Checkin What level user has permission to view this page
+page_require_level(2);
+>>>>>>> Stashed changes
 
   $all_categories = find_all('categories');
   $all_photo = find_all('media');
@@ -24,12 +31,18 @@ if (isset($_POST['add_product'])) {
             $media_id = remove_junk($db->escape($_POST['product-photo']));
         }
         $date    = make_date();
+<<<<<<< Updated upstream
         $query  = "INSERT INTO products (";
         $query .= " name, quantity, buy_price, sale_price, category_id, media_id, date";
         $query .= ") VALUES (";
         $query .= " '{$p_name}', '{$p_qty}', '{$p_buy}', '{$p_sale}', '{$p_cat}', '{$media_id}', '{$date}'";
         $query .= ")";
         $query .= " ON DUPLICATE KEY UPDATE name='{$p_name}'";
+=======
+        
+        $query  = "INSERT INTO products (name, quantity, buy_price, sale_price, category_id, media_id, date) VALUES ('{$p_name}', '{$p_qty}', '{$p_buy}', '{$p_sale}', '{$p_cat}', '{$media_id}', '{$date}') ON DUPLICATE KEY UPDATE name='{$p_name}'";
+        
+>>>>>>> Stashed changes
         if ($db->query($query)) {
             $product = last_id("products");
             $product_id = $product['id'];
@@ -66,13 +79,19 @@ if (isset($_POST['add_product'])) {
         <?php echo display_msg($msg); ?>
     </div>
 </div>
+<<<<<<< Updated upstream
 <!--     *************************     -->
 <div class="row">
     <div class="col-md-8">
+=======
+<div class="row">
+    <div class="col-md-8 offset-md-2"> <!-- Center the form on the page -->
+>>>>>>> Stashed changes
         <div class="panel panel-default">
             <div class="panel-heading">
                 <strong>
                     <span class="glyphicon glyphicon-th"></span>
+<<<<<<< Updated upstream
                     <!--     *************************     -->
                     <span>Add New Product</span>
                     <!--     *************************     -->
@@ -171,6 +190,74 @@ if (isset($_POST['add_product'])) {
 
                 </div>
             </div>
+=======
+                    <span>Add New Product</span>
+                </strong>
+            </div>
+            <div class="panel-body">
+                <form method="post" action="add_product.php" class="clearfix">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="glyphicon glyphicon-th-large"></i>
+                            </span>
+                            <input type="text" class="form-control" name="product-title" placeholder="Product Name" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <select class="form-control" name="product-category" required>
+                                    <option value="">Select Product Category</option>
+                                    <?php foreach ($all_categories as $cat): ?>
+                                        <option value="<?php echo (int)$cat['id'] ?>">
+                                            <?php echo $cat['name'] ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-control" name="product-photo">
+                                    <option value="">Select Product Photo</option>
+                                    <?php foreach ($all_photo as $photo): ?>
+                                        <option value="<?php echo (int)$photo['id'] ?>">
+                                            <?php echo $photo['file_name'] ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="glyphicon glyphicon-shopping-cart"></i>
+                                    </span>
+                                    <input type="number" class="form-control" name="product-quantity" placeholder="Product Quantity" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon">₱</span>
+                                    <input type="number" step="0.01" class="form-control" name="cost-price" placeholder="Cost Price" required>
+                                    <span class="input-group-addon">.00</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon">₱</span>
+                                    <input type="number" step="0.01" class="form-control" name="sale-price" placeholder="Selling Price" required>
+                                    <span class="input-group-addon">.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        <button type="submit" name="add_product" class="btn btn-danger">Add Product</button>
+                    </div>
+                </form>
+            </div>
+>>>>>>> Stashed changes
         </div>
 <?php
 // Commented out the following lines to prevent displaying product_id

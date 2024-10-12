@@ -47,10 +47,45 @@
  }
 ?>
 
+<<<<<<< Updated upstream
 <!--     *************************     -->
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><?php echo isset($page_title) ? remove_junk($page_title) : "Admin"; ?></title>
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <style>
+    .custom-class { color: #eaf5e9; }
+  </style>
+</head>
+<body class="bg-gray-100">
+>>>>>>> Stashed changes
 
 <?php include_once('layouts/header.php'); ?>
 
+<<<<<<< Updated upstream
+=======
+<div class="mt-6 ml-6"> <!-- Removed justify-center, added ml-8 to move it left -->
+    <div class="w-2/6"> <!-- Reduced width to 2/3 -->
+        <div class="bg-white shadow-md rounded-lg">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h2 class="text-3xl font-bold">
+                    <span class="glyphicon glyphicon-pencil" style="font-size: 20px;"></span>
+                    Edit Group
+                </h2>
+            </div>
+            <div class="p-4">
+                <form method="post" action="edit_group.php?id=<?php echo (int)$e_group['id']; ?>">
+                    <div class="mb-4">
+                        <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Group Name</label>
+                        <input type="text" class="form-control border rounded w-full py-2 px-3" name="group-name" value="<?php echo remove_junk(ucwords($e_group['group_name'])); ?>">
+                    </div>
+>>>>>>> Stashed changes
 
 <div class="login-page">
     <div class="text-center">
