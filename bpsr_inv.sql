@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 11, 2024 at 07:09 PM
+-- Generation Time: Oct 11, 2024 at 07:21 PM
 -- Server version: 10.1.36-MariaDB
 -- PHP Version: 7.0.32
 
@@ -414,16 +414,7 @@ CREATE TABLE `user_groups` (
   `group_level` int(11) NOT NULL,
   `group_status` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `user_groups`
---
-
-INSERT INTO `user_groups` (`id`, `group_name`, `group_level`, `group_status`) VALUES
-(1, 'Admin', 1, 1),
-(2, 'Employee', 2, 1),
-(3, 'User', 3, 1),
-(6, 'Aww', 4, 1);
+-- Error reading data for table bpsr_inv.user_groups: #2006 - MySQL server has gone away
 
 --
 -- Indexes for dumped tables
@@ -573,8 +564,14 @@ ALTER TABLE `sales`
 --
 ALTER TABLE `users`
   ADD CONSTRAINT `FK_user` FOREIGN KEY (`user_level`) REFERENCES `user_groups` (`group_level`) ON DELETE CASCADE ON UPDATE CASCADE;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+<div class="error"><h1>Error</h1><p><strong>SQL query:</strong>
+<a href="db_sql.php?sql_query=SET+time_zone+%3D+%22SYSTEM%22&amp;show_query=1&amp;db=bpsr_inv"><span class="nowrap"><img src="themes/dot.gif" title="Edit" alt="Edit" class="icon ic_b_edit" />&nbsp;Edit</span></a>    </p>
+<p>
+<code class="sql"><pre>
+SET time_zone = &quot;SYSTEM&quot;
+</pre></code>
+</p>
+<p>
+    <strong>MySQL said: </strong><a href="./url.php?url=https%3A%2F%2Fdev.mysql.com%2Fdoc%2Frefman%2F5.7%2Fen%2Ferror-messages-server.html" target="mysql_doc"><img src="themes/dot.gif" title="Documentation" alt="Documentation" class="icon ic_b_help" /></a>
+</p>
+<code>#2006 - MySQL server has gone away</code><br/></div>
