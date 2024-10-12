@@ -63,3 +63,39 @@
     echo json_encode($html);
   }
  ?>
+<?php
+require_once('includes/load.php');
+// Check user permission level
+page_require_level(1);
+
+$response = ['success' => false, 'message' => 'Failed to add user'];
+
+if (isset($_POST['full-name']) && isset($_POST['username']) && isset($_POST['password']) && isset($_POST['level'])) {
+    $name = remove_junk($db->escape($_POST['full-name']));
+    $username = remove_junk($db->escape($_POST['username']));
+    $password = sha1(remove_junk($db->escape($_POST['password'])));
+    $user_level = (int)$db->escape($_POST['level']);
+    $status = '1';
+
+    // Insert new user into the database
+    $query = "INSERT INTO users (name, username, password, user_level, status) VALUES ('{$name}', '{$username}', '{$password}', '{$user_level}', '{$status}')";
+    
+    if ($db->query($query)) {
+        // Successful insertion, return success response
+        $user_id = $db->insert_id();
+        $user_role = find_by_id('user_groups', $user_level)['group_name'];
+        $response = [
+            'success' => true,
+            'user' => [
+                'id' => $user_id,
+                'name' => $name,
+                'username' => $username,
+                'role' => ucwords($user_role),
+                'status' => $status,
+                'last_login' => 'Never'
+            ]
+        ];
+    }
+}
+echo json_encode($response);
+?>

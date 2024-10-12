@@ -9,18 +9,21 @@
     <!-- Custom CSS -->
     <style>
         .custom-header {
-            background-color: #eaf5e9;
+            background-color: #eaf5e9; /* Light green color */
         }
     </style>
 </head>
-<body class="bg-gray-100"></body>
+<body class="bg-gray-100">
 <?php
 $page_title = 'Add Stock';
 require_once('includes/load.php');
 // Check user permission level
 page_require_level(2);
 
+// Get all products from the database
 $all_products = find_all('products');
+
+// Get the product ID from the URL, if present
 $product_id_from_url = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 if (isset($_POST['add_stock'])) {
@@ -40,12 +43,12 @@ if (isset($_POST['add_stock'])) {
             $session->msg("s", "Successfully Added");
             redirect('stock.php', false);
         } else {
-            $session->msg("d", "Sorry Failed to insert.");
-            redirect('add_stock.php', false);
+            $session->msg("d", "Sorry, failed to insert.");
+            redirect('add_stock.php?id=' . $product_id_from_url, false);
         }
     } else {
         $session->msg("d", $errors);
-        redirect('add_stock.php', false);
+        redirect('add_stock.php?id=' . $product_id_from_url, false);
     }
 }
 
@@ -69,7 +72,7 @@ include_once('layouts/header.php');
                         <select class="form-control border rounded w-full py-2 px-3" name="product_id" id="product_id" required>
                             <option value="0">Select Product</option>
                             <?php foreach ($all_products as $product): ?>
-                                <option value="<?php echo $product['id']; ?>" <?php echo ($product['id'] === $product_id_from_url) ? 'selected' : ''; ?>>
+                                <option value="<?php echo $product['id']; ?>" <?php echo ($product['id'] == $product_id_from_url) ? 'selected' : ''; ?>>
                                     <?php echo $product['name']; ?>
                                 </option>
                             <?php endforeach; ?>
@@ -98,3 +101,5 @@ include_once('layouts/header.php');
 </div>
 
 <?php include_once('layouts/footer.php'); ?>
+</body>
+</html>

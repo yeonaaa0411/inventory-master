@@ -96,4 +96,48 @@ function suggetion() {
         });
   });
 
+  function submitUserForm() {
+    var formData = new FormData(document.getElementById('addUserForm'));
+  
+    fetch('add_user_ajax.php', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Update the table with the new user data
+        var newUserRow = `
+          <tr>
+            <td class="text-center border px-4 py-2">${data.user.id}</td>
+            <td class="border px-4 py-2">${data.user.name}</td>
+            <td class="border px-4 py-2">${data.user.username}</td>
+            <td class="text-center border px-4 py-2">${data.user.role}</td>
+            <td class="text-center border px-4 py-2">
+              <span class="${data.user.status === '1' ? 'bg-green-500' : 'bg-red-500'} text-white px-2 py-1 rounded">${data.user.status === '1' ? 'Active' : 'Deactive'}</span>
+            </td>
+            <td class="border px-4 py-2">${data.user.last_login}</td>
+            <td class="text-center border px-4 py-2">
+              <div class="flex justify-center space-x-2">
+                <a href="edit_user.php?id=${data.user.id}" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600">
+                  <i class="glyphicon glyphicon-pencil"></i>
+                </a>
+                <a href="delete_user.php?id=${data.user.id}" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">
+                  <i class="glyphicon glyphicon-trash"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+        `;
+        document.getElementById('userTableBody').insertAdjacentHTML('beforeend', newUserRow);
+        closeModal();
+      } else {
+        alert(data.message || 'Failed to add user');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('An error occurred while adding the user');
+    });
+  }
   

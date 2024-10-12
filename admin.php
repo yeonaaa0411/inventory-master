@@ -13,8 +13,9 @@
     /* Custom styles */
     .custom-class { color: #eaf5e9; }
     th, td { padding: 8px; border-bottom: 1px solid #e2e8f0; }
-    
-    th {   background-color: #eaf5e9; /* Light green color */ }
+    th { background-color: #eaf5e9; /* Light green color */ }
+    .text-right { text-align: right; } /* Right alignment for table data */
+    .nowrap { white-space: nowrap; } /* Prevent line breaks */
   </style>
 </head>
 <body class="bg-gray-100">
@@ -29,8 +30,8 @@
   $c_product = count_by_id('products');
   $c_sale = count_by_id('sales');
   $c_user = count_by_id('users');
-  $products_sold = find_higest_saleing_product('10');
-  $recent_products = find_recent_product_added('5');
+  $products_sold = find_higest_saleing_product('6');
+  $recent_products = find_recent_product_added('6');
   $recent_sales = find_recent_sale_added('6');
   $user = current_user();
 ?>
@@ -79,7 +80,6 @@
         </div>
     </div>
 </div>
-
 
 <!-- Welcome Panel -->
 <script>
@@ -138,8 +138,8 @@
         <tr>
           <th>#</th>
           <th>Product</th>
-          <th>Date</th>
-          <th>Total Sale</th>
+          <th class="text-center nowrap">Date</th> <!-- Add class for right alignment and prevent line breaks -->
+          <th class="text-right">Total Sale</th> <!-- Add class for right alignment -->
         </tr>
       </thead>
       <tbody>
@@ -151,8 +151,8 @@
               <?php echo remove_junk(first_character($recent_sale['name'])); ?>
             </a>
           </td>
-          <td><?php echo remove_junk(ucfirst($recent_sale['date'])); ?></td>
-          <td>₱ <?php echo remove_junk(first_character($recent_sale['price'])); ?></td>
+          <td class="text-right nowrap"><?php echo remove_junk(ucfirst($recent_sale['date'])); ?></td> <!-- Right align date and prevent line breaks -->
+          <td class="text-right">₱<?php echo number_format((float)$recent_sale['price'], 2); ?></td> <!-- Ensure number format -->
         </tr>
         <?php endforeach; ?>
       </tbody>
@@ -168,7 +168,7 @@
         <tr>
           <th>Product</th>
           <th>Category</th>
-          <th>Price</th>
+          <th class="text-right">Price</th> <!-- Add class for right alignment -->
         </tr>
       </thead>
       <tbody>
@@ -180,7 +180,7 @@
             </a>
           </td>
           <td><?php echo remove_junk(first_character($recent_product['category'])); ?></td>
-          <td>₱ <?php echo (int)$recent_product['sale_price']; ?></td>
+          <td class="text-right">₱<?php echo number_format((float)$recent_product['sale_price'], 2); ?></td> <!-- Ensure number format -->
         </tr>
         <?php endforeach; ?>
       </tbody>

@@ -21,11 +21,11 @@ if (isset($_POST['add_user'])) {
         $query = "INSERT INTO users (name, username, password, user_level, status) VALUES ('{$name}', '{$username}', '{$password}', '{$user_level}', '1')";
 
         if ($db->query($query)) {
-            // success
+            // Success: Redirect to users.php
             $session->msg('s', "User account has been created!");
-            redirect('add_user.php', false);
+            redirect('users.php', false); // Change here from 'add_user.php' to 'users.php'
         } else {
-            // failed
+            // Failed: Redirect back to add_user.php
             $session->msg('d', 'Sorry, failed to create account!');
             redirect('add_user.php', false);
         }
@@ -34,6 +34,7 @@ if (isset($_POST['add_user'])) {
         redirect('add_user.php', false);
     }
 }
+
 ?>
 
 <!DOCTYPE html>

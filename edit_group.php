@@ -108,3 +108,10 @@ if (isset($_POST['update'])) {
 <?php include_once('layouts/footer.php'); ?>
 </body>
 </html>
+<script>
+  // Auto-dismiss alerts after 3 seconds
+  setTimeout(() => {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => alert.remove());
+  }, 2000);
+</script>

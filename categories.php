@@ -10,21 +10,18 @@ if (isset($_POST['add_cat'])) {
     
     $cat_name = remove_junk($db->escape($_POST['category-name']));
     
-    // Prepared statement to check for existing category
-    $stmt = $db->prepare("SELECT * FROM categories WHERE name = ? LIMIT 1");
-    $stmt->bind_param('s', $cat_name);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows > 0) {
+    // Check if the category already exists
+    $sql = "SELECT * FROM categories WHERE name = '{$cat_name}' LIMIT 1";
+    $result = $db->query($sql);
+
+    if ($db->num_rows($result) > 0) {
         // Category already exists
         $session->msg('d', "Category '{$cat_name}' already exists. Please choose a different name.");
         redirect('categories.php', false);
     } elseif (empty($errors)) {
-        // Prepared statement to insert a new category
-        $insert_stmt = $db->prepare("INSERT INTO categories (name) VALUES (?)");
-        $insert_stmt->bind_param('s', $cat_name);
-        if ($insert_stmt->execute()) {
+        // Insert the new category
+        $insert_sql = "INSERT INTO categories (name) VALUES ('{$cat_name}')";
+        if ($db->query($insert_sql)) {
             $session->msg('s', "Category added successfully.");
             redirect('categories.php', false);
         } else {
@@ -56,6 +53,10 @@ $all_categories = find_all('categories');
   <style>
     th, td { padding: 20px; border-bottom: 1px solid #e2e8f0; }
     th { background-color: #eaf5e9; }
+
+    .header-bg {
+        background-color: #eaf5e9; /* Light green color */
+    }
   </style>
 </head>
 
@@ -71,7 +72,7 @@ $all_categories = find_all('categories');
 
 <div class="grid grid-cols-1 mt-6 mx-5">
   <div class="bg-white shadow-md rounded-lg">
-    <div class="flex justify-between items-center p-4 border-b">
+    <div class="flex justify-between items-center p-4 header-bg">
       <h2 class="text-3xl font-bold">
         <i class="fas fa-tag mr-2"></i>
         CATEGORIES
@@ -132,7 +133,7 @@ $all_categories = find_all('categories');
   setTimeout(() => {
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(alert => alert.remove());
-  }, 3000);
+  }, 2000);
 </script>
 
 </body>

@@ -20,9 +20,19 @@
   
   <!-- Custom CSS -->
   <style>
-    /* Custom styles */
-    th, td { padding: 20px; border-bottom: 1px solid #e2e8f0; }
-    th { background-color: #eaf5e9; /* Light green color */ }
+    /* Custom styles for the table */
+    th, td {
+      padding: 20px;
+      border-bottom: 1px solid #e2e8f0;
+      word-wrap: break-word; /* Allow long words to wrap */
+    }
+    th {
+      background-color: #eaf5e9; /* Light green color */
+    }
+    .table-cell-wrap {
+      white-space: normal; /* Allows text to wrap */
+      word-break: break-word; /* Break long words */
+    }
   </style>
 </head>
 <body class="bg-gray-100">
@@ -30,7 +40,7 @@
 <?php include_once('layouts/header.php'); ?>
 
 <div class="flex justify-center mt-6">
-   <div class="w-11/12 md:w-2/3"> <!-- Adjusted width -->
+   <div class="w-11/12 md:w-2/3">
      <?php echo display_msg($msg); ?>
    </div>
 </div>
@@ -49,22 +59,22 @@
       <table class="min-w-full border-collapse">
         <thead>
           <tr>
-            <th class="text-center border px-4 py-2" style="width: 50px;">#</th>
+            <th class="text-center border px-4 py-2">#</th>
             <th class="border px-4 py-2">Name</th>
             <th class="border px-4 py-2">Username</th>
-            <th class="text-center border px-4 py-2" style="width: 15%;">User Role</th>
-            <th class="text-center border px-4 py-2" style="width: 10%;">Status</th>
-            <th class="border px-4 py-2" style="width: 20%;">Last Login</th>
-            <th class="text-center border px-4 py-2" style="width: 100px;">Actions</th>
+            <th class="text-center border px-4 py-2">User Role</th>
+            <th class="text-center border px-4 py-2">Status</th>
+            <th class="border px-4 py-2">Last Login</th>
+            <th class="text-center border px-4 py-2">Actions</th>
           </tr>
         </thead>
         <tbody>
         <?php foreach($all_users as $a_user): ?>
           <tr>
            <td class="text-center border px-4 py-2"><?php echo count_id();?></td>
-           <td class="border px-4 py-2"><?php echo remove_junk(ucwords($a_user['name']))?></td>
-           <td class="border px-4 py-2"><?php echo remove_junk(ucwords($a_user['username']))?></td>
-           <td class="text-center border px-4 py-2"><?php echo remove_junk(ucwords($a_user['group_name']))?></td>
+           <td class="border px-4 py-2 table-cell-wrap"><?php echo remove_junk(ucwords($a_user['name']))?></td>
+           <td class="border px-4 py-2 table-cell-wrap"><?php echo remove_junk(ucwords($a_user['username']))?></td>
+           <td class="text-center border px-4 py-2 table-cell-wrap"><?php echo remove_junk(ucwords($a_user['group_name']))?></td>
            <td class="text-center border px-4 py-2">
              <?php if($a_user['status'] === '1'): ?>
               <span class="bg-green-500 text-white px-2 py-1 rounded"><?php echo "Active"; ?></span>
@@ -94,3 +104,4 @@
 <?php include_once('layouts/footer.php'); ?>
 </body>
 </html>
+

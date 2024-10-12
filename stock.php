@@ -25,8 +25,8 @@ $all_products = find_all('products');
     <style>
         th,
         td {
-            padding: 25px;
-            border: 1px solid #e2e8f0; /* Change border to 1px for better visibility */
+            padding: 30px; /* Increase padding for more space */
+            border: 1px solid #e2e8f0;
         }
 
         th {
@@ -34,13 +34,21 @@ $all_products = find_all('products');
         }
 
         table {
-            border-collapse: collapse; /* Ensure borders collapse */
-            width: 100%; /* Ensure table takes full width */
-            
+            border-collapse: separate; /* Changed from collapse to separate */
+            border-spacing: 0 10px; /* Added spacing between rows */
+            width: 100%;
+        }
+
+        tr {
+            min-height: 60px; /* Set a minimum height for each row */
         }
 
         tr:hover {
-            background-color: #f7fafc; /* Light hover effect for rows */
+            background-color: #f7fafc;
+        }
+
+        .header-bg {
+            background-color: #eaf5e9; /* Light green color */
         }
     </style>
 </head>
@@ -56,7 +64,7 @@ $all_products = find_all('products');
 
     <div class="grid grid-cols-1 mt-6 mx-5">
         <div class="bg-white shadow-md rounded-lg">
-            <div class="flex justify-between items-center p-4 border-b">
+            <div class="flex justify-between items-center p-6 header-bg border-b"> <!-- Added header-bg class and increased padding to p-6 -->
                 <strong class="text-3xl font-bold">
                     <i class="fas fa-box mr-2"></i>
                     Inventory Log
@@ -69,17 +77,17 @@ $all_products = find_all('products');
                 <table class="min-w-full border-collapse">
                     <thead>
                         <tr>
-                            <th class="text-center border px-4 py-2" style="width: 50px;">#</th>
-                            <th class="text-center border px-4 py-2" style="width: 15%;">Product</th>
-                            <th class="text-center border px-4 py-2" style="width: 15%;">Quantity</th>
-                            <th class="text-center border px-4 py-2" style="width: 50px;">Comments</th>
-                            <th class="text-center border px-4 py-2" style="width: 15%;">Date</th>
-                            <th class="text-center border px-4 py-2" style="width: 100px;">Actions</th>
+                            <th class="text-center border px-6 py-3" style="width: 60px;">#</th>
+                            <th class="text-center border px-6 py-3" style="width: 20%;">Product</th>
+                            <th class="text-center border px-6 py-3" style="width: 15%;">Quantity</th>
+                            <th class="text-center border px-6 py-3" style="width: 25%;">Comments</th>
+                            <th class="text-center border px-6 py-3" style="width: 20%;">Date</th>
+                            <th class="text-center border px-6 py-3" style="width: 120px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($all_stock as $index => $stock): ?>
-                            <tr>
+                            <tr style="height: 80px;">
                                 <td class="text-center"><?php echo $index + 1; ?></td>
                                 <td class="text-center">
                                     <a href="view_product.php?id=<?php echo (int)$stock['product_id']; ?>">
@@ -98,10 +106,10 @@ $all_products = find_all('products');
                                 <td class="text-center">
                                     <div class="flex justify-center space-x-2">
                                         <a href="edit_stock.php?id=<?php echo (int)$stock['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Edit">
-                                            <i class="glyphicon glyphicon-edit"></i>
+                                            <i class="fas fa-pencil-alt"></i>
                                         </a>
                                         <a href="delete_stock.php?id=<?php echo (int)$stock['id']; ?>" onClick="return confirm('Are you sure you want to delete?')" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" title="Remove">
-                                            <i class="glyphicon glyphicon-trash"></i>
+                                            <i class="fas fa-trash-alt"></i>
                                         </a>
                                     </div>
                                 </td>
