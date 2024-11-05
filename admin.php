@@ -16,6 +16,9 @@
     th { background-color: #eaf5e9; /* Light green color */ }
     .text-right { text-align: right; } /* Right alignment for table data */
     .nowrap { white-space: nowrap; } /* Prevent line breaks */
+    .table a {
+  color: #000; /* Set color to black */
+}
   </style>
 </head>
 <body class="bg-gray-100">
