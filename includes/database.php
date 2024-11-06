@@ -88,9 +88,13 @@ public function affected_rows()
  /* Function for Remove escapes special
  /* characters in a string for use in an SQL statement
  /*--------------------------------------------------------------*/
- public function escape($str){
-   return $this->con->real_escape_string($str);
- }
+ public function escape($str) {
+  if ($str === null) {
+      return ''; // Return an empty string or handle null case as needed
+  }
+  return $this->con->real_escape_string($str);
+}
+
 /*--------------------------------------------------------------*/
 /* Function for while loop
 /*--------------------------------------------------------------*/
