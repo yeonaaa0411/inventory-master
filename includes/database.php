@@ -15,18 +15,17 @@ class MySqli_DB {
 /*--------------------------------------------------------------*/
 public function db_connect()
 {
-  $this->con = mysqli_connect('localhost', 'root', '');
-  if(!$this->con)
-         {
-           die(" Database connection failed:". mysqli_connect_error());
-         } else {
-           $select_db = $this->con->select_db(DB_NAME);
-             if(!$select_db)
-             {
-               die("Failed to Select Database". mysqli_connect_error());
-             }
-         }
+    $this->con = mysqli_connect(DB_HOST, DB_USER, DB_PASS);
+    if (!$this->con) {
+        die("Database connection failed: " . mysqli_connect_error());
+    } else {
+        $select_db = $this->con->select_db(DB_NAME);
+        if (!$select_db) {
+            die("Failed to Select Database: " . mysqli_error($this->con));
+        }
+    }
 }
+
 /*--------------------------------------------------------------*/
 /* Function for Close database connection
 /*--------------------------------------------------------------*/
