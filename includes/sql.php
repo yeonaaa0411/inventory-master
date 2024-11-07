@@ -10,6 +10,7 @@ function find_all($table) {
 }
 
 /* Function for Perform queries */
+/* Function for Perform queries */
 function find_by_sql($sql) {
   global $db;
   $result = $db->query($sql);
@@ -17,9 +18,12 @@ function find_by_sql($sql) {
     return false; // Handle errors with SQL query
   }
   $result_set = $db->while_loop($result);
-  return $result_set;
+  // Ensure the result set is not null or empty before returning
+  return ($result_set && is_array($result_set)) ? $result_set : null;
 }
 
+
+/* Function for Find data from table by id */
 /* Function for Find data from table by id */
 function find_by_id($table, $id) {
   global $db;
@@ -28,14 +32,23 @@ function find_by_id($table, $id) {
     $sql = $db->query("SELECT * FROM {$db->escape($table)} WHERE id='{$db->escape($id)}' LIMIT 1");
     if ($sql) {
       $result = $db->fetch_assoc($sql);
-      // Ensure result is not null before returning
-      return ($result && is_array($result)) ? $result : null;
+      // Ensure result is not null or empty before returning
+      if ($result && is_array($result)) {
+        return $result;
+      } else {
+        // Return null if no rows are found or result is not an array
+        return null;
+      }
     } else {
+      // Return null if query fails
       return null;
     }
   }
-  return null; // return null if table does not exist
+  // Return null if table does not exist
+  return null;
 }
+
+
 
 /* Function for Delete data from table by id */
 function delete_by_id($table, $id) {
