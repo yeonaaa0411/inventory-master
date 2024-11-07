@@ -19,12 +19,13 @@ public function db_connect()
     if (!$this->con) {
         die("Database connection failed: " . mysqli_connect_error());
     } else {
-        $select_db = $this->con->select_db(DB_NAME);
-        if (!$select_db) {
+        // Select the database using mysqli_select_db
+        if (!mysqli_select_db($this->con, DB_NAME)) {
             die("Failed to Select Database: " . mysqli_error($this->con));
         }
     }
 }
+
 
 /*--------------------------------------------------------------*/
 /* Function for Close database connection
