@@ -1,4 +1,8 @@
 <?php
+// Start the session (make sure this is done before accessing any session variables)
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 // -----------------------------------------------------------------------
 // DEFINE SEPERATOR ALIASES
 // -----------------------------------------------------------------------
@@ -18,10 +22,6 @@ require_once(LIB_PATH_INC.'upload.php');
 require_once(LIB_PATH_INC.'database.php');
 require_once(LIB_PATH_INC.'sql.php');
 
-// Start the session (make sure this is done before accessing any session variables)
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 // Check if the session variable 'user_id' is set
 if (isset($_SESSION['user_id'])) {
