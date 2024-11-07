@@ -199,13 +199,19 @@ function authenticate($username = '', $password = '') {
   /*--------------------------------------------------------------*/
   /* Find group level
   /*--------------------------------------------------------------*/
-  function find_by_groupLevel($level)
-  {
+  function find_by_groupLevel($level) {
     global $db;
     $sql = "SELECT group_level FROM user_groups WHERE group_level = '{$db->escape($level)}' LIMIT 1 ";
     $result = $db->query($sql);
-    return($db->num_rows($result) === 0 ? true : false);
+    
+    // Check if the result is valid and contains rows
+    if ($db->num_rows($result) > 0) {
+      return true;  // group level found
+    } else {
+      return false;  // group level not found
+    }
   }
+  
   /*--------------------------------------------------------------*/
   /* Function for cheaking which user level has access to page
   /*--------------------------------------------------------------*/
