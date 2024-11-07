@@ -221,6 +221,13 @@ function authenticate($username = '', $password = '') {
   function page_require_level($require_level) {
     global $session;
     $current_user = current_user();
+
+    // Check if the current user is null
+    if (!$current_user) {
+        $session->msg('d', 'You must be logged in to view this page.');
+        redirect('index.php', false);
+    }
+
     $login_level = find_by_groupLevel($current_user['user_level']);
     
     // if user not logged in
@@ -241,6 +248,7 @@ function authenticate($username = '', $password = '') {
         redirect('home.php', false);
     }
 }
+
 
    /*--------------------------------------------------------------*/
    /* Function for Finding all product name
