@@ -1,5 +1,4 @@
 <?php
-// Start the session (make sure this is done before accessing any session variables)
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }

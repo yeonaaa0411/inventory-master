@@ -24,15 +24,17 @@ function find_by_sql($sql) {
 function find_by_id($table, $id) {
   global $db;
   $id = (int)$id;
-  if(tableExists($table)) {
+  if (tableExists($table)) {
     $sql = $db->query("SELECT * FROM {$db->escape($table)} WHERE id='{$db->escape($id)}' LIMIT 1");
     if ($sql) {
       $result = $db->fetch_assoc($sql);
-      return $result ? $result : null;
+      // Ensure result is not null before returning
+      return ($result && is_array($result)) ? $result : null;
     } else {
       return null;
     }
   }
+  return null; // return null if table does not exist
 }
 
 /* Function for Delete data from table by id */
