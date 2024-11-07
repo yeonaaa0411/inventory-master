@@ -24,12 +24,7 @@ require_once(LIB_PATH_INC.'sql.php');
 
 
 // Check if the session variable 'user_id' is set
-if (isset($_SESSION['user_id'])) {
-    $user_id = $_SESSION['user_id'];
-} else {
-    // Handle the case where user_id is not set
-    $user_id = null; // or redirect to login page, show an error, etc.
-}
+
 
 $remote_ip = $_SERVER['REMOTE_ADDR'];
 $action = $_SERVER['REQUEST_URI'];
