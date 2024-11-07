@@ -14,17 +14,14 @@ class MySqli_DB {
     /* Function for Open database connection
     /*--------------------------------------------------------------*/
     public function db_connect() {
-        $this->con = mysqli_connect(DB_HOST, DB_USER, DB_PASS);
-
-        if (!$this->con) {
-            die("Database connection failed: " . mysqli_connect_error());
-        } else {
-            // Attempt to select the database
-            if (!mysqli_select_db($this->con, DB_NAME)) {
-                die("Failed to select database: " . mysqli_error($this->con));
-            }
-        }
-    }
+      // Use the constants defined in config.php
+      $this->con = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
+  
+      if (!$this->con) {
+          die("Database connection failed: " . mysqli_connect_error());
+      }
+  }
+  
 
     /*--------------------------------------------------------------*/
     /* Function for Close database connection
