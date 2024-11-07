@@ -1,6 +1,4 @@
 <?php
-ob_start();  // Start output buffering to avoid premature output
-
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -24,6 +22,7 @@ require_once(LIB_PATH_INC.'upload.php');
 require_once(LIB_PATH_INC.'database.php');
 require_once(LIB_PATH_INC.'sql.php');
 
+
 // Check if the session variable 'user_id' is set
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
@@ -38,6 +37,4 @@ $action = preg_replace('/^.+[\\\\\\/]/', '', $action);
 
 // logging disabled ~ remove the comment "//" to enable
 // logAction($user_id, $remote_ip, $action);
-
-ob_end_flush();  // Flush the output buffer
 ?>
