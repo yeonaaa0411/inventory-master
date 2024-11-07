@@ -1,8 +1,12 @@
 <?php
-ob_start(); // Start output buffering
+error_log("Before session_start()");
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+error_log("After session_start()");
+
+// Continue with the rest of your code...
+
 
 // Continue with the rest of your code...
 
