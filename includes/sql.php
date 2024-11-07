@@ -19,8 +19,9 @@ function find_by_sql($sql) {
   }
   $result_set = $db->while_loop($result);
   // Ensure the result set is not null or empty before returning
-  return ($result_set && is_array($result_set)) ? $result_set : null;
+  return ($result_set && is_array($result_set) && count($result_set) > 0) ? $result_set : null;
 }
+
 
 
 /* Function for Find data from table by id */
@@ -47,6 +48,7 @@ function find_by_id($table, $id) {
   // Return null if table does not exist
   return null;
 }
+
 
 
 
@@ -201,41 +203,45 @@ function authenticate($username = '', $password = '') {
   /*--------------------------------------------------------------*/
   function find_by_groupLevel($level) {
     global $db;
-    $sql = "SELECT group_level FROM user_groups WHERE group_level = '{$db->escape($level)}' LIMIT 1 ";
+    $sql = "SELECT group_level, group_status FROM user_groups WHERE group_level = '{$db->escape($level)}' LIMIT 1 ";
     $result = $db->query($sql);
-    
+  
     // Check if the result is valid and contains rows
     if ($db->num_rows($result) > 0) {
-      return true;  // group level found
+      return $db->fetch_assoc($result);  // Return the full group data (including group_status)
     } else {
-      return false;  // group level not found
+      return null;  // Return null if no group is found
     }
   }
+  
   
   /*--------------------------------------------------------------*/
   /* Function for cheaking which user level has access to page
   /*--------------------------------------------------------------*/
-   function page_require_level($require_level){
-     global $session;
-     $current_user = current_user();
-     $login_level = find_by_groupLevel($current_user['user_level']);
-     //if user not login
-     if (!$session->isUserLoggedIn(true)):
-            $session->msg('d','Please login...');
-            redirect('index.php', false);
-      //if Group status Deactive
-     elseif($login_level['group_status'] === '0'):
-           $session->msg('d','This level user has been band!');
-           redirect('home.php',false);
-      //cheackin log in User level and Require level is Less than or equal to
-     elseif($current_user['user_level'] <= (int)$require_level):
-              return true;
-      else:
-            $session->msg("d", "Sorry! you dont have permission to view the page.");
-            redirect('home.php', false);
-        endif;
+  function page_require_level($require_level) {
+    global $session;
+    $current_user = current_user();
+    $login_level = find_by_groupLevel($current_user['user_level']);
+    
+    // if user not logged in
+    if (!$session->isUserLoggedIn(true)) {
+        $session->msg('d', 'Please login...');
+        redirect('index.php', false);
+    }
+    // if group status is deactivated (0) and login_level is not null
+    elseif ($login_level && $login_level['group_status'] === '0') {
+        $session->msg('d', 'This level user has been banned!');
+        redirect('home.php', false);
+    }
+    // checking if user level is less than or equal to the required level
+    elseif ($current_user['user_level'] <= (int)$require_level) {
+        return true;
+    } else {
+        $session->msg("d", "Sorry! You don't have permission to view the page.");
+        redirect('home.php', false);
+    }
+}
 
-     }
    /*--------------------------------------------------------------*/
    /* Function for Finding all product name
    /* JOIN with category  and media database table

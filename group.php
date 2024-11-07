@@ -4,7 +4,13 @@ require_once('includes/load.php');
 // Check what level user has permission to view this page
 page_require_level(1);
 
+// Fetch all groups
 $all_groups = find_all('user_groups');
+
+// Check if the result is not empty
+if (!$all_groups) {
+    $all_groups = []; // Set it to an empty array if no groups found
+}
 ?>
 
 <!DOCTYPE html>
@@ -68,32 +74,38 @@ $all_groups = find_all('user_groups');
           </tr>
         </thead>
         <tbody>
-        <?php foreach($all_groups as $a_group): ?>
+        <?php if (count($all_groups) > 0): ?>
+          <?php foreach($all_groups as $a_group): ?>
+            <tr>
+             <td class="text-center border px-4 py-2"><?php echo count_id(); ?></td>
+             <td class="border px-4 py-2 table-cell-wrap"><?php echo remove_junk(ucwords($a_group['group_name'])); ?></td>
+             <td class="text-center border px-4 py-2">
+               <?php echo remove_junk(ucwords($a_group['group_level'])); ?>
+             </td>
+             <td class="text-center border px-4 py-2">
+             <?php if($a_group['group_status'] === '1'): ?>
+              <span class="bg-green-500 text-white px-2 py-1 rounded">Active</span>
+            <?php else: ?>
+              <span class="bg-red-500 text-white px-2 py-1 rounded">Deactive</span>
+            <?php endif; ?>
+             </td>
+             <td class="text-center border px-4 py-2">
+               <div class="flex justify-center space-x-2">
+                  <a href="edit_group.php?id=<?php echo (int)$a_group['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" data-toggle="tooltip" title="Edit">
+                    <i class="glyphicon glyphicon-pencil"></i>
+                  </a>
+                  <a href="delete_group.php?id=<?php echo (int)$a_group['id']; ?>" onClick="return confirm('Are you sure you want to delete this group?');" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" data-toggle="tooltip" title="Delete">
+                    <i class="glyphicon glyphicon-trash"></i>
+                  </a>
+               </div>
+             </td>
+            </tr>
+          <?php endforeach; ?>
+        <?php else: ?>
           <tr>
-           <td class="text-center border px-4 py-2"><?php echo count_id(); ?></td>
-           <td class="border px-4 py-2 table-cell-wrap"><?php echo remove_junk(ucwords($a_group['group_name'])); ?></td>
-           <td class="text-center border px-4 py-2">
-             <?php echo remove_junk(ucwords($a_group['group_level'])); ?>
-           </td>
-           <td class="text-center border px-4 py-2">
-           <?php if($a_group['group_status'] === '1'): ?>
-            <span class="bg-green-500 text-white px-2 py-1 rounded">Active</span>
-          <?php else: ?>
-            <span class="bg-red-500 text-white px-2 py-1 rounded">Deactive</span>
-          <?php endif; ?>
-           </td>
-           <td class="text-center border px-4 py-2">
-             <div class="flex justify-center space-x-2">
-                <a href="edit_group.php?id=<?php echo (int)$a_group['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" data-toggle="tooltip" title="Edit">
-                  <i class="glyphicon glyphicon-pencil"></i>
-                </a>
-                <a href="delete_group.php?id=<?php echo (int)$a_group['id']; ?>" onClick="return confirm('Are you sure you want to delete this group?');" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" data-toggle="tooltip" title="Delete">
-                  <i class="glyphicon glyphicon-trash"></i>
-                </a>
-             </div>
-           </td>
+            <td colspan="5" class="text-center border px-4 py-2">No groups found</td>
           </tr>
-        <?php endforeach; ?>
+        <?php endif; ?>
         </tbody>
       </table>
     </div>
