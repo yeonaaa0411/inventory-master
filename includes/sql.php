@@ -1,4 +1,9 @@
+
 <?php
+session_start();
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 require_once('includes/load.php');
 
 /* Function for find all database table rows by table name */
@@ -118,19 +123,17 @@ function authenticate($username = '', $password = '') {
   /*--------------------------------------------------------------*/
   /* Find current log in user by session id
   /*--------------------------------------------------------------*/
-  function current_user() {
-    static $current_user;
-    global $db;
-    if (!$current_user) {
-        if (isset($_SESSION['user_id'])) {
-            $user_id = intval($_SESSION['user_id']);
-            $current_user = find_by_id('users', $user_id);
-        }
-    }
-    // Check if current_user is null before returning
-    return $current_user !== null ? $current_user : null; // Return null if not found
-}
-
+  function current_user(){
+      static $current_user;
+      global $db;
+      if(!$current_user){
+         if(isset($_SESSION['user_id'])):
+             $user_id = intval($_SESSION['user_id']);
+             $current_user = find_by_id('users',$user_id);
+        endif;
+      }
+    return $current_user;
+  }
   /*--------------------------------------------------------------*/
   /* Find all user by
   /* Joining users table and user gropus table
