@@ -1,19 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($page_title) ? remove_junk($page_title) : "Admin"; ?></title>
-    <!-- Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <style>
-        .custom-header {
-            background-color: #eaf5e9; /* Light green color */
-        }
-    </style>
-</head>
-<body class="bg-gray-100">
 <?php
 $page_title = 'Add Stock';
 require_once('includes/load.php');
@@ -54,6 +38,24 @@ if (isset($_POST['add_stock'])) {
 
 include_once('layouts/header.php');
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo isset($page_title) ? remove_junk($page_title) : "Admin"; ?></title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        .custom-header {
+            background-color: #eaf5e9; /* Light green color */
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
 
 <div class="mt-6 ml-6">
     <div class="w-2/6">
