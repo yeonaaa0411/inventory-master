@@ -1,3 +1,10 @@
+<?php
+$page_title = 'All Images';
+require_once('includes/load.php');
+// Checkin What level user has permission to view this page
+page_require_level(2);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,12 +24,7 @@
 </head>
 <body class="bg-gray-100">
 
-<?php
-$page_title = 'All Images';
-require_once('includes/load.php');
-// Checkin What level user has permission to view this page
-page_require_level(2);
-?>
+
 <?php $media_files = find_all('media'); ?>
 <?php
 if (isset($_POST['submit'])) {
