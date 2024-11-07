@@ -1,3 +1,9 @@
+<?php
+  $page_title = 'Admin Home Page';
+  require_once('includes/load.php');
+  page_require_level(2);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,11 +29,7 @@
 </head>
 <body class="bg-gray-100">
 
-<?php
-  $page_title = 'Admin Home Page';
-  require_once('includes/load.php');
-  page_require_level(2);
-?>
+
 <?php
   $c_categorie = count_by_id('categories');
   $c_product = count_by_id('products');
