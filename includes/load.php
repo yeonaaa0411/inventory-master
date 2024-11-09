@@ -1,10 +1,7 @@
 <?php
-ob_start(); // Start output buffering to prevent headers already sent issue
-
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
 // Continue with the rest of your code...
 
 // -----------------------------------------------------------------------
@@ -16,7 +13,7 @@ define("DS", DIRECTORY_SEPARATOR);
 // -----------------------------------------------------------------------
 // DEFINE ROOT PATHS
 // -----------------------------------------------------------------------
-defined('SITE_ROOT') ? null : define('SITE_ROOT', realpath(dirname(__FILE__)));
+defined('SITE_ROOT')? null: define('SITE_ROOT', realpath(dirname(__FILE__)));
 define("LIB_PATH_INC", SITE_ROOT.DS);
 
 require_once(LIB_PATH_INC.'config.php');
@@ -26,11 +23,13 @@ require_once(LIB_PATH_INC.'upload.php');
 require_once(LIB_PATH_INC.'database.php');
 require_once(LIB_PATH_INC.'sql.php');
 
+
 // Check if the session variable 'user_id' is set
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
 } else {
-    $user_id = null; // Handle the case where user_id is not set
+    // Handle the case where user_id is not set
+    $user_id = null; // or redirect to login page, show an error, etc.
 }
 
 $remote_ip = $_SERVER['REMOTE_ADDR'];

@@ -15,7 +15,9 @@ $user = current_user();  // Ensure user is fetched after session start
   <body>
     <?php if ($session->isUserLoggedIn(true)): ?>
       <header id="header">
-        <div class="logo pull-left">BPSR Inventory</div>
+      <div class="logo pull-left">
+  <img src="includes/uploads/BPSRLogo.png" alt="BPSR Logo" style="height: 100%; width: 100%;">
+</div>
         <div class="header-content">
           <div class="header-date pull-left">
             <strong><?php echo date("F j, Y, g:i a");?></strong>
