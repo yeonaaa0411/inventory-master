@@ -43,32 +43,94 @@ if (isset($_POST['submit'])) {
             }
 
             .print-page {
-                page-break-before: always;
-                width: auto;
-                margin: auto;
+                width: 100%;
+                margin: 0 auto;
+                padding: 10px;
             }
 
             .no-print {
                 display: none;
             }
+
+            .summary-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+            }
+
+            .summary-table th,
+            .summary-table td {
+                border: 1px solid #E2E8F0;
+                padding: 6px 10px;
+                font-size: 10pt; /* Adjust font size for better readability */
+                text-align: left;
+            }
+
+            .summary-table th {
+                background-color: #EDF2F7;
+                font-weight: bold;
+            }
+
+            .summary-table td {
+                background-color: #F7FAFC;
+            }
+
+            /* Handle page breaks after every 25 rows */
+            .summary-table tr:nth-child(25) {
+                page-break-after: always;
+            }
+
+            /* Prevent row splitting across pages */
+            .summary-table tr {
+                page-break-inside: avoid;
+            }
+
+            /* If there are additional rows, break pages properly */
+            .summary-table td,
+            .summary-table th {
+                word-wrap: break-word;
+            }
+
+            /* Hide Grand Total and Profit on pages except the last one */
+            .summary-table tfoot {
+                display: none;
+            }
+
+            .summary-table:last-of-type tfoot {
+                display: table-footer-group;
+            }
+
         }
 
+        /* Regular page styling for non-print view */
         .print-page {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 10px;
+        }
+
+        .header-logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header-logo img {
+            height: 100px;
+            width: auto;
         }
 
         .report-title {
             text-align: center;
             font-size: 1.5rem;
             font-weight: bold;
+            margin-top: 10px;
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 2px solid #4A5568;
         }
 
-        .summary-table th, .summary-table td {
+        .summary-table th,
+        .summary-table td {
             border: 1px solid #E2E8F0;
         }
 
@@ -89,11 +151,18 @@ if (isset($_POST['submit'])) {
     </div>
 
     <div class="print-page bg-white shadow-lg rounded-lg p-6">
+        <!-- Logo Section -->
+        <div class="header-logo">
+            <img src="includes/uploads/BPSRLogo.png" alt="BPSR Logo" style="height: 200px; width: 100%;">
+        </div>
+
         <?php if ($results): ?>
+            <!-- Report Title Section -->
             <div class="report-title">
                 <h1>Sales Report</h1>
                 <p class="text-gray-700"><?php echo isset($start_date) ? $start_date : ''; ?> to <?php echo isset($end_date) ? $end_date : ''; ?></p>
             </div>
+
             <table class="w-full summary-table border-collapse">
                 <thead>
                     <tr>
