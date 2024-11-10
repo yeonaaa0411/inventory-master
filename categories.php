@@ -57,6 +57,12 @@ $all_categories = find_all('categories');
     .header-bg {
         background-color: #eaf5e9; /* Light green color */
     }
+
+    /* Highlight the row on hover */
+    tr:hover {
+        background-color: #f4f4f9; /* Light gray color */
+        cursor: pointer;
+    }
   </style>
 </head>
 

@@ -10,33 +10,47 @@ if (isset($_POST['add'])) {
     $req_fields = array('group-name', 'group-level');
     validate_fields($req_fields);
 
+    // Check if the group name already exists
     if (find_by_groupName($_POST['group-name']) === false) {
         $session->msg('d', '<b>Sorry!</b> Entered Group Name already in database!');
         redirect('add_group.php', false);
-    } elseif (find_by_groupLevel($_POST['group-level']) === false) {
+    }
+
+    // Check if the group level already exists
+    elseif (find_by_groupLevel($_POST['group-level']) === false) {
         $session->msg('d', '<b>Sorry!</b> Entered Group Level already in database!');
         redirect('add_group.php', false);
     }
     
+    // If no errors, proceed to add the new group
     if (empty($errors)) {
         $name = remove_junk($db->escape($_POST['group-name']));
         $level = remove_junk($db->escape($_POST['group-level']));
         $status = remove_junk($db->escape($_POST['status']));
 
-        $query  = "INSERT INTO user_groups (";
-        $query .= "group_name, group_level, group_status";
-        $query .= ") VALUES (";
-        $query .= " '{$name}', '{$level}', '{$status}'";
-        $query .= ")";
+        // Check for duplicate group level before inserting
+        $query_check = "SELECT * FROM user_groups WHERE group_level = '{$level}' LIMIT 1";
+        $result = $db->query($query_check);
         
-        if ($db->query($query)) {
-            // success
-            $session->msg('s', "Group has been created! ");
+        if ($db->num_rows($result) > 0) {
+            $session->msg('d', '<b>Sorry!</b> Group Level already exists. Please choose a different level.');
             redirect('add_group.php', false);
         } else {
-            // failed
-            $session->msg('d', ' Sorry failed to create Group!');
-            redirect('add_group.php', false);
+            $query  = "INSERT INTO user_groups (";
+            $query .= "group_name, group_level, group_status";
+            $query .= ") VALUES (";
+            $query .= " '{$name}', '{$level}', '{$status}'";
+            $query .= ")";
+            
+            if ($db->query($query)) {
+                // success
+                $session->msg('s', "Group has been created! ");
+                redirect('group.php', false); // Redirect to group.php on success
+            } else {
+                // failed
+                $session->msg('d', ' Sorry failed to create Group!');
+                redirect('add_group.php', false);
+            }
         }
     } else {
         $session->msg("d", $errors);
@@ -83,7 +97,10 @@ if (isset($_POST['add'])) {
 
                     <div class="mb-4">
                         <label for="level" class="block text-gray-700 text-sm font-bold mb-2">Group Level</label>
-                        <input type="number" class="form-control border rounded w-full py-2 px-3" name="group-level" placeholder="Group Level" required>
+                        <select class="form-control border rounded w-full py-2 px-3" name="group-level" required>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
                     </div>
 
                     <div class="mb-4">

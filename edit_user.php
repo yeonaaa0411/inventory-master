@@ -29,10 +29,10 @@ if (isset($_POST['update'])) {
         $result = $db->query($sql);
         if ($result && $db->affected_rows() === 1) {
             $session->msg('s', "Account Updated ");
-            redirect('edit_user.php?id=' . (int)$e_user['id'], false);
+            redirect('users.php', false); // Redirect to users.php on success
         } else {
-            $session->msg('d', ' Sorry failed to update!');
-            redirect('edit_user.php?id=' . (int)$e_user['id'], false);
+            $session->msg('d', 'Sorry failed to update!');
+            redirect('edit_user.php?id=' . (int)$e_user['id'], false); // Stay on the edit page if update fails
         }
     } else {
         $session->msg("d", $errors);
@@ -54,10 +54,10 @@ if (isset($_POST['update-pass'])) {
         $result = $db->query($sql);
         if ($result && $db->affected_rows() === 1) {
             $session->msg('s', "User password has been updated ");
-            redirect('edit_user.php?id=' . (int)$e_user['id'], false);
+            redirect('users.php', false); // Redirect to users.php on success
         } else {
-            $session->msg('d', ' Sorry failed to update user password!');
-            redirect('edit_user.php?id=' . (int)$e_user['id'], false);
+            $session->msg('d', 'Sorry failed to update user password!');
+            redirect('edit_user.php?id=' . (int)$e_user['id'], false); // Stay on the edit page if update fails
         }
     } else {
         $session->msg("d", $errors);
@@ -155,7 +155,6 @@ if (isset($_POST['update-pass'])) {
         </div>
     </div>
 </div>
-
 
 <?php include_once('layouts/footer.php'); ?>
 </body>

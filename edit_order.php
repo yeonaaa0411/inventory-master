@@ -28,17 +28,18 @@ if (isset($_POST['edit_order'])) {
         $result = $db->query($sql);
         if ($result && $db->affected_rows() === 1) {
             $session->msg("s", "Successfully updated order");
-            redirect('orders.php', false);
+            redirect('sales_by_order.php?id=' . (int)$order['id'], false); // Redirect to the edited order's page
         } else {
-            $session->msg("d", "Sorry! Failed to update order");
-            redirect('orders.php', false);
+            $session->msg("d", "No changes made to the order");
+            redirect('edit_order.php?id=' . (int)$order['id'], false); // Stay on the editing page if update failed
         }
     } else {
         $session->msg("d", $errors);
-        redirect('orders.php', false);
+        redirect('edit_order.php?id=' . (int)$order['id'], false); // Stay on the editing page if there are errors
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -83,11 +84,8 @@ if (isset($_POST['edit_order'])) {
                     <div class="mb-4">
                         <label for="paymethod" class="block text-gray-700 text-sm font-bold mb-2">Payment Method</label>
                         <select class="form-control border rounded w-full py-2 px-3" name="paymethod">
-                            <option value="">Select Payment Method</option>
                             <option value="Cash" <?php if ($order['paymethod'] === "Cash") echo "selected"; ?>>Cash</option>
-                            <option value="Check" <?php if ($order['paymethod'] === "Check") echo "selected"; ?>>Check</option>
-                            <option value="Credit" <?php if ($order['paymethod'] === "Credit") echo "selected"; ?>>Credit</option>
-                            <option value="Charge" <?php if ($order['paymethod'] === "Charge") echo "selected"; ?>>Charge to Account</option>
+                            <option value="Gcash" <?php if ($order['paymethod'] === "Gcash") echo "selected"; ?>>Gcash</option>
                         </select>
                     </div>
 

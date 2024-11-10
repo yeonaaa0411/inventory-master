@@ -6,12 +6,15 @@ page_require_level(2);
 
 $sale = find_by_id('sales', (int)$_GET['id']);
 if (!$sale) {
-    $session->msg("d", "Missing product id.");
+    $session->msg("d", "Missing sale id.");
     redirect('sales.php');
 }
 
 $product = find_by_id('products', $sale['product_id']);
 $order = find_by_id('orders', $sale['order_id']);
+
+// Get the referrer URL to return after updating
+$referrer_url = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'sales.php';
 
 if (isset($_POST['update_sale'])) {
     $req_fields = array('title', 'order_id', 'quantity', 'date');
@@ -57,10 +60,11 @@ if (isset($_POST['update_sale'])) {
                 }
             }
             $session->msg('s', "Sale updated.");
-            redirect('edit_sale.php?id=' . $sale['id'], false);
+            // Redirect to the order page after the update
+            redirect('sales_by_order.php?id=' . (int)$order['id'], false); // Redirect to the order's page
         } else {
-            $session->msg('d', 'Sorry, failed to update!');
-            redirect('edit_sale.php?id=' . (int)$sale['id'], false);
+            $session->msg('d', 'No changes made to the sales!');
+            redirect('edit_sale.php?id=' . (int)$sale['id'], false); // Stay on the editing page if update failed
         }
     } else {
         $session->msg("d", $errors);
@@ -68,6 +72,8 @@ if (isset($_POST['update_sale'])) {
     }
 }
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">

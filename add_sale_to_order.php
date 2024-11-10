@@ -161,6 +161,11 @@ if (isset($_POST['update_category']) && !empty($_POST['product-category'])) {
                         <?php
                         $sales = find_sales_by_order_id($order_id);
 
+                        // Ensure $sales is an array to prevent the "foreach" error
+                        if (!$sales) {
+                            $sales = array(); // Set $sales to an empty array if it is null or false
+                        }
+
                         foreach ($products_available as $product) {
                             $added_to_order = false;
                             foreach ($sales as $sale) {

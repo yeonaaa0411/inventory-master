@@ -5,7 +5,12 @@ require_once('includes/load.php');
 page_require_level(2);
 
 $all_categories = find_all('categories');
-if (isset($_POST['update_category'])) {
+
+// Initialize products as an empty array
+$products = [];
+
+// Check if the form is submitted and a category is selected
+if (isset($_POST['update_category']) && !empty($_POST['product-category'])) {
     $products = find_products_by_category((int)$_POST['product-category']);
 } else {
     $products = join_product_table();
@@ -74,7 +79,6 @@ if (isset($_POST['update_category'])) {
                     }
                     ?>
                 </strong>
-                <a href="add_product.php" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add New Product</a>
             </div>
             <div class="p-4">
                 <form method="post" action="">
@@ -112,48 +116,52 @@ if (isset($_POST['update_category'])) {
                         </tr>
                     </thead>
                     <tbody>
-                      <?php foreach ($products as $product): ?>
-                        <tr>
-                        <td class="text-center"><?php echo count_id(); ?></td>
-                        <td class="text-center"><?php echo remove_junk($product['category']); ?></td>
-                        <td class="text-center">
-                            <a href="view_product.php?id=<?php echo (int)$product['id']; ?>">
-                                <?php echo remove_junk($product['name']); ?>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <div class="flex justify-center">
-                                <?php if ($product['media_id'] === '0'): ?>
-                                    <img class="img-avatar img-circle" src="uploads/products/no_image.jpg" alt="">
-                                <?php else: ?>
-                                    <img class="img-avatar img-circle" src="uploads/products/<?php echo $product['image']; ?>" alt="">
-                                <?php endif; ?>
-                            </div>
-                        </td>
-                        <td class="text-center" style="<?php echo ($product['quantity'] == 0) ? 'color: red;' : ''; ?>">
-                            <?php echo remove_junk($product['quantity']); ?>
-                        </td>
-                        <td class="text-center"><?php echo remove_junk($product['buy_price']); ?></td>
-                        <td class="text-center"><?php echo remove_junk($product['sale_price']); ?></td>
-                        <td class="text-center"><?php echo read_date($product['date']); ?></td>
-                        <td class="text-center">
-                            <div class="flex justify-center space-x-2">
-                                <a href="add_stock.php?id=<?php echo (int)$product['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Add">
-                                    <i class="fas fa-plus"></i>
-                                </a>
-                                <a href="edit_product.php?id=<?php echo (int)$product['id']; ?>" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600" title="Edit">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </a>
-                                <a href="delete_product.php?id=<?php echo (int)$product['id']; ?>" onClick="return confirm('Are you sure you want to delete?')" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" title="Delete">
-                                    <i class="fas fa-trash-alt"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-
-                      <?php endforeach; ?>
-                  </tbody>
-
+                        <?php if (is_array($products) && !empty($products)): ?>
+                            <?php foreach ($products as $product): ?>
+                                <tr>
+                                    <td class="text-center"><?php echo count_id(); ?></td>
+                                    <td class="text-center"><?php echo remove_junk($product['category']); ?></td>
+                                    <td class="text-center">
+                                        <a href="view_product.php?id=<?php echo (int)$product['id']; ?>">
+                                            <?php echo remove_junk($product['name']); ?>
+                                        </a>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="flex justify-center">
+                                            <?php if ($product['media_id'] === '0'): ?>
+                                                <img class="img-avatar img-circle" src="uploads/products/no_image.jpg" alt="">
+                                            <?php else: ?>
+                                                <img class="img-avatar img-circle" src="uploads/products/<?php echo $product['image']; ?>" alt="">
+                                            <?php endif; ?>
+                                        </div>
+                                    </td>
+                                    <td class="text-center" style="<?php echo ($product['quantity'] == 0) ? 'color: red;' : ''; ?>">
+                                        <?php echo remove_junk($product['quantity']); ?>
+                                    </td>
+                                    <td class="text-center"><?php echo remove_junk($product['buy_price']); ?></td>
+                                    <td class="text-center"><?php echo remove_junk($product['sale_price']); ?></td>
+                                    <td class="text-center"><?php echo read_date($product['date']); ?></td>
+                                    <td class="text-center">
+                                        <div class="flex justify-center space-x-2">
+                                            <a href="add_stock.php?id=<?php echo (int)$product['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Add">
+                                                <i class="fas fa-plus"></i>
+                                            </a>
+                                            <a href="edit_product.php?id=<?php echo (int)$product['id']; ?>" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600" title="Edit">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </a>
+                                            <a href="delete_product.php?id=<?php echo (int)$product['id']; ?>" onClick="return confirm('Are you sure you want to delete?')" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" title="Delete">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="9" class="text-center">No products found</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
                 </table>
             </div>
         </div>
