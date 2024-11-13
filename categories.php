@@ -3,7 +3,7 @@ $page_title = 'All Categories';
 require_once('includes/load.php');
 page_require_level(2);
 
-// Handle form submission
+// Handle form submission (No form needed for category addition anymore)
 if (isset($_POST['add_cat'])) {
     $req_field = array('category-name');
     validate_fields($req_field);
@@ -63,6 +63,11 @@ $all_categories = find_all('categories');
         background-color: #f4f4f9; /* Light gray color */
         cursor: pointer;
     }
+
+    /* Modal style */
+    .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 50; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.5); }
+    .modal-content { background-color: #fff; padding: 20px; border-radius: 8px; max-width: 500px; width: 100%; }
+    .modal.active { display: flex; }
   </style>
 </head>
 
@@ -83,15 +88,23 @@ $all_categories = find_all('categories');
         <i class="fas fa-tag mr-2"></i>
         CATEGORIES
       </h2>
+      <!-- Button to trigger the modal -->
+      <button id="openModal" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Category</button>
     </div>
-    <div class="p-4">
-      <form method="post" action="categories.php">
-        <div class="flex space-x-4">
-          <input type="text" class="form-control border border-gray-300 rounded-md px-4 py-2 w-full" name="category-name" placeholder="Category Name" required>
-          <button type="submit" name="add_cat" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Add Category</button>
-        </div>
-      </form>
-    </div>
+  </div>
+</div>
+
+<!-- Modal for adding a category -->
+<div id="categoryModal" class="modal">
+  <div class="modal-content">
+    <h3 class="text-xl font-bold mb-4">Add Category</h3>
+    <form method="post" action="categories.php">
+      <input type="text" name="category-name" placeholder="Category Name" class="form-control border border-gray-300 rounded-md px-4 py-2 w-full mb-4" required>
+      <div class="flex justify-end">
+        <button type="submit" name="add_cat" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-green-600">Add Category</button>
+        <button type="button" id="closeModal" class="bg-red-500 text-white px-4 py-2 rounded ml-2 hover:bg-red-600">Cancel</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -133,8 +146,23 @@ $all_categories = find_all('categories');
 
 <?php include_once('layouts/footer.php'); ?>
 
-<!-- JavaScript for auto-dismiss pop-ups -->
+<!-- JavaScript to manage the modal -->
 <script>
+  // Get modal and buttons
+  const modal = document.getElementById('categoryModal');
+  const openModalButton = document.getElementById('openModal');
+  const closeModalButton = document.getElementById('closeModal');
+
+  // Open modal when "Add Category" button is clicked
+  openModalButton.addEventListener('click', () => {
+    modal.classList.add('active');
+  });
+
+  // Close modal when "Cancel" button is clicked
+  closeModalButton.addEventListener('click', () => {
+    modal.classList.remove('active');
+  });
+  
   // Auto-dismiss alerts after 3 seconds
   setTimeout(() => {
     const alerts = document.querySelectorAll('.alert');

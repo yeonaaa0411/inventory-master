@@ -72,6 +72,9 @@ $order = find_by_id("orders", $order_id);
                     <i class="fas fa-box mr-2"></i>
                     Order #<?php echo $order_id; ?>
                 </strong>
+                <!-- Back Button -->
+                <a href="add_order.php" class="bg-blue-500 text-white px-10 py-2 rounded hover:bg-blue-600">Back</a>
+
             </div>
             <div class="p-4">
                 <table class="min-w-full border-collapse">

@@ -18,7 +18,7 @@
   
   if($delete_id)
   {
-      $session->msg("s","sale deleted.");
+      $session->msg("s","Sale has been successfully removed from the records.");
       redirect('sales.php');
   } else {
       $session->msg("d","sale deletion failed.");

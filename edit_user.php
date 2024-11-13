@@ -118,7 +118,7 @@ if (isset($_POST['update-pass'])) {
                         <label for="status" class="block text-gray-700 text-sm font-bold mb-2">Status</label>
                         <select class="form-control border rounded w-full py-2 px-3" name="status">
                             <option <?php if ($e_user['status'] === '1') echo 'selected="selected"'; ?> value="1">Active</option>
-                            <option <?php if ($e_user['status'] === '0') echo 'selected="selected"'; ?> value="0">Deactive</option>
+                            <option <?php if ($e_user['status'] === '0') echo 'selected="selected"'; ?> value="0">Inactive</option>
                         </select>
                     </div>
 

@@ -84,7 +84,7 @@ if (isset($_POST['update_category']) && !empty($_POST['product-category'])) {
                 <form method="post" action="">
                     <div class="flex space-x-4">
                         <select class="form-control border border-gray-300 rounded-md px-4 py-2 w-full" name="product-category">
-                            <option value="">Select Product Category</option>
+                            <option value="">All Categories</option>
                             <?php foreach ($all_categories as $cat): ?>
                                 <option value="<?php echo (int)$cat['id'] ?>">
                                     <?php echo remove_junk($cat['name']) ?>

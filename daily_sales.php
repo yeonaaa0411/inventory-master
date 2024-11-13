@@ -6,7 +6,10 @@ page_require_level(2);
 
 $year = date('Y');
 $month = date('m');
+
+// Ensure that the dailySales function returns an array or handle null
 $sales = dailySales($year, $month);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -78,15 +81,21 @@ $sales = dailySales($year, $month);
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($sales as $sale): ?>
-                        <tr>
-                            <td class="text-center"><?php echo count_id(); ?></td>
-                            <td class="text-center"><?php echo remove_junk($sale['name']); ?></td>
-                            <td class="text-center"><?php echo (int)$sale['qty']; ?></td>
-                            <td class="text-center"><?php echo remove_junk($sale['total_saleing_price']); ?></td>
-                            <td class="text-center"><?php echo $sale['date']; ?></td>
-                        </tr>
-                        <?php endforeach; ?>
+                        <?php if (!empty($sales)): ?>
+                            <?php foreach ($sales as $sale): ?>
+                            <tr>
+                                <td class="text-center"><?php echo count_id(); ?></td>
+                                <td class="text-center"><?php echo remove_junk($sale['name']); ?></td>
+                                <td class="text-center"><?php echo (int)$sale['qty']; ?></td>
+                                <td class="text-center"><?php echo remove_junk($sale['total_saleing_price']); ?></td>
+                                <td class="text-center"><?php echo $sale['date']; ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-red-500">No sales found for this period.</td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>

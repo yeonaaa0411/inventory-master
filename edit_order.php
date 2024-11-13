@@ -28,7 +28,7 @@ if (isset($_POST['edit_order'])) {
         $result = $db->query($sql);
         if ($result && $db->affected_rows() === 1) {
             $session->msg("s", "Successfully updated order");
-            redirect('sales_by_order.php?id=' . (int)$order['id'], false); // Redirect to the edited order's page
+            redirect('orders.php', false); // Redirect to orders.php after successful update
         } else {
             $session->msg("d", "No changes made to the order");
             redirect('edit_order.php?id=' . (int)$order['id'], false); // Stay on the editing page if update failed
@@ -39,7 +39,6 @@ if (isset($_POST['edit_order'])) {
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">

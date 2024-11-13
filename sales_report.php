@@ -55,6 +55,28 @@ page_require_level(2);
                             <button type="submit" name="submit" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">Generate Report</button>
                         </div>
                     </form>
+
+                    <?php
+                    // Process form submission
+                    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['start-date']) && isset($_POST['end-date'])) {
+                        $start_date = $_POST['start-date'];
+                        $end_date = $_POST['end-date'];
+
+                        // Fetch sales data for the selected date range
+                        $sales_data = find_product_sales_by_month(null, $start_date, $end_date);
+
+                        if (empty($sales_data)) {
+                            echo "<p class='text-center mt-4 font-bold text-red-600'>No sales data</p>";
+                        } else {
+                            echo "<table class='mt-4 w-full text-center'>";
+                            echo "<tr><th>Month</th><th>Total Sales</th></tr>";
+                            foreach ($sales_data as $month => $total_sales) {
+                                echo "<tr><td>{$month}</td><td>₱ {$total_sales}</td></tr>";
+                            }
+                            echo "</table>";
+                        }
+                    }
+                    ?>
                 </div>
             </div>
         </div>

@@ -68,9 +68,6 @@ $all_orders = find_all('orders');
                     <i class="fas fa-th mr-2"></i> <!-- Icon for orders -->
                     All Orders
                 </strong>
-                <div class="pull-right">
-                    <a href="add_order.php" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Order</a>
-                </div>
             </div>
             <div class="p-4">
                 <table class="min-w-full border-collapse">

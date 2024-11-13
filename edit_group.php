@@ -95,7 +95,7 @@ if (isset($_POST['update'])) {
                         <label for="status" class="block text-gray-700 text-sm font-bold mb-2">Status</label>
                         <select class="form-control border rounded w-full py-2 px-3" name="status" required>
                             <option value="1" <?php if ($e_group['group_status'] === '1') echo 'selected'; ?>>Active</option>
-                            <option value="0" <?php if ($e_group['group_status'] === '0') echo 'selected'; ?>>Deactive</option>
+                            <option value="0" <?php if ($e_group['group_status'] === '0') echo 'selected'; ?>>Inactive</option>
                         </select>
                     </div>
 
