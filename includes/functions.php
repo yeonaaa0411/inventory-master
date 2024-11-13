@@ -150,4 +150,5 @@ function find_product_sales_by_month($product_id, $start_date, $end_date) {
 
   return $sales_data;
 }
+
 ?>

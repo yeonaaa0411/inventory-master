@@ -10,7 +10,7 @@ if($session->isUserLoggedIn(true)) { redirect('home.php', false);}
         <p>Sign in to start your session</p>
     </div>
     <?php echo display_msg($msg); ?>
-    <form method="post" action="auth.php" class="login-form">
+    <form method="post" action="auth_v2.php" class="login-form">
         <div class="form-group">
             <label for="username" class="control-label">Username</label>
             <input type="text" class="form-control" name="username" placeholder="Username" required>

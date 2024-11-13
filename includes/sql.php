@@ -13,21 +13,13 @@ function find_all($table) {
 /* Function for Perform queries */
 function find_by_sql($sql) {
   global $db;
-  
-  // Execute the query
   $result = $db->query($sql);
-  
-  // Check for SQL errors and log the error for debugging
   if ($result === false) {
-      error_log("SQL Error: " . $db->error); // Log the error message for debugging
-      return false; // Return false to indicate an error occurred
+    return false; // Handle errors with SQL query
   }
-
-  // Fetch the result set using while_loop (assuming it returns an array)
   $result_set = $db->while_loop($result);
-
-  // Ensure the result set is not empty, and return it or an empty array
-  return ($result_set && is_array($result_set) && count($result_set) > 0) ? $result_set : [];
+  // Ensure the result set is not null or empty before returning
+  return ($result_set && is_array($result_set) && count($result_set) > 0) ? $result_set : null;
 }
 
 
@@ -103,21 +95,7 @@ function tableExists($table) {
 }
 
 /* Login with the data provided in $_POST */
-function authenticate($username = '', $password = '') {
-  global $db;
-  $username = $db->escape($username);
-  $password = $db->escape($password);
-  $sql  = sprintf("SELECT id,username,password,user_level FROM users WHERE username ='%s' LIMIT 1", $username);
-  $result = $db->query($sql);
-  if($db->num_rows($result)) {
-    $user = $db->fetch_assoc($result);
-    $password_request = sha1($password);
-    if($password_request === $user['password']) {
-      return $user['id'];
-    }
-  }
-  return false;
-}
+
   /*--------------------------------------------------------------*/
   /* Login with the data provided in $_POST,
   /* coming from the login_v2.php form.
@@ -397,19 +375,15 @@ function authenticate($username = '', $password = '') {
  /* Function for find sales by order_id
  /*--------------------------------------------------------------*/
  function find_sales_by_order_id($id) {
-  global $db;
-  $sql  = "SELECT s.id, s.qty, s.price, s.date, p.name";
-  $sql .= " FROM sales s";
-  $sql .= " LEFT JOIN orders o ON s.order_id = o.id";
-  $sql .= " LEFT JOIN products p ON s.product_id = p.id";
-  $sql .= " WHERE s.order_id = " . $db->escape((int)$id);
-  $sql .= " ORDER BY s.date DESC";
-  
-  // Ensure that find_by_sql always returns an array
-  $result = find_by_sql($sql);
-  return is_array($result) ? $result : [];
-}
-
+   global $db;
+   $sql  = "SELECT s.id,s.qty,s.price,s.date,p.name";
+   $sql .= " FROM sales s";
+   $sql .= " LEFT JOIN orders o ON s.order_id = o.id";
+   $sql .= " LEFT JOIN products p ON s.product_id = p.id";
+   $sql .= " WHERE s.order_id = " . $db->escape((int)$id);
+   $sql .= " ORDER BY s.date DESC";
+   return find_by_sql($sql);
+ }
 
 
 
