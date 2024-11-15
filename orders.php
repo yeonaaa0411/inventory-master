@@ -82,30 +82,37 @@ $all_orders = find_all('orders');
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($all_orders as $order): ?>
-                        <tr style="height: 80px;">
-                            <td class="text-center">
-                                <a href="sales_by_order.php?id=<?php echo (int)$order['id']; ?>">
-                                    <?php echo (int)$order['id']; ?>
-                                </a>
-                            </td>
-                            <td class="text-center"><?php echo remove_junk(ucfirst($order['customer'])); ?></td>
-                            <td class="text-center"><?php echo remove_junk(ucfirst($order['paymethod'])); ?></td>
-                            <td class="text-center"><?php echo remove_junk(ucfirst($order['notes'])); ?></td>
-                            <td class="text-center"><?php echo remove_junk(ucfirst($order['date'])); ?></td>
-                            <td class="text-center">
-                                <div class="flex justify-center space-x-2">
-                                    <a href="edit_order.php?id=<?php echo (int)$order['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Edit">
-                                        <i class="fas fa-pencil-alt"></i>
+                        <?php if (!empty($all_orders) && is_array($all_orders)): ?>
+                            <?php foreach ($all_orders as $order): ?>
+                            <tr style="height: 80px;">
+                                <td class="text-center">
+                                    <a href="sales_by_order.php?id=<?php echo (int)$order['id']; ?>">
+                                        <?php echo (int)$order['id']; ?>
                                     </a>
-                                    <a href="delete_order.php?id=<?php echo (int)$order['id']; ?>" onClick="return confirm('Are you sure you want to delete?')" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" title="Remove">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
+                                </td>
+                                <td class="text-center"><?php echo remove_junk(ucfirst($order['customer'])); ?></td>
+                                <td class="text-center"><?php echo remove_junk(ucfirst($order['paymethod'])); ?></td>
+                                <td class="text-center"><?php echo remove_junk(ucfirst($order['notes'])); ?></td>
+                                <td class="text-center"><?php echo remove_junk(ucfirst($order['date'])); ?></td>
+                                <td class="text-center">
+                                    <div class="flex justify-center space-x-2">
+                                        <a href="edit_order.php?id=<?php echo (int)$order['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Edit">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                        <a href="delete_order.php?id=<?php echo (int)$order['id']; ?>" onClick="return confirm('Are you sure you want to delete?')" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" title="Remove">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-black-500">No orders found.</td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
+
                 </table>
             </div>
         </div>

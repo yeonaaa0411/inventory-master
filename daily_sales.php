@@ -6,9 +6,28 @@ page_require_level(2);
 
 $year = date('Y');
 $month = date('m');
+$day = date('d');
+$today = date('Y-m-d'); // Format today's date as "YYYY-MM-DD"
 
-// Ensure that the dailySales function returns an array or handle null
-$sales = dailySales($year, $month);
+
+// Fetch sales data
+$sales = dailySales($year, $month) ?? [];
+
+// Filter sales to include only those from today's date
+$sales_today = array_filter($sales, function ($sale) use ($today) {
+    return $sale['date'] === $today;
+});
+
+
+// Pagination variables
+$limit = 50; // Limit the number of records per page
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Current page
+$offset = ($page - 1) * $limit; // Offset for pagination
+
+// Slice array to simulate pagination on today's sales
+$sales_for_page = array_slice($sales_today, $offset, $limit);
+$total_sales = count($sales_today); // Total records for today
+$total_pages = ceil($total_sales / $limit); // Total pages
 
 ?>
 <!DOCTYPE html>
@@ -21,15 +40,14 @@ $sales = dailySales($year, $month);
 
     <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
         .table-row-height th,
         .table-row-height td {
-            padding-top: 1.5rem; /* Increase padding for more row height */
-            padding-bottom: 1.5rem; /* Increase padding for more row height */
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
             border: 1px solid #e2e8f0;
         }
 
@@ -65,8 +83,7 @@ $sales = dailySales($year, $month);
         <div class="bg-white shadow-md rounded-lg">
             <div class="flex justify-between items-center p-4 header-bg rounded-t-lg">
                 <strong class="text-3xl font-bold">
-                    <i class="fas fa-calendar-day mr-2"></i> <!-- Icon for daily sales -->
-                    Daily Sales
+                    <i class="fas fa-calendar-day mr-2"></i> Daily Sales
                 </strong>
             </div>
             <div class="p-4">
@@ -81,8 +98,8 @@ $sales = dailySales($year, $month);
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (!empty($sales)): ?>
-                            <?php foreach ($sales as $sale): ?>
+                        <?php if (!empty($sales_for_page)): ?>
+                            <?php foreach ($sales_for_page as $sale): ?>
                             <tr>
                                 <td class="text-center"><?php echo count_id(); ?></td>
                                 <td class="text-center"><?php echo remove_junk($sale['name']); ?></td>
@@ -93,13 +110,30 @@ $sales = dailySales($year, $month);
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="5" class="text-center py-4 text-red-500">No sales found for this period.</td>
+                                <td colspan="5" class="text-center py-4 text-black-500">No sales found for today.</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
             </div>
         </div>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="flex justify-center mt-4 mb-6">
+        <!-- Previous Button -->
+        <a href="?page=<?php echo max(1, $page - 1); ?>"
+           class="mr-4 px-4 py-2 bg-gray-300 text-gray-700 rounded <?php echo $page <= 1 ? 'opacity-50 cursor-not-allowed' : ''; ?>"
+           <?php echo $page <= 1 ? 'aria-disabled="true"' : ''; ?>>
+            Previous
+        </a>
+
+        <!-- Next Button -->
+        <a href="?page=<?php echo min($total_pages, $page + 1); ?>"
+           class="px-4 py-2 bg-gray-300 text-gray-700 rounded <?php echo $page >= $total_pages ? 'opacity-50 cursor-not-allowed' : ''; ?>"
+           <?php echo $page >= $total_pages ? 'aria-disabled="true"' : ''; ?>>
+            Next
+        </a>
     </div>
 
     <?php include_once('layouts/footer.php'); ?>

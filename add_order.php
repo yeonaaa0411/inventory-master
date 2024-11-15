@@ -1,27 +1,43 @@
 <?php
 $page_title = 'Add Order';
 require_once('includes/load.php');
-// Check what level user has permission to view this page
 page_require_level(2);
 
-$all_orders = find_all('orders');
-$order_id = last_id('orders');
-$new_order_id = $order_id['id'] + 1;
-?>
+// Check if it's a new day and reset counts if needed
+$current_date = date('Y-m-d'); // Get the current date in 'Y-m-d' format
 
-<?php
+// Fetch the last order date from the database
+$last_order_date_query = $db->query("SELECT MAX(date) AS last_order_date FROM orders");
+$last_order_date_result = $db->fetch_assoc($last_order_date_query);
+$last_order_date = $last_order_date_result['last_order_date'] ?? '0000-00-00';
+
+if ($last_order_date != $current_date) {
+    // It's a new day, so reset the order and customer count
+    $new_customer_num = 1;
+    $new_order_id = 1;
+} else {
+    // It's the same day, so increment based on the last record
+    $last_customer_query = $db->query("SELECT MAX(CAST(SUBSTRING(customer, 10) AS UNSIGNED)) AS last_customer_num FROM orders");
+    $last_customer_num = $db->fetch_assoc($last_customer_query)['last_customer_num'] ?? 0;
+    $new_customer_num = $last_customer_num + 1;
+
+    $last_order_id = last_id('orders')['id'];
+    $new_order_id = $last_order_id + 1;
+}
+
+$new_customer_name = 'Customer ' . $new_customer_num;
+
 if (isset($_POST['add_order'])) {
-    $customer = remove_junk($db->escape($_POST['customer']));
+    $customer = $new_customer_name; // Automatically set customer name
     $paymethod = remove_junk($db->escape($_POST['paymethod']));
     $notes = remove_junk($db->escape($_POST['notes']));
-    $current_date = make_date();
 
     if (empty($errors)) {
         $sql  = "INSERT INTO orders (id, customer, paymethod, notes, date)";
         $sql .= " VALUES ('{$new_order_id}', '{$customer}', '{$paymethod}', '{$notes}', '{$current_date}')";
 
         if ($db->query($sql)) {
-            $session->msg("s", "Successfully Added Order");
+            $session->msg("s", "Successfully Added Order as {$customer}");
             redirect('add_sale_to_order.php?id=' . $new_order_id, false);
         } else {
             $session->msg("d", "Sorry, Failed to Insert.");
@@ -33,6 +49,7 @@ if (isset($_POST['add_order'])) {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +67,7 @@ if (isset($_POST['add_order'])) {
 
     <style>
         .custom-header {
-            background-color: #eaf5e9; /* Light green color */
+            background-color: #eaf5e9;
         }
     </style>
 </head>
@@ -73,8 +90,9 @@ if (isset($_POST['add_order'])) {
                         <h3 class="text-3xl font-semibold">#<?php echo $new_order_id; ?></h3>
                     </div>
                     <form method="post" action="add_order.php" class="clearfix">
+                        <!-- Display customer name -->
                         <div class="mb-4">
-                            <input type="text" class="form-control border border-gray-300 rounded-md px-4 py-2 w-full" name="customer" placeholder="Customer" required>
+                            <input type="text" class="form-control border border-gray-300 rounded-md px-4 py-2 w-full bg-gray-200" name="customer" value="<?php echo $new_customer_name; ?>" readonly>
                         </div>
 
                         <div class="mb-4">

@@ -435,17 +435,15 @@ function  dailySales($year,$month){
 /*--------------------------------------------------------------*/
 /* Function for Generate Monthly sales report
 /*--------------------------------------------------------------*/
-function  monthlySales($year){
+function monthlySales($year){
   global $db;
   $sql  = "SELECT s.qty,";
-  $sql .= " DATE_FORMAT(s.date, '%Y-%m-%e') AS date,p.name,";
-  $sql .= "SUM(p.sale_price * s.qty) AS total_saleing_price";
+  $sql .= " DATE_FORMAT(s.date, '%Y-%m-%e') AS date, p.name, s.product_id,";
+  $sql .= " SUM(p.sale_price * s.qty) AS total_saleing_price";
   $sql .= " FROM sales s";
   $sql .= " LEFT JOIN products p ON s.product_id = p.id";
   $sql .= " WHERE DATE_FORMAT(s.date, '%Y' ) = '{$year}'";
-  $sql .= " GROUP BY DATE_FORMAT( s.date,  '%c' ),s.product_id";
-  $sql .= " ORDER BY date_format(s.date, '%c' ) ASC";
+  $sql .= " GROUP BY DATE_FORMAT(s.date, '%c'), s.product_id";
+  $sql .= " ORDER BY date_format(s.date, '%c') ASC";
   return find_by_sql($sql);
 }
-
-?>

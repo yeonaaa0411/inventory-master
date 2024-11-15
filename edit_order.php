@@ -75,10 +75,11 @@ if (isset($_POST['edit_order'])) {
                     <h3 class="text-3xl font-semibold">#<?php echo remove_junk($order['id']); ?></h3>
                 </div>
                 <form method="post" action="edit_order.php?id=<?php echo (int)$order['id']; ?>">
-                    <div class="mb-4">
-                        <label for="customer" class="block text-gray-700 text-sm font-bold mb-2">Customer</label>
-                        <input type="text" class="form-control border rounded w-full py-2 px-3" name="customer" value="<?php echo remove_junk(ucfirst($order['customer'])); ?>">
-                    </div>
+                <div class="mb-4">
+                    <label for="customer" class="block text-gray-700 text-sm font-bold mb-2">Customer</label>
+                    <input type="text" class="form-control border border-gray-300 rounded-md px-4 py-2 w-full bg-gray-200" name="customer" value="<?php echo remove_junk(ucfirst($order['customer'])); ?>" readonly>
+                </div>
+
 
                     <div class="mb-4">
                         <label for="paymethod" class="block text-gray-700 text-sm font-bold mb-2">Payment Method</label>
