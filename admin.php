@@ -2,6 +2,35 @@
   $page_title = 'Admin Home Page';
   require_once('includes/load.php');
   page_require_level(2);
+
+  // Run the Flask API to fetch the sales forecast
+  $ch = curl_init();
+  curl_setopt($ch, CURLOPT_URL, "http://localhost:5000/predict_sales"); // Ensure this URL is correct
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+  $forecast = curl_exec($ch);
+  curl_close($ch);
+  
+  var_dump($forecast);  // Check the response from the Flask API
+  
+  // Decode the JSON output from the Flask API into a PHP array
+  $sales_forecast = json_decode($forecast, true);
+  
+  
+
+// Ensure that the $sales_forecast is not empty and contains the expected data
+if (empty($sales_forecast)) {
+  $sales_forecast = [];
+}
+
+$months = [];
+$predicted_sales = [];
+
+// Assuming the response from Flask API contains 'date' and 'predicted_sales'
+foreach ($sales_forecast as $data) {
+  $months[] = date('F Y', strtotime($data['date']));  // Convert 'date' to human-readable format
+  $predicted_sales[] = (float) $data['predicted_sales'];  // Convert predicted sales to float for numerical processing
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -16,19 +45,23 @@
 
   <!-- Custom CSS -->
   <style>
-    /* Custom styles */
     .custom-class { color: #eaf5e9; }
     th, td { padding: 8px; border-bottom: 1px solid #e2e8f0; }
     th { background-color: #eaf5e9; /* Light green color */ }
-    .text-right { text-align: right; } /* Right alignment for table data */
-    .nowrap { white-space: nowrap; } /* Prevent line breaks */
+    .text-right { text-align: right; }
+    .nowrap { white-space: nowrap; }
     .table a {
-  color: #000; /* Set color to black */
-}
+      color: #000;
+    }
+  </style>
+
+  <!-- Include Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .chart-container { width: 100%; height: 400px; }
   </style>
 </head>
 <body class="bg-gray-100">
-
 
 <?php
   $c_categorie = count_by_id('categories');
@@ -40,6 +73,7 @@
   $recent_sales = find_recent_sale_added('6');
   $user = current_user();
 ?>
+
 <?php include_once('layouts/header.php'); ?>
 
 <!-- Display messages -->
@@ -143,8 +177,8 @@
         <tr>
           <th>#</th>
           <th>Product</th>
-          <th class="text-center nowrap">Date</th> <!-- Add class for right alignment and prevent line breaks -->
-          <th class="text-right">Total Sale</th> <!-- Add class for right alignment -->
+          <th class="text-center nowrap">Date</th>
+          <th class="text-right">Total Sale</th>
         </tr>
       </thead>
       <tbody>
@@ -156,8 +190,8 @@
               <?php echo remove_junk(first_character($recent_sale['name'])); ?>
             </a>
           </td>
-          <td class="text-right nowrap"><?php echo remove_junk(ucfirst($recent_sale['date'])); ?></td> <!-- Right align date and prevent line breaks -->
-          <td class="text-right">₱<?php echo number_format((float)$recent_sale['price'], 2); ?></td> <!-- Ensure number format -->
+          <td class="text-right nowrap"><?php echo remove_junk(ucfirst($recent_sale['date'])); ?></td>
+          <td class="text-right">₱<?php echo number_format((float)$recent_sale['price'], 2); ?></td>
         </tr>
         <?php endforeach; ?>
       </tbody>
@@ -173,7 +207,7 @@
         <tr>
           <th>Product</th>
           <th>Category</th>
-          <th class="text-right">Price</th> <!-- Add class for right alignment -->
+          <th class="text-right">Price</th>
         </tr>
       </thead>
       <tbody>
@@ -185,13 +219,84 @@
             </a>
           </td>
           <td><?php echo remove_junk(first_character($recent_product['category'])); ?></td>
-          <td class="text-right">₱<?php echo number_format((float)$recent_product['sale_price'], 2); ?></td> <!-- Ensure number format -->
+          <td class="text-right">₱<?php echo number_format((float)$recent_product['sale_price'], 2); ?></td>
         </tr>
         <?php endforeach; ?>
       </tbody>
     </table>
   </div>
 </div>
+
+
+
+<!-- Sales Forecast Chart -->
+<div class="bg-white p-3 rounded-lg shadow-md mt-4">
+  <div class="chart-container">
+    <canvas id="salesForecastChart"></canvas>
+  </div>
+</div>
+
+<!-- JavaScript to render the chart -->
+<script>
+// Sales Forecast Chart
+const months = <?php echo json_encode($months); ?>;
+const predicted_sales = <?php echo json_encode($predicted_sales); ?>;
+
+// Log to check if data is correctly populated
+console.log("Months: ", months);
+console.log("Predicted Sales: ", predicted_sales);
+
+// Create a chart
+const ctx = document.getElementById('salesForecastChart').getContext('2d');
+const salesForecastChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: months,
+        datasets: [{
+            label: 'Predicted Quantity Sold',
+            data: predicted_sales,
+            borderColor: 'rgba(75, 192, 192, 1)', // Line color
+            backgroundColor: 'rgba(75, 192, 192, 0.2)', // Fill color
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            tooltip: {
+                mode: 'index',
+                intersect: false
+            }
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Month'
+                }
+            },
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Quantity Sold'
+                }
+            }
+        }
+    }
+});
+
+
+
+
+</script>
+</body>
+</html>
 
 <?php include_once('layouts/footer.php'); ?>
 </body>
