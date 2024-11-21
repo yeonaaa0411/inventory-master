@@ -1,11 +1,21 @@
 from flask import Flask, jsonify
 import pandas as pd
 import mysql.connector
-from sklearn.ensemble import RandomForestRegressor
-import joblib
-import os
+from statsmodels.tsa.arima.model import ARIMA
+from sklearn.metrics import mean_absolute_percentage_error
+import numpy as np
 
 app = Flask(__name__)
+
+# Function to convert numpy types to native Python types
+def convert_to_native_types(obj):
+    if isinstance(obj, (np.int64, np.float64)):
+        return obj.item()  # Converts to native int or float
+    elif isinstance(obj, dict):
+        return {k: convert_to_native_types(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_to_native_types(v) for v in obj]
+    return obj  # Return other types as is
 
 @app.route('/predict_sales', methods=['GET'])
 def predict_sales():
@@ -20,95 +30,137 @@ def predict_sales():
     connection = mysql.connector.connect(**db_config)
     cursor = connection.cursor()
 
-    # Fetch sales data with quantity only
-    query = "SELECT date, qty FROM sales ORDER BY date"
+    # Fetch sales data
+    query = """
+    SELECT sales.date, qty, sales.product_id, price 
+    FROM sales 
+    JOIN products ON sales.product_id = products.id 
+    ORDER BY sales.date
+    """
     cursor.execute(query)
     data = cursor.fetchall()
 
     # Prepare data into a pandas DataFrame
-    df = pd.DataFrame(data, columns=['date', 'qty'])
-    df['date'] = pd.to_datetime(df['date'], errors='coerce')
+    df = pd.DataFrame(data, columns=['date', 'qty', 'product_id', 'price'])
+    df['date'] = pd.to_datetime(df['date'])
+    df.set_index('date', inplace=True)
 
-    # Group by months and sum the total quantity sold (sum the quantities for the entire month)
-    df = df.groupby(df['date'].dt.to_period('M'))['qty'].sum().reset_index()
-    df['date'] = df['date'].dt.to_timestamp()
+    # Aggregate sales by quarter
+    df['total_price'] = df['qty'] * df['price']
+    df_quarterly = df.resample('Q').sum()
 
-    # Extract features: month number, lag features, and cyclical encoding
-    df['month_num'] = df['date'].dt.month + (df['date'].dt.year - df['date'].dt.year.min()) * 12
-    df['month'] = df['date'].dt.month
-    df['year'] = df['date'].dt.year
-    df['lag_1'] = df['qty'].shift(1)  # Quantity from the previous month
-    df['lag_2'] = df['qty'].shift(2)  # Quantity from 2 months ago
+    # Additional step to calculate the count of sales per quarter
+    sales_count_quarterly = df.resample('Q').size()  # Count the number of sales orders per quarter
 
-    # Drop rows with NaN values created by lagging
-    df = df.dropna()
+    # Use past data from January 2022 to the current day for training
+    training_data = df_quarterly['qty']['2022-01-01':pd.Timestamp.today()]  # Data from Jan 2022 to the current day
+    sales_count_training_data = sales_count_quarterly['2022-01-01':pd.Timestamp.today()]  # Sales count training data
 
-    # Define X and y (feature matrix and target vector)
-    X = df[['month_num', 'month', 'year', 'lag_1', 'lag_2']]  # Use lag features
-    y = df['qty']  # Predict total quantity sold
+    # Fit ARIMA model to the historical data for quantity prediction
+    model = ARIMA(training_data, order=(1, 1, 1))  # Adjust (p, d, q) as needed
+    model_fit = model.fit()
 
-    # Check if model already exists
-    model_path = 'quantity_forecast_model_rf.pkl'
-    if os.path.exists(model_path):
-        # Load the pre-trained Random Forest model
-        model = joblib.load(model_path)
-    else:
-        # Train a new Random Forest model
-        model = RandomForestRegressor(n_estimators=100, random_state=42)
-        model.fit(X, y)
-        # Save the model for future use
-        joblib.dump(model, model_path)
+    # Fit ARIMA model to the historical data for sales count prediction
+    sales_count_model = ARIMA(sales_count_training_data, order=(1, 1, 1))  # Adjust (p, d, q) for sales count
+    sales_count_model_fit = sales_count_model.fit()
 
-    # Define future months to predict (5 months)
-    future_months = 5
-    current_month_num = df['month_num'].max()
+    # Predict future sales quantities for the next 5 quarters (starting from Q4 2024)
+    forecast_steps = 5  # Forecasting from Q4 2024 and for the next 5 quarters
+    forecast_qty = model_fit.forecast(steps=forecast_steps)
 
-    future_y = []
-    future_dates = []
+    # Predict future sales count for the next 5 quarters
+    forecast_sales_count = sales_count_model_fit.forecast(steps=forecast_steps)
 
-    # Start from the latest available month in the dataset
-    last_month_data = df.iloc[-1]
+    # Prepare predicted data for the next 5 quarters
+    future_quarters = pd.date_range(start='2024-12-31', periods=forecast_steps, freq='Q')
+    predictions = pd.DataFrame({'date': future_quarters, 'predicted_qty': forecast_qty, 'predicted_sales_count': forecast_sales_count})
 
-    # Predict each future month
-    for i in range(future_months):
-        # Adjust the input data for each month to use the most recent values
-        period_data = df.tail(1)  # Start with the latest data available
+    # Predict specific product quantities for future quarters
+    product_predictions = []
+    product_revenue_predictions = []
+    for product_id in df['product_id'].unique():
+        product_data = df[df['product_id'] == product_id].resample('Q').sum()
+        product_training_data = product_data['qty']['2022-01-01':pd.Timestamp.today()]  # Using up to current date
 
-        # Prepare the feature matrix for the prediction
-        period_X = period_data[['month_num', 'month', 'year', 'lag_1', 'lag_2']].copy()
+        product_model = ARIMA(product_training_data, order=(1, 1, 1))
+        product_model_fit = product_model.fit()
+        product_forecast = product_model_fit.forecast(steps=forecast_steps)
 
-        # Adjust lag features for the most recent data used
-        # Lag 1 is the previous month's sales (which is last month's quantity)
-        period_X['lag_1'] = last_month_data['qty']
-        # Lag 2 is the second-to-last month's sales
-        if len(df) > 1:
-            period_X['lag_2'] = df['qty'].iloc[-2]
-        else:
-            period_X['lag_2'] = last_month_data['qty']  # Fallback to the same value if there's no second-to-last month
+        # Append the predicted quantity for each product
+        product_predictions.append({
+            'product_id': product_id,
+            'predicted_qty': product_forecast
+        })
+        
+        # Revenue predictions for the products
+        revenue_forecast = []
+        for i in range(forecast_steps):
+            price = df[df['product_id'] == product_id]['price'].iloc[0]
+            
+            # Convert price to float to avoid multiplication with Decimal
+            price = float(price)
+            
+            revenue_forecast.append(product_forecast[i] * price)
 
-        # Predict the next month's sales
-        month_pred = model.predict(period_X.tail(1))  # Predict using the latest data
-        future_y.append(month_pred[0])
+        product_revenue_predictions.append({
+            'product_id': product_id,
+            'predicted_revenue': revenue_forecast
+        })
 
-        # Calculate the future dates for each prediction
-        future_date = df['date'].max() + pd.DateOffset(months=i+1)
-        future_dates.append(future_date)
+    # Calculate the accuracy of the model using historical data (e.g., past 4 quarters)
+    historical_train = df_quarterly['qty'][:-4]  # Exclude last 4 quarters for testing
+    historical_test = df_quarterly['qty'][-4:]
+    historical_model = ARIMA(historical_train, order=(1, 1, 1))
+    historical_fit = historical_model.fit()
+    historical_forecast = historical_fit.forecast(steps=4)
+    mape = mean_absolute_percentage_error(historical_test, historical_forecast)
 
-        # Update the 'last_month_data' with the new prediction for the next loop
-        last_month_data = period_X.iloc[0].copy()
-        last_month_data['qty'] = month_pred[0]
+    # Prepare final response with all predictions
+    result = {
+        'accuracy': f"{(1 - mape) * 100:.2f}%",
+        'predictions': []
+    }
 
-    # Prepare the final DataFrame with predicted values
-    future_df = pd.DataFrame({'date': future_dates, 'predicted_sales': future_y})
+    # Add the predicted sales quantities, sales count, and revenues for future quarters
+    for i, date in enumerate(future_quarters):
+        total_revenue = 0
+        for product_pred in product_predictions:
+            product_qty = product_pred['predicted_qty'][i]
+            product_id = product_pred['product_id']
+            price = df[df['product_id'] == product_id]['price'].iloc[0]
+            
+            # Convert price to float to avoid multiplication with Decimal
+            price = float(price)
+            
+            total_revenue += product_qty * price
 
-    # Convert to dictionary format for JSON response
-    forecast = future_df.to_dict(orient='records')
+        # Correct the quarter assignment logic to reflect correct quarter names
+        quarter_number = ((date.month - 1) // 3) + 1  # This ensures the quarter is correctly mapped
+        result['predictions'].append({
+            'date': date.strftime('%a, %d %b %Y %H:%M:%S GMT'),
+            'predicted_qty': predictions['predicted_qty'].iloc[i],
+            'predicted_sales_count': predictions['predicted_sales_count'].iloc[i],
+            'predicted_revenue': total_revenue,
+            'quarter': quarter_number,  # Correct quarter calculation
+            'year': date.year
+        })
+
+    # Sort the products based on predicted revenue and quantity
+    top_10_revenue_products = sorted(product_revenue_predictions, key=lambda x: sum(x['predicted_revenue']), reverse=True)[:10]
+    top_10_qty_products = sorted(product_predictions, key=lambda x: sum(x['predicted_qty']), reverse=True)[:10]
+
+    # Add top 10 products by revenue and quantity to the result
+    result['top_10_revenue_products'] = [{'product_id': product['product_id'], 'predicted_revenue': sum(product['predicted_revenue'])} for product in top_10_revenue_products]
+    result['top_10_qty_products'] = [{'product_id': product['product_id'], 'predicted_qty': sum(product['predicted_qty'])} for product in top_10_qty_products]
 
     # Close the database connection
     cursor.close()
     connection.close()
 
-    return jsonify(forecast)
+    # Convert all values to native types
+    result = convert_to_native_types(result)
+
+    return jsonify(result)
 
 if __name__ == '__main__':
     app.run(debug=True)

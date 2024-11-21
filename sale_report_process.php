@@ -175,7 +175,11 @@ if (isset($_POST['submit'])) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($results as $result): ?>
+                    <?php
+                    $total_quantity = 0; // Initialize total quantity sold
+                    foreach ($results as $result): 
+                        $total_quantity += $result['total_sales']; // Sum up quantities sold
+                    ?>
                         <tr>
                             <td class="px-4 py-2"><?php echo remove_junk($result['date']); ?></td>
                             <td class="px-4 py-2"><?php echo remove_junk(ucfirst($result['name'])); ?></td>
@@ -190,6 +194,10 @@ if (isset($_POST['submit'])) {
                     <tr class="font-semibold">
                         <td colspan="4" class="px-4 py-2 text-right">Grand Total</td>
                         <td colspan="2" class="px-4 py-2 text-right">₱<?php echo number_format(total_price($results)[0], 2); ?></td>
+                    </tr>
+                    <tr class="font-semibold">
+                        <td colspan="4" class="px-4 py-2 text-right">Total Quantity Sold</td>
+                        <td colspan="2" class="px-4 py-2 text-right"><?php echo number_format($total_quantity); ?></td>
                     </tr>
                     <tr class="font-semibold">
                         <td colspan="4" class="px-4 py-2 text-right">Profit</td>

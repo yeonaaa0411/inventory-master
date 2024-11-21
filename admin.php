@@ -1,35 +1,48 @@
 <?php
-  $page_title = 'Admin Home Page';
-  require_once('includes/load.php');
-  page_require_level(2);
+$page_title = 'Admin Home Page';
+require_once('includes/load.php');
+page_require_level(2);
 
-  // Run the Flask API to fetch the sales forecast
-  $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL, "http://localhost:5000/predict_sales"); // Ensure this URL is correct
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-  $forecast = curl_exec($ch);
-  curl_close($ch);
-  
-  var_dump($forecast);  // Check the response from the Flask API
-  
-  // Decode the JSON output from the Flask API into a PHP array
-  $sales_forecast = json_decode($forecast, true);
-  
-  
+// Run the Flask API to fetch the sales forecast
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, "http://localhost:5000/predict_sales"); // Ensure this URL is correct
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+$forecast = curl_exec($ch);
+curl_close($ch);
+
+// Decode the JSON output from the Flask API into a PHP array
+$sales_forecast = json_decode($forecast, true);
 
 // Ensure that the $sales_forecast is not empty and contains the expected data
 if (empty($sales_forecast)) {
-  $sales_forecast = [];
+    $sales_forecast = [];
 }
 
-$months = [];
+// Update to process year and quarter from Flask API
+$quarters = [];
 $predicted_sales = [];
+$predicted_sales_count = [];
+$predicted_revenue = [];
+$top_10_qty_products = [];
+$top_10_revenue_products = [];
 
-// Assuming the response from Flask API contains 'date' and 'predicted_sales'
-foreach ($sales_forecast as $data) {
-  $months[] = date('F Y', strtotime($data['date']));  // Convert 'date' to human-readable format
-  $predicted_sales[] = (float) $data['predicted_sales'];  // Convert predicted sales to float for numerical processing
+foreach ($sales_forecast['predictions'] as $data) {
+    $quarters[] = "Q" . $data['quarter'] . " " . $data['year']; // Combine quarter and year for display
+    $predicted_sales[] = (float) $data['predicted_qty']; // Convert predicted sales to float
+    $predicted_sales_count[] = (float) $data['predicted_sales_count']; // Convert predicted sales count to float
+    $predicted_revenue[] = (float) $data['predicted_revenue']; // Convert predicted revenue to float
 }
+
+// Top 10 Products
+foreach ($sales_forecast['top_10_qty_products'] as $product) {
+    $top_10_qty_products[] = (float) $product['predicted_qty'];
+}
+
+foreach ($sales_forecast['top_10_revenue_products'] as $product) {
+    $top_10_revenue_products[] = (float) $product['predicted_revenue'];
+}
+
+
 
 ?>
 
@@ -58,8 +71,24 @@ foreach ($sales_forecast as $data) {
   <!-- Include Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    .chart-container { width: 100%; height: 400px; }
-  </style>
+  .chart-container {
+    width: 50%;
+    height: 100%;
+    
+  }
+
+  #salesForecastChart,
+  #predictedSalesQtyChart,
+  #predictedSalesCountChart,
+  #predictedRevenueChart,
+  #top10QtyProductsChart,
+  #top10RevenueProductsChart,
+
+   {
+    width: 100% !important;
+    height: 400px; /* You can adjust this as per your requirement */
+  }
+</style>
 </head>
 <body class="bg-gray-100">
 
@@ -137,7 +166,7 @@ foreach ($sales_forecast as $data) {
     </div>
     <div class="jumbotron text-center">
       <h3 class="text-2xl font-semibold">Welcome!</h3>
-      <p>Contact support for assistance.</p>
+      <p>Batangas Pet Shop Republic.</p>
     </div>
   </div>
 </div>
@@ -235,15 +264,40 @@ foreach ($sales_forecast as $data) {
     <canvas id="salesForecastChart"></canvas>
   </div>
 </div>
+<!-- Chart for Predicted Sales Quantity -->
+<div class="chart-container">
+    <canvas id="predictedSalesQtyChart"></canvas>
+</div>
+
+<!-- Chart for Predicted Sales Count -->
+<div class="chart-container">
+    <canvas id="predictedSalesCountChart"></canvas>
+</div>
+
+<!-- Chart for Predicted Revenue -->
+<div class="chart-container">
+    <canvas id="predictedRevenueChart"></canvas>
+</div>
+
+<!-- Chart for Top 10 Products by Quantity -->
+<div class="chart-container">
+    <canvas id="top10QtyProductsChart"></canvas>
+</div>
+
+<!-- Chart for Top 10 Products by Revenue -->
+<div class="chart-container">
+    <canvas id="top10RevenueProductsChart"></canvas>
+</div>
 
 <!-- JavaScript to render the chart -->
 <script>
 // Sales Forecast Chart
-const months = <?php echo json_encode($months); ?>;
+// Sales Forecast Chart
+const quarters = <?php echo json_encode($quarters); ?>;
 const predicted_sales = <?php echo json_encode($predicted_sales); ?>;
 
 // Log to check if data is correctly populated
-console.log("Months: ", months);
+console.log("Quarters: ", quarters);
 console.log("Predicted Sales: ", predicted_sales);
 
 // Create a chart
@@ -251,7 +305,7 @@ const ctx = document.getElementById('salesForecastChart').getContext('2d');
 const salesForecastChart = new Chart(ctx, {
     type: 'line',
     data: {
-        labels: months,
+        labels: quarters, // Use quarters instead of months
         datasets: [{
             label: 'Predicted Quantity Sold',
             data: predicted_sales,
@@ -277,7 +331,7 @@ const salesForecastChart = new Chart(ctx, {
                 beginAtZero: true,
                 title: {
                     display: true,
-                    text: 'Month'
+                    text: 'Quarter'
                 }
             },
             y: {
@@ -291,10 +345,130 @@ const salesForecastChart = new Chart(ctx, {
     }
 });
 
-
-
-
 </script>
+<div class="bg-white p-3 rounded-lg shadow-md mt-4">
+  <!-- Wrapper for all charts -->
+  <div class="flex flex-wrap justify-between space-x-4 space-y-4">
+    <!-- Chart 1: Sales Forecast Chart -->
+    <div class="chart-container w-full sm:w-1/2">
+      <canvas id="salesForecastChart"></canvas>
+    </div>
+    
+    <!-- Chart 2: Predicted Sales Quantity -->
+    <div class="chart-container w-full sm:w-1/2">
+      <canvas id="predictedSalesQtyChart"></canvas>
+    </div>
+
+    <!-- Chart 3: Predicted Sales Count -->
+    <div class="chart-container w-full sm:w-1/2">
+      <canvas id="predictedSalesCountChart"></canvas>
+    </div>
+
+    <!-- Chart 4: Predicted Revenue -->
+    <div class="chart-container w-full sm:w-1/2">
+      <canvas id="predictedRevenueChart"></canvas>
+    </div>
+
+    <!-- Chart 5: Top 10 Products by Quantity -->
+    <div class="chart-container w-full sm:w-1/2">
+      <canvas id="top10QtyProductsChart"></canvas>
+    </div>
+
+    <!-- Chart 6: Top 10 Products by Revenue -->
+    <div class="chart-container w-full sm:w-1/2">
+      <canvas id="top10RevenueProductsChart"></canvas>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- JavaScript to render the charts -->
+<script>
+// Predicted Sales Quantity Chart
+var ctx1 = document.getElementById('predictedSalesQtyChart').getContext('2d');
+var predictedSalesQtyChart = new Chart(ctx1, {
+    type: 'line',
+    data: {
+        labels: <?php echo json_encode($quarters); ?>,
+        datasets: [{
+            label: 'Predicted Sales Quantity',
+            data: <?php echo json_encode($predicted_sales); ?>,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            fill: false,
+            tension: 0.1
+        }]
+    }
+});
+
+// Predicted Sales Count Chart
+var ctx2 = document.getElementById('predictedSalesCountChart').getContext('2d');
+var predictedSalesCountChart = new Chart(ctx2, {
+    type: 'line',
+    data: {
+        labels: <?php echo json_encode($quarters); ?>,
+        datasets: [{
+            label: 'Predicted Sales Count',
+            data: <?php echo json_encode($predicted_sales_count); ?>,
+            borderColor: 'rgba(153, 102, 255, 1)',
+            fill: false,
+            tension: 0.1
+        }]
+    }
+});
+
+// Predicted Revenue Chart
+var ctx3 = document.getElementById('predictedRevenueChart').getContext('2d');
+var predictedRevenueChart = new Chart(ctx3, {
+    type: 'line',
+    data: {
+        labels: <?php echo json_encode($quarters); ?>,
+        datasets: [{
+            label: 'Predicted Revenue',
+            data: <?php echo json_encode($predicted_revenue); ?>,
+            borderColor: 'rgba(255, 159, 64, 1)',
+            fill: false,
+            tension: 0.1
+        }]
+    }
+});
+
+// Top 10 Products by Quantity Chart
+var ctx4 = document.getElementById('top10QtyProductsChart').getContext('2d');
+var top10QtyProductsChart = new Chart(ctx4, {
+    type: 'bar',
+    data: {
+        labels: <?php echo json_encode(range(1, 10)); ?>,  // Labels for Top 10
+        datasets: [{
+            label: 'Top 10 Products by Quantity',
+            data: <?php echo json_encode($top_10_qty_products); ?>,
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+        }]
+    }
+});
+
+// Top 10 Products by Revenue Chart
+var ctx5 = document.getElementById('top10RevenueProductsChart').getContext('2d');
+var top10RevenueProductsChart = new Chart(ctx5, {
+    type: 'bar',
+    data: {
+        labels: <?php echo json_encode(range(1, 10)); ?>,  // Labels for Top 10
+        datasets: [{
+            label: 'Top 10 Products by Revenue',
+            data: <?php echo json_encode($top_10_revenue_products); ?>,
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    }
+});
+</script>
+
+
 </body>
 </html>
 

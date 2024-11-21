@@ -152,19 +152,25 @@ function find_product_sales_by_month($product_id, $start_date, $end_date) {
 }
 // This is a placeholder for your predictive analytics function.
 // Replace with actual data fetching or calculations.
-function get_sales_forecast($days = 30) {
-    // You would call your predictive model or statistics calculation here.
-    // For this example, let's assume you're fetching the forecast for the next 30 days.
+function get_sales_forecast($months = 2) {
+  // Predict total sales for the next $months (e.g., 2 months)
+  // Fetch past sales data from the database to calculate predictions
+  $forecast = [];
 
-    // Example data: an array of predicted sales for the next 30 days
-    $forecast = [];
-    for ($i = 0; $i < $days; $i++) {
-        $forecast[] = [
-            'day' => date('Y-m-d', strtotime("+$i days")),
-            'predicted_sales' => rand(1000, 5000), // Randomized for this example
-        ];
-    }
-    return $forecast;
+  // Example: Use a predictive model or statistics for total sales prediction
+  // Let's assume the model predicted a total sales value for the next 2 months.
+  $predicted_sales = rand(50000, 100000);  // Randomized total sales prediction for 2 months
+
+  // Predict for 2 months
+  for ($i = 0; $i < $months; $i++) {
+      $forecast[] = [
+          'month' => date('F Y', strtotime("+$i month")), // Current month + i months
+          'predicted_sales' => $predicted_sales,
+      ];
+  }
+
+  return $forecast;
 }
+
 
 ?>
