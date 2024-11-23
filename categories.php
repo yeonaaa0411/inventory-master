@@ -3,7 +3,7 @@ $page_title = 'All Categories';
 require_once('includes/load.php');
 page_require_level(2);
 
-// Handle form submission (No form needed for category addition anymore)
+// Handle form submission for adding a category
 if (isset($_POST['add_cat'])) {
     $req_field = array('category-name');
     validate_fields($req_field);
@@ -30,6 +30,33 @@ if (isset($_POST['add_cat'])) {
         }
     } else {
         $session->msg("d", $errors);
+        redirect('categories.php', false);
+    }
+}
+
+// Handle form submission for editing a category
+if (isset($_POST['edit_cat'])) {
+    $cat_id = (int)$_POST['category-id'];
+    $cat_name = remove_junk($db->escape($_POST['category-name']));
+    
+    // Check if the category name already exists (optional check)
+    $sql = "SELECT * FROM categories WHERE name = '{$cat_name}' AND id != {$cat_id} LIMIT 1";
+    $result = $db->query($sql);
+    if ($db->num_rows($result) > 0) {
+        $session->msg('d', "Category '{$cat_name}' already exists. Please choose a different name.");
+        redirect('categories.php', false);
+    } elseif (empty($errors)) {
+        // Update the category
+        $update_sql = "UPDATE categories SET name = '{$cat_name}' WHERE id = {$cat_id}";
+        if ($db->query($update_sql)) {
+            $session->msg('s', "Category updated successfully.");
+            redirect('categories.php', false);
+        } else {
+            $session->msg('d', 'Failed to update the category.');
+            redirect('categories.php', false);
+        }
+    } else {
+        $session->msg('d', 'Invalid input or empty fields.');
         redirect('categories.php', false);
     }
 }
@@ -97,11 +124,12 @@ $all_categories = find_all('categories');
 <!-- Modal for adding a category -->
 <div id="categoryModal" class="modal">
   <div class="modal-content">
-    <h3 class="text-xl font-bold mb-4">Add Category</h3>
+    <h3 class="text-xl font-bold mb-4" id="modalTitle">Add Category</h3>
     <form method="post" action="categories.php">
-      <input type="text" name="category-name" placeholder="Category Name" class="form-control border border-gray-300 rounded-md px-4 py-2 w-full mb-4" required>
+      <input type="hidden" name="category-id" id="category-id">
+      <input type="text" name="category-name" id="category-name" placeholder="Category Name" class="form-control border border-gray-300 rounded-md px-4 py-2 w-full mb-4" required>
       <div class="flex justify-end">
-        <button type="submit" name="add_cat" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-green-600">Add Category</button>
+        <button type="submit" name="add_cat" id="addCategoryButton" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Category</button>
         <button type="button" id="closeModal" class="bg-red-500 text-white px-4 py-2 rounded ml-2 hover:bg-red-600">Cancel</button>
       </div>
     </form>
@@ -127,9 +155,10 @@ $all_categories = find_all('categories');
               <td class="border px-4 py-2"><?php echo remove_junk(ucfirst($cat['name'])); ?></td>
               <td class="text-center border px-4 py-2">
                 <div class="flex justify-center space-x-2">
-                  <a href="edit_category.php?id=<?php echo (int)$cat['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Edit">
+                  <button class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Edit"
+                          onclick="openEditModal(<?php echo $cat['id']; ?>, '<?php echo $cat['name']; ?>')">
                     <i class="fas fa-pencil-alt"></i>
-                  </a>
+                  </button>
                   <a href="delete_category.php?id=<?php echo (int)$cat['id']; ?>" onClick="return confirm('Are you sure you want to delete?');" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" title="Delete">
                     <i class="fas fa-trash-alt"></i>
                   </a>
@@ -152,22 +181,29 @@ $all_categories = find_all('categories');
   const modal = document.getElementById('categoryModal');
   const openModalButton = document.getElementById('openModal');
   const closeModalButton = document.getElementById('closeModal');
+  const addCategoryButton = document.getElementById('addCategoryButton');
+  const modalTitle = document.getElementById('modalTitle');
 
   // Open modal when "Add Category" button is clicked
   openModalButton.addEventListener('click', () => {
     modal.classList.add('active');
+    modalTitle.textContent = "Add Category";
+    addCategoryButton.textContent = "Add Category";
   });
 
   // Close modal when "Cancel" button is clicked
   closeModalButton.addEventListener('click', () => {
     modal.classList.remove('active');
   });
-  
-  // Auto-dismiss alerts after 3 seconds
-  setTimeout(() => {
-    const alerts = document.querySelectorAll('.alert');
-    alerts.forEach(alert => alert.remove());
-  }, 2000);
+
+  // Function to open modal for editing category
+  function openEditModal(catId, catName) {
+    document.getElementById('category-id').value = catId;
+    document.getElementById('category-name').value = catName;
+    modal.classList.add('active');
+    modalTitle.textContent = "Edit Category";
+    addCategoryButton.textContent = "Update Category";
+  }
 </script>
 
 </body>

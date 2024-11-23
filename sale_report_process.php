@@ -22,6 +22,7 @@ if (isset($_POST['submit'])) {
     $session->msg("d", "Select dates");
     redirect('sales_report.php', false);
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

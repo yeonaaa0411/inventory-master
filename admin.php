@@ -1,4 +1,4 @@
-  <?php
+<?php
   $page_title = 'Admin Home Page';
   require_once('includes/load.php');
   page_require_level(2);

@@ -40,31 +40,6 @@ if (isset($_POST['update'])) {
     }
 }
 ?>
-
-<?php
-// Update user password
-if (isset($_POST['update-pass'])) {
-    $req_fields = array('password');
-    validate_fields($req_fields);
-    if (empty($errors)) {
-        $id = (int)$e_user['id'];
-        $password = remove_junk($db->escape($_POST['password']));
-        $h_pass   = sha1($password);
-        $sql = "UPDATE users SET password='{$h_pass}' WHERE id='{$db->escape($id)}'";
-        $result = $db->query($sql);
-        if ($result && $db->affected_rows() === 1) {
-            $session->msg('s', "User password has been updated ");
-            redirect('users.php', false); // Redirect to users.php on success
-        } else {
-            $session->msg('d', 'Sorry failed to update user password!');
-            redirect('edit_user.php?id=' . (int)$e_user['id'], false); // Stay on the edit page if update fails
-        }
-    } else {
-        $session->msg("d", $errors);
-        redirect('edit_user.php?id=' . (int)$e_user['id'], false);
-    }
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -126,29 +101,6 @@ if (isset($_POST['update-pass'])) {
                         <button type="submit" name="update" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                             Update
                         </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Change password form -->
-    <div class="w-3/6 ml-4"> <!-- Added margin-left for spacing -->
-        <div class="bg-white shadow-md rounded-lg">
-            <div class="custom-header p-4">
-                <div class="flex items-center">
-                    <span class="glyphicon glyphicon-th" style="font-size: 20px;"></span>
-                    <h2 class="text-3xl font-bold ml-2">Change <?php echo remove_junk(ucwords($e_user['name'])); ?> Password</h2>
-                </div>
-            </div>
-            <div class="p-4">
-                <form action="edit_user.php?id=<?php echo (int)$e_user['id']; ?>" method="post" class="clearfix">
-                    <div class="mb-4">
-                        <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
-                        <input type="password" class="form-control border rounded w-full py-2 px-3" name="password" placeholder="Type user new password">
-                    </div>
-                    <div class="flex justify-center">
-                        <button type="submit" name="update-pass" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 pull-right">Change</button>
                     </div>
                 </form>
             </div>

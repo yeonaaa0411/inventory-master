@@ -112,8 +112,9 @@ if (isset($_POST['product'])) {
                         </div>
 
                         <div class="mb-8 flex space-x-4"> <!-- Increased bottom margin -->
+
+                            <!-- Product Category Dropdown -->
                             <select class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="product-category" required>
-                                <option value="">Select Product Category</option>
                                 <?php foreach ($all_categories as $cat): ?>
                                     <option value="<?php echo (int)$cat['id'] ?>" <?php if ($cat['id'] === $product['category_id']) echo 'selected'; ?>>
                                         <?php echo $cat['name'] ?>
@@ -121,15 +122,17 @@ if (isset($_POST['product'])) {
                                 <?php endforeach; ?>
                             </select>
 
+                            <!-- Product Photo Dropdown -->
                             <select class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="product-photo">
-                                <option value="">Select Product Photo</option>
                                 <?php foreach ($all_photo as $photo): ?>
                                     <option value="<?php echo (int)$photo['id'] ?>" <?php if ($photo['id'] === $product['media_id']) echo 'selected'; ?>>
                                         <?php echo $photo['file_name'] ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
-                        </div>
+
+                            </div>
+
 
                         <div class="mb-8 flex space-x-4"> <!-- Increased bottom margin -->
                             <input type="number" class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="product-quantity" value="<?php echo remove_junk($product['quantity']); ?>" placeholder="Product Quantity" required>

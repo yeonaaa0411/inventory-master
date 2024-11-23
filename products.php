@@ -15,6 +15,11 @@ if (isset($_POST['update_category']) && !empty($_POST['product-category'])) {
 } else {
     $products = join_product_table();
 }
+
+// Sort the products alphabetically by name
+usort($products, function($a, $b) {
+    return strcmp($a['name'], $b['name']); // Compare product names
+});
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -83,14 +88,14 @@ if (isset($_POST['update_category']) && !empty($_POST['product-category'])) {
             <div class="p-4">
                 <form method="post" action="">
                     <div class="flex space-x-4">
-                        <select class="form-control border border-gray-300 rounded-md px-4 py-2 w-full" name="product-category">
-                            <option value="">All Categories</option>
-                            <?php foreach ($all_categories as $cat): ?>
-                                <option value="<?php echo (int)$cat['id'] ?>">
-                                    <?php echo remove_junk($cat['name']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                    <select class="form-control border border-gray-300 rounded-md px-4 py-2 w-full" name="product-category">
+                        <?php foreach ($all_categories as $cat): ?>
+                            <option value="<?php echo (int)$cat['id'] ?>">
+                                <?php echo remove_junk($cat['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+
                         <button type="submit" name="update_category" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Filter Category</button>
                     </div>
                 </form>
@@ -131,7 +136,7 @@ if (isset($_POST['update_category']) && !empty($_POST['product-category'])) {
                                             <?php if ($product['media_id'] === '0'): ?>
                                                 <img class="img-avatar img-circle" src="uploads/products/no_image.jpg" alt="">
                                             <?php else: ?>
-                                                <img class="img-avatar img-circle" src="uploads/products/<?php echo $product['image']; ?>" alt="">
+                                                <img class="img-avatar img-circle" src="uploads/products/<?php echo $product['image']; ?>" alt=""/>
                                             <?php endif; ?>
                                         </div>
                                     </td>

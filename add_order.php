@@ -96,11 +96,11 @@ if (isset($_POST['add_order'])) {
                         </div>
 
                         <div class="mb-4">
-                            <select class="form-control border border-gray-300 rounded-md px-4 py-2 w-full" name="paymethod" required>
-                                <option value="">Select Payment Method</option>
-                                <option value="Cash">Cash</option>
-                                <option value="Gcash">Gcash</option>
-                            </select>
+                        <select class="form-control border border-gray-300 rounded-md px-4 py-2 w-full" name="paymethod" required>
+                            <option value="Cash" selected>Cash</option>
+                            <option value="Gcash">Gcash</option>
+                        </select>
+
                         </div>
 
                         <div class="mb-4">

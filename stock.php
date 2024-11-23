@@ -86,36 +86,43 @@ $all_products = find_all('products');
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($all_stock as $index => $stock): ?>
-                            <tr style="height: 80px;">
-                                <td class="text-center"><?php echo $index + 1; ?></td>
-                                <td class="text-center">
-                                    <a href="view_product.php?id=<?php echo (int)$stock['product_id']; ?>">
-                                        <?php
-                                        foreach ($all_products as $product) {
-                                            if ($stock['product_id'] == $product['id']) {
-                                                echo remove_junk($product['name']);
+                        <?php if (is_array($all_stock) && count($all_stock) > 0): ?>
+                            <?php foreach ($all_stock as $index => $stock): ?>
+                                <tr style="height: 80px;">
+                                    <td class="text-center"><?php echo $index + 1; ?></td>
+                                    <td class="text-center">
+                                        <a href="view_product.php?id=<?php echo (int)$stock['product_id']; ?>">
+                                            <?php
+                                            foreach ($all_products as $product) {
+                                                if ($stock['product_id'] == $product['id']) {
+                                                    echo remove_junk($product['name']);
+                                                }
                                             }
-                                        }
-                                        ?>
-                                    </a>
-                                </td>
-                                <td class="text-center"><?php echo remove_junk(ucfirst($stock['quantity'])); ?></td>
-                                <td class="text-center"><?php echo remove_junk(ucfirst($stock['comments'])); ?></td>
-                                <td class="text-center"><?php echo remove_junk(ucfirst($stock['date'])); ?></td>
-                                <td class="text-center">
-                                    <div class="flex justify-center space-x-2">
-                                        <a href="edit_stock.php?id=<?php echo (int)$stock['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Edit">
-                                            <i class="fas fa-pencil-alt"></i>
+                                            ?>
                                         </a>
-                                        <a href="delete_stock.php?id=<?php echo (int)$stock['id']; ?>" onClick="return confirm('Are you sure you want to delete?')" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" title="Remove">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </a>
-                                    </div>
-                                </td>
+                                    </td>
+                                    <td class="text-center"><?php echo remove_junk(ucfirst($stock['quantity'])); ?></td>
+                                    <td class="text-center"><?php echo remove_junk(ucfirst($stock['comments'])); ?></td>
+                                    <td class="text-center"><?php echo remove_junk(ucfirst($stock['date'])); ?></td>
+                                    <td class="text-center">
+                                        <div class="flex justify-center space-x-2">
+                                            <a href="edit_stock.php?id=<?php echo (int)$stock['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Edit">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </a>
+                                            <a href="delete_stock.php?id=<?php echo (int)$stock['id']; ?>" onClick="return confirm('Are you sure you want to delete?')" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" title="Remove">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="6" class="text-center">No stock records found.</td>
                             </tr>
-                        <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
+
                 </table>
             </div>
         </div>

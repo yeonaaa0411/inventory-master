@@ -56,13 +56,13 @@
     </div>
     <?php echo display_msg($msg); ?>
     <form method="post" action="change_password.php" class="space-y-4">
+    <div class="mb-3">
+        <label for="oldPassword" class="block text-gray-700 text-sm font-bold mb-1">Old Password</label>
+        <input type="password" class="border rounded w-full py-2 px-3 text-gray-700" name="old-password" placeholder="Old password">
+      </div>
       <div class="mb-3">
         <label for="newPassword" class="block text-gray-700 text-sm font-bold mb-1">New Password</label>
         <input type="password" class="border rounded w-full py-2 px-3 text-gray-700" name="new-password" placeholder="New password">
-      </div>
-      <div class="mb-3">
-        <label for="oldPassword" class="block text-gray-700 text-sm font-bold mb-1">Old Password</label>
-        <input type="password" class="border rounded w-full py-2 px-3 text-gray-700" name="old-password" placeholder="Old password">
       </div>
       <input type="hidden" name="id" value="<?php echo (int)$user['id']; ?>">
       <div class="flex justify-center">

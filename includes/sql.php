@@ -15,12 +15,12 @@ function find_by_sql($sql) {
   global $db;
   $result = $db->query($sql);
   if ($result === false) {
-    return false; // Handle errors with SQL query
+      return []; // Return an empty array on query failure
   }
   $result_set = $db->while_loop($result);
-  // Ensure the result set is not null or empty before returning
-  return ($result_set && is_array($result_set) && count($result_set) > 0) ? $result_set : null;
+  return is_array($result_set) ? $result_set : [];
 }
+
 
 
 

@@ -7,6 +7,11 @@ page_require_level(2);
 // Get all products from the database
 $all_products = find_all('products');
 
+// Sort products alphabetically by name (this includes numbers and letters)
+usort($all_products, function($a, $b) {
+    return strcasecmp($a['name'], $b['name']);
+});
+
 // Get the product ID from the URL, if present
 $product_id_from_url = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
@@ -16,6 +21,12 @@ if (isset($_POST['add_stock'])) {
     $product_id = remove_junk($db->escape($_POST['product_id']));
     $quantity = remove_junk($db->escape($_POST['quantity']));
     $comments = remove_junk($db->escape($_POST['comments']));
+    
+    // Check if comments are empty, and set to "No Comment" if true
+    if (empty($comments)) {
+        $comments = "No Comment";
+    }
+
     $current_date = make_date();
 
     if (empty($errors)) {
@@ -35,6 +46,7 @@ if (isset($_POST['add_stock'])) {
         redirect('add_stock.php?id=' . $product_id_from_url, false);
     }
 }
+
 
 include_once('layouts/header.php');
 ?>
@@ -56,7 +68,6 @@ include_once('layouts/header.php');
 </head>
 <body class="bg-gray-100">
 
-
 <div class="mt-6 ml-6">
     <div class="w-2/6">
         <div class="bg-white shadow-md rounded-lg">
@@ -69,17 +80,17 @@ include_once('layouts/header.php');
             <div class="p-4">
                 <?php echo display_msg($msg); ?>
                 <form method="post" action="">
-                    <div class="mb-4">
-                        <label for="product_id" class="block text-gray-700 text-sm font-bold mb-2">Select Product</label>
-                        <select class="form-control border rounded w-full py-2 px-3" name="product_id" id="product_id" required>
-                            <option value="0">Select Product</option>
-                            <?php foreach ($all_products as $product): ?>
-                                <option value="<?php echo $product['id']; ?>" <?php echo ($product['id'] == $product_id_from_url) ? 'selected' : ''; ?>>
-                                    <?php echo $product['name']; ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+                <div class="mb-4">
+                    <label for="product_id" class="block text-gray-700 text-sm font-bold mb-2">Select Product</label>
+                    <select class="form-control border rounded w-full py-2 px-3" name="product_id" id="product_id" required>
+                        <?php foreach ($all_products as $product): ?>
+                            <option value="<?php echo $product['id']; ?>" <?php echo ($product['id'] == $product_id_from_url) ? 'selected' : ''; ?>>
+                                <?php echo $product['name']; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
 
                     <div class="mb-4">
                         <label for="quantity" class="block text-gray-700 text-sm font-bold mb-2">Product Quantity</label>
