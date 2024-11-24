@@ -41,17 +41,32 @@
   foreach ($sales_forecast['top_10_revenue_products'] as $product) {
       $top_10_revenue_products[] = (float) $product['predicted_revenue'];
   }
-// Extract product names for the labels
+// Extract product names for the labels (use 'name' instead of 'product_id')
 $top_10_qty_product_names = [];
 foreach ($sales_forecast['top_10_qty_products'] as $product) {
-    $top_10_qty_product_names[] = $product['product_id']; // Assuming 'name' is the key for product names
+    // Ensure we use 'product_name' for the chart labels
+    if (isset($product['product_name'])) {
+        $top_10_qty_product_names[] = $product['product_name']; // Correctly use 'product_name'
+    } else {
+        // Fallback to use 'product_id' if 'product_name' is missing
+        $top_10_qty_product_names[] = "Unknown Product ID: " . $product['product_id'];
+    }
 }
 
 // Do the same for the top 10 revenue products
 $top_10_revenue_product_names = [];
 foreach ($sales_forecast['top_10_revenue_products'] as $product) {
-    $top_10_revenue_product_names[] = $product['product_id']; // Assuming 'name' is the key for product names
+    if (isset($product['product_name'])) {
+        $top_10_revenue_product_names[] = $product['product_name']; // Correctly use 'product_name'
+    } else {
+        // Fallback if 'product_name' is missing
+        $top_10_revenue_product_names[] = "Unknown Product ID: " . $product['product_id'];
+    }
 }
+
+
+
+
 
 
 
@@ -449,61 +464,43 @@ const predictedRevenueChart = new Chart(predictedRevenueCtx, {
 });
 
 
-// Top 10 Products by Quantity
-const top10QtyCtx = document.getElementById('top10QtyProductsChart').getContext('2d');
-const top10QtyProductsChart = new Chart(top10QtyCtx, {
-  type: 'bar',
-  data: {
-    labels: <?php echo json_encode($sales_forecast['top_10_qty_products']); ?>, // Product names from the API
-    datasets: [{
-      label: 'Top 10 Products by Quantity',
-      data: <?php echo json_encode($top_10_qty_products); ?>, // Quantity data from the API
-      backgroundColor: '#FF5722',
-    }]
-  },
-  options: {
-    ...commonOptions,
-    scales: {
-      ...commonOptions.scales,
-      y: {
-        ...commonOptions.scales.y,
-        title: {
-          display: true,
-          text: 'Product Sold (Qty)', // Custom label for this chart
-          font: { size: 14, weight: 'bold' },
-        }
-      }
+// JavaScript part to render the charts
+// Chart.js for Top 10 Products by Quantity
+// Top 10 Products by Quantity Chart
+var ctx = document.getElementById('top10QtyProductsChart').getContext('2d');
+var top10QtyProductsChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: <?php echo json_encode($top_10_qty_product_names); ?>, // Product names from PHP
+        datasets: [{
+            label: 'Predicted Quantity Sold',
+            data: <?php echo json_encode($top_10_qty_products); ?>, // Quantities from PHP
+            backgroundColor: '#4e73df', // Blue color for bars
+            borderColor: '#4e73df', // Border color
+            borderWidth: 1 // Border width
+        }]
     }
-  }
 });
 
-// Top 10 Products by Revenue
-const top10RevenueCtx = document.getElementById('top10RevenueProductsChart').getContext('2d');
-const top10RevenueProductsChart = new Chart(top10RevenueCtx, {
-  type: 'bar',
-  data: {
-    labels: <?php echo json_encode($sales_forecast['top_10_revenue_products']); ?>, // Product names from the API
-    datasets: [{
-      label: 'Top 10 Products by Revenue',
-      data: <?php echo json_encode($top_10_revenue_products); ?>, // Revenue data from the API
-      backgroundColor: '#FFEB3B',
-    }]
-  },
-  options: {
-    ...commonOptions,
-    scales: {
-      ...commonOptions.scales,
-      y: {
-        ...commonOptions.scales.y,
-        title: {
-          display: true,
-          text: 'Revenue (₱)', // Custom label for this chart
-          font: { size: 14, weight: 'bold' },
-        }
-      }
+// Top 10 Products by Revenue Chart
+var ctx2 = document.getElementById('top10RevenueProductsChart').getContext('2d');
+var top10RevenueProductsChart = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+        labels: <?php echo json_encode($top_10_revenue_product_names); ?>, // Product names from PHP
+        datasets: [{
+            label: 'Predicted Revenue',
+            data: <?php echo json_encode($top_10_revenue_products); ?>, // Revenue values from PHP
+            backgroundColor: '#1cc88a', // Green color for bars
+            borderColor: '#1cc88a', // Border color
+            borderWidth: 1 // Border width
+        }]
     }
-  }
 });
+
+
+
+
 // Update Y-axis label for Top 10 Products by Revenue Chart
 updateYAxisLabel(top10RevenueProductsChart, 'Product Revenue');
 </script>

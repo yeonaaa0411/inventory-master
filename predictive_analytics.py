@@ -32,7 +32,7 @@ def predict_sales():
 
     # Fetch sales data
     query = """
-    SELECT sales.date, qty, sales.product_id, price 
+    SELECT sales.date, qty, sales.product_id, price, products.name AS product_name 
     FROM sales 
     JOIN products ON sales.product_id = products.id 
     ORDER BY sales.date
@@ -41,7 +41,7 @@ def predict_sales():
     data = cursor.fetchall()
 
     # Prepare data into a pandas DataFrame
-    df = pd.DataFrame(data, columns=['date', 'qty', 'product_id', 'price'])
+    df = pd.DataFrame(data, columns=['date', 'qty', 'product_id', 'price', 'product_name'])
     df['date'] = pd.to_datetime(df['date'])
     df.set_index('date', inplace=True)
 
@@ -78,7 +78,7 @@ def predict_sales():
     # Predict specific product quantities for future quarters
     product_predictions = []
     product_revenue_predictions = []
-    for product_id in df['product_id'].unique():
+    for product_id, product_name in df[['product_id', 'product_name']].drop_duplicates().values:
         product_data = df[df['product_id'] == product_id].resample('Q').sum()
         product_training_data = product_data['qty']['2022-01-01':pd.Timestamp.today()]  # Using up to current date
 
@@ -88,7 +88,7 @@ def predict_sales():
 
         # Append the predicted quantity for each product
         product_predictions.append({
-            'product_id': product_id,
+            'product_name': product_name,
             'predicted_qty': product_forecast
         })
         
@@ -103,7 +103,7 @@ def predict_sales():
             revenue_forecast.append(product_forecast[i] * price)
 
         product_revenue_predictions.append({
-            'product_id': product_id,
+            'product_name': product_name,
             'predicted_revenue': revenue_forecast
         })
 
@@ -126,8 +126,7 @@ def predict_sales():
         total_revenue = 0
         for product_pred in product_predictions:
             product_qty = product_pred['predicted_qty'][i]
-            product_id = product_pred['product_id']
-            price = df[df['product_id'] == product_id]['price'].iloc[0]
+            price = df[df['product_name'] == product_pred['product_name']]['price'].iloc[0]
             
             # Convert price to float to avoid multiplication with Decimal
             price = float(price)
@@ -150,8 +149,8 @@ def predict_sales():
     top_10_qty_products = sorted(product_predictions, key=lambda x: sum(x['predicted_qty']), reverse=True)[:10]
 
     # Add top 10 products by revenue and quantity to the result
-    result['top_10_revenue_products'] = [{'product_id': product['product_id'], 'predicted_revenue': sum(product['predicted_revenue'])} for product in top_10_revenue_products]
-    result['top_10_qty_products'] = [{'product_id': product['product_id'], 'predicted_qty': sum(product['predicted_qty'])} for product in top_10_qty_products]
+    result['top_10_revenue_products'] = [{'product_name': product['product_name'], 'predicted_revenue': sum(product['predicted_revenue'])} for product in top_10_revenue_products]
+    result['top_10_qty_products'] = [{'product_name': product['product_name'], 'predicted_qty': sum(product['predicted_qty'])} for product in top_10_qty_products]
 
     # Close the database connection
     cursor.close()
