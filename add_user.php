@@ -63,7 +63,7 @@ if (isset($_POST['add_user'])) {
             <div class="custom-header p-4">
                 <div class="flex items-center">
                     <span class="glyphicon glyphicon-th" style="font-size: 20px;"></span>
-                    <h2 class="text-3xl font-bold ml-2">ADD NEW USER</h2>
+                    <h2 class="text-3xl font-bold ml-2">Add New User</h2>
                 </div>
             </div>
             <div class="p-4">

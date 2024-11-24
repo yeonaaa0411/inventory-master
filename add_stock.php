@@ -74,7 +74,7 @@ include_once('layouts/header.php');
             <div class="custom-header p-4">
                 <div class="flex items-center">
                     <span class="glyphicon glyphicon-th" style="font-size: 20px;"></span>
-                    <h2 class="text-3xl font-bold ml-2">ADD STOCK</h2>
+                    <h2 class="text-3xl font-bold ml-2">Add Stock</h2>
                 </div>
             </div>
             <div class="p-4">

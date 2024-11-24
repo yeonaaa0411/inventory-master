@@ -48,10 +48,10 @@
 <!-- Users Panel -->
 <div class="grid grid-cols-1 mt-1 mx-5">
   <div class="bg-white shadow-md rounded-lg">
-    <div class="flex justify-between items-center p-4 border-b">
+      <div class="flex justify-between items-center p-4 border-b" style="background-color: #eaf5e9;">
       <h2 class="text-3xl font-bold">
         <span class="glyphicon glyphicon-th" style="font-size: 20px;"></span>
-        USERS
+        Users
       </h2>
       <a href="add_user.php" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add New User</a>
     </div>

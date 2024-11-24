@@ -14,7 +14,6 @@ $sales = $sales ?: []; // If $sales is null, set it to an empty array
 $daily_sales = dailySales($year, date('m'));
 $daily_sales_aggregated = [];
 foreach ($daily_sales as $sale) {
-    // Ensure product_id exists before using it
     if (isset($sale['product_id']) && !empty($sale['product_id'])) {
         $product_id = $sale['product_id'];
         if (!isset($daily_sales_aggregated[$product_id])) {
@@ -26,14 +25,12 @@ foreach ($daily_sales as $sale) {
         $daily_sales_aggregated[$product_id]['qty'] += $sale['qty'];
         $daily_sales_aggregated[$product_id]['total_saleing_price'] += $sale['total_saleing_price'];
     } else {
-        // Log or handle missing product_id
         error_log("Missing product_id in daily sales: " . json_encode($sale));
     }
 }
 
 // Merge daily sales data into the monthly sales data
 foreach ($sales as &$sale) {
-    // Ensure product_id exists before processing
     if (isset($sale['product_id']) && !empty($sale['product_id'])) {
         $product_id = $sale['product_id'];
         if (isset($daily_sales_aggregated[$product_id])) {
@@ -41,10 +38,14 @@ foreach ($sales as &$sale) {
             $sale['total_saleing_price'] += $daily_sales_aggregated[$product_id]['total_saleing_price'];
         }
     } else {
-        // Log or handle missing product_id
         error_log("Missing product_id in monthly sales: " . json_encode($sale));
     }
 }
+
+// Sort monthly sales by date in descending order
+usort($sales, function($a, $b) {
+    return strtotime($b['date']) - strtotime($a['date']);
+});
 
 // Pagination variables
 $limit = 50; // Limit the number of records per page
@@ -55,6 +56,7 @@ $offset = ($page - 1) * $limit; // Offset for pagination
 $sales_for_page = array_slice($sales, $offset, $limit);
 $total_sales = count($sales); // Total records
 $total_pages = ceil($total_sales / $limit); // Total pages
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

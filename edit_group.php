@@ -69,7 +69,7 @@ if (isset($_POST['update'])) {
     <div class="w-2/6">
         <div class="bg-white shadow-md rounded-lg">
             <div class="flex justify-between items-center p-4 header-bg">
-                <h2 class="text-3xl font-bold">EDIT GROUP</h2>
+                <h2 class="text-3xl font-bold">Edit Group</h2>
             </div>
             <div class="p-4">
                 <form method="post" action="edit_group.php?id=<?php echo (int)$e_group['id']; ?>">

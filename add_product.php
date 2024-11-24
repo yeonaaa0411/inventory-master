@@ -110,7 +110,7 @@ if (isset($_POST['add_product'])) {
                 <div class="custom-header p-10 border-b">
                     <div class="flex items-center">
                         <i class="fas fa-box mr-2" style="font-size: 20px;"></i>
-                        <strong class="text-3xl font-bold">ADD NEW PRODUCT</strong>
+                        <strong class="text-3xl font-bold">Add New Product</strong>
                     </div>
                 </div>
                 <div class="p-10"> <!-- Increased padding for more vertical space -->

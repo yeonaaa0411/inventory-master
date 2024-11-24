@@ -4,34 +4,11 @@
   // Checkin What level user has permission to view this page
    page_require_level(2);
 
-/**
-* CoreConduit Copyright (C) 2016 Cory J. Potter - All Rights Reserved
-* NOT INTENDED FOR COMMERCIAL USE!
-* <coreconduitconsulting@gmail.com>
-*
-**************************************************************************
-*
-* CORECONDUIT CONFIDENTIAL
-* __________________
-*
-*  [2014] - [2018] CoreConduit A.K.A. Cory J. Potter - All Rights Reserved.
-*
-* NOTICE:  All information contained herein is, and remains the property of
-*          CoreConduit and its suppliers, if any.  The intellectual and
-*          technical concepts contained herein are proprietary to CoreConduit
-*          and its suppliers and may be covered by U.S. and Foreign Patents,
-*          patents in process, and are protected by trade secret or copyright law.
-*          Dissemination of this information or reproduction of this material is
-*          strictly forbidden unless prior written permission is obtained from
-*          CoreConduit.
-*          Unless required by applicable law or agreed to in writing, software
-*          distributed is distributed on an "AS IS" BASIS,
-*          WITHOUT WARRANTIES OF ANY KIND, either express or implied.
-*************************************************************************/
+
 
 $logs = find_all('log');
 
-/******************************************************************************/
+
 ?>
 <?php include_once('./layouts/header.php'); ?>
 

@@ -129,14 +129,16 @@ if (isset($_POST['update_category']) && !empty($_POST['product-category'])) {
             <div class="p-4">
                 <form method="post" action="">
                     <div class="flex space-x-4">
-                        <select class="form-control border border-gray-300 rounded-md px-4 py-2 w-full" name="product-category">
-                            <option value="">Select Product Category</option>
-                            <?php foreach ($all_categories as $cat): ?>
+                    <select class="form-control border border-gray-300 rounded-md px-4 py-2 w-full" name="product-category">
+                        <?php foreach ($all_categories as $cat): ?>
+                            <?php if (!empty(trim($cat['name']))) : // Skip if name is empty or invalid ?>
                                 <option value="<?php echo (int)$cat['id'] ?>">
                                     <?php echo $cat['name'] ?>
                                 </option>
-                            <?php endforeach; ?>
-                        </select>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </select>
+
                         <button type="submit" name="update_category" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Filter Category</button>
                     </div>
                 </form>

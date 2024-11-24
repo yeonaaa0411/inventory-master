@@ -85,7 +85,7 @@ if (isset($_POST['add'])) {
             <div class="flex justify-between items-center p-4 header-bg">
                 <h2 class="text-3xl font-bold">
                     <span class="glyphicon glyphicon-th" style="font-size: 20px;"></span>
-                    ADD NEW GROUP
+                    Add New Group
                 </h2>
             </div>
             <div class="p-4">

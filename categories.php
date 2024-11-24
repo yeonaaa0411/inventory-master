@@ -113,7 +113,7 @@ $all_categories = find_all('categories');
     <div class="flex justify-between items-center p-4 header-bg">
       <h2 class="text-3xl font-bold">
         <i class="fas fa-tag mr-2"></i>
-        CATEGORIES
+        Categories
       </h2>
       <!-- Button to trigger the modal -->
       <button id="openModal" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Category</button>

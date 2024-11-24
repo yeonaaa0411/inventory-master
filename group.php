@@ -23,7 +23,6 @@ if (!$all_groups) {
   <!-- Tailwind CSS -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-  <!-- Custom CSS -->
   <style>
     /* Custom styles */
     .custom-class { color: #eaf5e9; }
@@ -37,10 +36,14 @@ if (!$all_groups) {
     th {
       background-color: #eaf5e9; /* Light green color */
     }
+    .header-section {
+      background-color: #eaf5e9; /* Apply Light green color to the header */
+    }
     .table-cell-wrap {
       max-width: 150px; /* Set a maximum width for long content */
     }
-  </style>
+</style>
+
 </head>
 <body class="bg-gray-100">
 
@@ -55,13 +58,14 @@ if (!$all_groups) {
 <!-- Groups Panel -->
 <div class="grid grid-cols-1 mt-6 mx-5">
   <div class="bg-white shadow-md rounded-lg">
-    <div class="flex justify-between items-center p-4 border-b">
+      <div class="flex justify-between items-center p-4 border-b header-section">
       <h2 class="text-3xl font-bold">
         <span class="glyphicon glyphicon-th" style="font-size: 20px;"></span>
-        GROUPS
+        Groups
       </h2>
       <a href="add_group.php" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add New Group</a>
     </div>
+
     <div class="p-4">
       <table class="min-w-full border-collapse">
         <thead>
