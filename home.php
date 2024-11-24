@@ -37,7 +37,7 @@ function closePanel()
         </div>
 
         <div class="jumbotron text-center">
-           <h3>Welcome!</h3>Contact support for additional assistance.
+           <h3>Welcome!</h3>Batangas Pet Shop Republic.
         </div>
 
       </div>
