@@ -3,11 +3,11 @@ name: Run Predictive Analytics
 on:
   push:
     branches:
-      - main  # This can be your default branch, e.g., 'main' or 'master'
+      - main  # This can be 'main' or 'master', depending on your branch name
 
 jobs:
   run_predictive_analytics:
-    runs-on: ubuntu-latest  # You can change to other environments, e.g., python-latest
+    runs-on: ubuntu-latest
 
     steps:
       # Step 1: Checkout the code from GitHub
@@ -18,14 +18,14 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x'  # Adjust based on your required Python version
+          python-version: '3.x'
 
-      # Step 3: Install dependencies (e.g., Flask, pandas, mysql-connector, etc.)
+      # Step 3: Install dependencies
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt  # Ensure you have a requirements.txt file
+          pip install -r requirements.txt
 
       # Step 4: Run your predictive analytics script
       - name: Run Predictive Analytics
         run: |
-          python predictive_analytics.py  # Correct path to your Python script in the root directory
+          python predictive_analytics.py  # Correct path if it's in the root directory
