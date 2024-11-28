@@ -159,22 +159,23 @@ if (isset($_POST['submit'])) {
 
         <?php if ($results): ?>
             <!-- Report Title Section -->
-            <div class="report-title">
+            <div class="report-title bg-green-50 p-4 rounded-lg shadow">
                 <h1>Sales Report</h1>
                 <p class="text-gray-700"><?php echo isset($start_date) ? $start_date : ''; ?> to <?php echo isset($end_date) ? $end_date : ''; ?></p>
             </div>
 
             <table class="w-full summary-table border-collapse">
-                <thead>
-                    <tr>
-                        <th class="px-4 py-2 text-left">Date</th>
-                        <th class="px-4 py-2 text-left">Product Title</th>
-                        <th class="px-4 py-2 text-right">Cost Price</th>
-                        <th class="px-4 py-2 text-right">Selling Price</th>
-                        <th class="px-4 py-2 text-right">Total Qty</th>
-                        <th class="px-4 py-2 text-right">Total</th>
-                    </tr>
-                </thead>
+<thead>
+    <tr style="background-color: rgba(236, 253, 245, 1);">
+        <th class="px-4 py-2 text-left">Date</th>
+        <th class="px-4 py-2 text-left">Product Title</th>
+        <th class="px-4 py-2 text-right">Cost Price</th>
+        <th class="px-4 py-2 text-right">Selling Price</th>
+        <th class="px-4 py-2 text-right">Total Qty</th>
+        <th class="px-4 py-2 text-right">Total</th>
+    </tr>
+</thead>
+
                 <tbody>
                     <?php
                     $total_quantity = 0; // Initialize total quantity sold
