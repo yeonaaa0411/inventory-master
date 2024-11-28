@@ -1,6 +1,7 @@
 <?php
-require_once('includes/load.php');
 session_start(); // Ensure session is started
+require_once('includes/load.php');
+
 if (isset($_SESSION['user_id'])) {
     if (!$session->logout()) {
         redirect("index.php");
