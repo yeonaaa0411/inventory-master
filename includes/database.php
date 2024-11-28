@@ -15,18 +15,27 @@ class MySqli_DB {
 /*--------------------------------------------------------------*/
 public function db_connect()
 {
-  $this->con = mysqli_connect('localhost', 'root', '');
-  if(!$this->con)
-         {
-           die(" Database connection failed:". mysqli_connect_error());
-         } else {
-           $select_db = $this->con->select_db(DB_NAME);
-             if(!$select_db)
-             {
-               die("Failed to Select Database". mysqli_connect_error());
-             }
-         }
+    // Check if running on localhost or deployed server
+    if ($_SERVER['SERVER_NAME'] == 'localhost') {
+        // Local environment configuration
+        $this->con = mysqli_connect('localhost', 'root', '');  // Local database connection
+    } else {
+        // Deployed environment configuration
+        $this->con = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
+    }
+
+    // Check if the connection was successful
+    if (!$this->con) {
+        die("Database connection failed: " . mysqli_connect_error());
+    } else {
+        // Select the database for the connection
+        $select_db = $this->con->select_db(DB_NAME);
+        if (!$select_db) {
+            die("Failed to select database: " . mysqli_connect_error());
+        }
+    }
 }
+
 /*--------------------------------------------------------------*/
 /* Function for Close database connection
 /*--------------------------------------------------------------*/
