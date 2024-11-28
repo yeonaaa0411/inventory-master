@@ -1,3 +1,4 @@
+<?php include_once('layouts/header.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,7 +24,7 @@
   endif;
 ?>
 
-<?php include_once('layouts/header.php'); ?>
+
 
 <div class=" justify-left min-h-screen">
   <div class="bg-white shadow-lg rounded-lg overflow-hidden w-full max-w-md">
