@@ -25,13 +25,21 @@
   $predicted_revenue = [];
   $top_10_qty_products = [];
   $top_10_revenue_products = [];
-
+  
+  // Loop through the forecast data and build the quarters array
   foreach ($sales_forecast['predictions'] as $data) {
-      $quarters[] = "Q" . $data['quarter'] . " " . $data['year']; // Combine quarter and year for display
-      $predicted_sales[] = (float) $data['predicted_qty']; // Convert predicted sales to float
-      $predicted_sales_count[] = (float) $data['predicted_sales_count']; // Convert predicted sales count to float
-      $predicted_revenue[] = (float) $data['predicted_revenue']; // Convert predicted revenue to float
+      $quarter_label = "Q" . $data['quarter'] . " " . $data['year']; // Combine quarter and year for display
+      
+      // Check if the quarter label already exists to avoid duplication
+      if (!in_array($quarter_label, $quarters)) {
+          $quarters[] = $quarter_label;
+      }
+      
+      $predicted_sales[] = (float) $data['predicted_qty'];
+      $predicted_sales_count[] = (float) $data['predicted_sales_count'];
+      $predicted_revenue[] = (float) $data['predicted_revenue'];
   }
+  
 
   // Top 10 Products
   foreach ($sales_forecast['top_10_qty_products'] as $product) {
