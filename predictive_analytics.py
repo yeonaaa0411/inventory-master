@@ -2,7 +2,7 @@ from flask import Flask, jsonify
 import pandas as pd
 import mysql.connector
 from statsmodels.tsa.arima.model import ARIMA
-from sklearn.metrics import mean_absolute_percentage_error
+from sklearn.metrics import mean_absolute_percentage_error, mean_absolute_error, mean_squared_error, r2_score
 import numpy as np
 
 app = Flask(__name__)
@@ -113,11 +113,19 @@ def predict_sales():
     historical_model = ARIMA(historical_train, order=(1, 1, 1))
     historical_fit = historical_model.fit()
     historical_forecast = historical_fit.forecast(steps=4)
+
+    # Calculate MAE, RMSE, and R²
+    mae = mean_absolute_error(historical_test, historical_forecast)
+    rmse = np.sqrt(mean_squared_error(historical_test, historical_forecast))
+    r2 = r2_score(historical_test, historical_forecast)
     mape = mean_absolute_percentage_error(historical_test, historical_forecast)
 
     # Prepare final response with all predictions
     result = {
         'accuracy': f"{(1 - mape) * 100:.2f}%",
+        'mae': f"{mae:.2f}",
+        'rmse': f"{rmse:.2f}",
+        'r2': f"{r2:.2f}",
         'predictions': []
     }
 
@@ -174,20 +182,28 @@ def predict_sales():
     result['top_10_revenue_products'] = [{'product_name': product['product_name'], 'predicted_revenue': sum(product['predicted_revenue'])} for product in top_10_revenue_products]
     result['top_10_qty_products'] = [{'product_name': product['product_name'], 'predicted_qty': sum(product['predicted_qty'])} for product in top_10_qty_products]
 
-    # Slow-moving products detection: Products with predicted qty below a certain threshold (e.g., 10 units per quarter)
-    slow_moving_threshold = 20
+    # Slow-moving products detection: Products with low predicted quantity
+    slow_moving_products = [{'product_name': product['product_name'], 'predicted_qty': sum(product['predicted_qty'])} for product in product_predictions if sum(product['predicted_qty']) < 100]
+
+    # Slow-moving products detection: Products with predicted qty below a threshold
+    slow_moving_threshold = 50  # Example threshold for slow-moving products
     slow_moving_products = []
     for product_pred in product_predictions:
-        if sum(product_pred['predicted_qty']) < slow_moving_threshold:
+        total_qty = sum(product_pred['predicted_qty'])
+        if total_qty < slow_moving_threshold:
             slow_moving_products.append({
                 'product_name': product_pred['product_name'],
-                'predicted_qty': sum(product_pred['predicted_qty'])
+                'predicted_qty': total_qty
             })
 
     # Add slow-moving products to the result
     result['slow_moving_products'] = slow_moving_products
 
-    # Return JSON response with the result
+    # Close database connection
+    cursor.close()
+    connection.close()
+
+    # Convert numpy types to native Python types before returning the response
     return jsonify(convert_to_native_types(result))
 
 if __name__ == '__main__':

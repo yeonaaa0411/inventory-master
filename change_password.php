@@ -1,3 +1,4 @@
+<?php include_once('layouts/header.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -77,7 +78,7 @@
   }
 ?>
 
-<?php include_once('layouts/header.php'); ?>
+
 
 <div class="flex items-center justify-center py-12 bg-gray-50">
   <div class="bg-white shadow-xl rounded-lg w-full max-w-md p-8">
