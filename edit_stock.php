@@ -10,7 +10,7 @@
 
   if(!$stock){
     $session->msg("d", "Missing order id.");
-    redirect('stock.php');
+    redirect('inventory.php');
   }
 ?>
 
@@ -20,6 +20,13 @@ if(isset($_POST['edit_stock'])){
   validate_fields($req_field);
   $product_id = remove_junk($db->escape($_POST['product_id']));
   $quantity = remove_junk($db->escape($_POST['quantity']));
+
+  // Check if the quantity or comments have changed
+  if ($product_id == $stock['product_id'] && $quantity == $stock['quantity'] && $_POST['comments'] == $stock['comments']) {
+    $session->msg("w", "No changes were made.");
+    redirect('edit_stock.php?id=' . $stock['id'], false); // Redirect back to the same page
+    exit(); // Prevent further code execution
+  }
 
   $s_qty_diff = 0;
   if ($quantity != $stock['quantity']) {
@@ -50,7 +57,7 @@ if(isset($_POST['edit_stock'])){
         }
       }
       $session->msg("s", "Successfully updated");
-      redirect('stock.php', false);
+      redirect('inventory.php', false);
     } else {
       $session->msg("d", "Sorry! Failed");
       redirect('edit_stock.php', false);
@@ -79,7 +86,7 @@ if(isset($_POST['edit_stock'])){
       border: 1px solid #e2e8f0;
     }
     th {
-      background-color: #eaf5e9;
+      background-color: rgba(236, 253, 245, 1); /* Apply the bg-green-50 color from your edit_product.php */
     }
     table {
       border-collapse: collapse;
@@ -89,8 +96,50 @@ if(isset($_POST['edit_stock'])){
       background-color: #f7fafc;
     }
     .custom-header {
-      background-color: #eaf5e9; /* Light green color */
+      background-color: rgba(236, 253, 245, 1); /* Light green color */
     }
+    
+    /* Button Styling */
+    .btn-primary {
+      background-color: #4CAF50;
+      color: white;
+      padding: 0.5rem 1.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #45a049;
+    }
+
+    /* Form Input Styling */
+    .form-input {
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      padding: 0.75rem;
+      width: 100%;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #4CAF50;
+    }
+
+    .form-label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Dropdown and Select Styling */
+    select.form-input {
+      padding: 0.75rem;
+      font-size: 1rem;
+      width: 100%;
+    }
+
   </style>
 </head>
 <body class="bg-gray-100">
@@ -100,36 +149,37 @@ if(isset($_POST['edit_stock'])){
   <?php echo display_msg($msg); ?>
 
   <div class="flex justify-start mt-10">
-    <div class="w-full sm:w-3/5 lg:w-2/5">
+    <div class="w-full sm:w-3/5 lg:w-3/5">
       <div class="bg-white shadow-md rounded-lg">
         <div class="custom-header p-10 border-b">
           <div class="flex items-center">
-            <i class="fas fa-box mr-2" style="font-size: 20px;"></i>
-            <strong class="text-3xl font-bold">EDIT STOCK</strong>
+            <i class="fas fa-cogs mr-2" style="font-size: 20px;"></i>
+            <strong class="text-3xl font-bold">Edit Stock</strong>
           </div>
         </div>
         <div class="p-10"> <!-- Increased padding for more vertical space -->
-          <form method="post" action="" class="clearfix">
+          <form method="post" action="edit_stock.php?id=<?php echo (int)$stock['id'] ?>" class="clearfix">
             <div class="mb-8"> <!-- Increased bottom margin -->
-              <label for="name" class="text-lg font-semibold"><?php echo $product['name']; ?></label>
-              <input type="hidden" class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="product_id" value="<?php echo $stock['product_id']; ?>">
-            </div>
-
-            <div class="mb-8"> <!-- Increased bottom margin -->
-              <div class="input-group flex space-x-4">
+              <div class="input-group">
                 <span class="input-group-addon">
-                  <i class="glyphicon glyphicon-shopping-cart"></i>
+                  <i class="glyphicon glyphicon-th-large"></i>
                 </span>
-                <input type="number" class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="quantity" value="<?php echo $stock['quantity']; ?>" placeholder="Product Quantity">
+                <input type="text" class="form-input" name="product-title" value="<?php echo remove_junk($product['name']); ?>" placeholder="Product Name" readonly>
               </div>
             </div>
 
-            <div class="mb-8">
-              <input type="text" class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="comments" value="<?php echo remove_junk(ucfirst($stock['comments'])); ?>" placeholder="Notes">
+            <div class="mb-8 flex space-x-4"> <!-- Increased bottom margin -->
+              <!-- Product Quantity -->
+              <input type="number" class="form-input" name="quantity" value="<?php echo remove_junk($stock['quantity']); ?>" placeholder="Quantity" required>
             </div>
 
-            <div class="text-right">
-              <button type="submit" name="edit_stock" class="bg-blue-500 text-white px-6 py-4 rounded hover:bg-blue-600">Update Inventory</button>
+            <div class="mb-8">
+              <label for="comments" class="form-label">Comments</label>
+              <textarea class="form-input" name="comments" placeholder="Comments" rows="4"><?php echo remove_junk($stock['comments']); ?></textarea>
+            </div>
+
+            <div class="flex justify-center">
+              <button type="submit" name="edit_stock" class="btn-primary">Update Stock</button>
             </div>
           </form>
         </div>
@@ -139,5 +189,6 @@ if(isset($_POST['edit_stock'])){
 
   <!-- Include footer -->
   <?php include_once('layouts/footer.php'); ?>
+
 </body>
 </html>

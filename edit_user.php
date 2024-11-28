@@ -24,21 +24,36 @@ if (isset($_POST['update'])) {
         $name = remove_junk($db->escape($_POST['name']));
         $username = remove_junk($db->escape($_POST['username']));
         $level = (int)$db->escape($_POST['level']);
-        $status   = remove_junk($db->escape($_POST['status']));
-        $sql = "UPDATE users SET name ='{$name}', username ='{$username}', user_level='{$level}', status='{$status}' WHERE id='{$db->escape($id)}'";
+        $status = remove_junk($db->escape($_POST['status']));
+
+        // Prevent changing user_level for level 1 users
+        if ($e_user['user_level'] == 1 && $level != $e_user['user_level']) {
+            $session->msg('d', "You cannot change the role of a Level 1 user.");
+            redirect('edit_user.php?id=' . (int)$e_user['id'], false);
+        }
+
+// Ensure Level 1 users' role and status cannot be changed
+if ($e_user['user_level'] == 1) {
+    $level = $e_user['user_level']; // Force Level 1 role
+    $status = '1'; // Force Active status
+}
+
+$sql = "UPDATE users SET name ='{$name}', username ='{$username}', user_level='{$level}', status='{$status}' WHERE id='{$db->escape($id)}'";
+
         $result = $db->query($sql);
         if ($result && $db->affected_rows() === 1) {
             $session->msg('s', "Account Updated ");
-            redirect('users.php', false); // Redirect to users.php on success
+            redirect('users.php', false);
         } else {
             $session->msg('d', 'Sorry failed to update!');
-            redirect('edit_user.php?id=' . (int)$e_user['id'], false); // Stay on the edit page if update fails
+            redirect('edit_user.php?id=' . (int)$e_user['id'], false);
         }
     } else {
         $session->msg("d", $errors);
         redirect('edit_user.php?id=' . (int)$e_user['id'], false);
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -81,21 +96,39 @@ if (isset($_POST['update'])) {
                     </div>
 
                     <div class="mb-4">
-                        <label for="level" class="block text-gray-700 text-sm font-bold mb-2">User Role</label>
-                        <select class="form-control border rounded w-full py-2 px-3" name="level">
-                            <?php foreach ($groups as $group) : ?>
-                                <option <?php if ($group['group_level'] === $e_user['user_level']) echo 'selected="selected"'; ?> value="<?php echo $group['group_level']; ?>"><?php echo ucwords($group['group_name']); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+    <label for="level" class="block text-gray-700 text-sm font-bold mb-2">User Role</label>
+    <?php if ($e_user['user_level'] == 1) : ?>
+        <!-- Non-editable display for Level 1 users -->
+        <input type="text" class="form-control border rounded w-full py-2 px-3 bg-gray-200 cursor-not-allowed" 
+            value="Admin" disabled>
+        <input type="hidden" name="level" value="1"> <!-- Ensure value is posted as hidden -->
+    <?php else : ?>
+        <!-- Editable dropdown for other users -->
+        <select class="form-control border rounded w-full py-2 px-3" name="level">
+            <?php foreach ($groups as $group) : ?>
+                <option <?php if ($group['group_level'] === $e_user['user_level']) echo 'selected="selected"'; ?> 
+                    value="<?php echo $group['group_level']; ?>"><?php echo ucwords($group['group_name']); ?></option>
+            <?php endforeach; ?>
+        </select>
+    <?php endif; ?>
+</div>
 
-                    <div class="mb-4">
-                        <label for="status" class="block text-gray-700 text-sm font-bold mb-2">Status</label>
-                        <select class="form-control border rounded w-full py-2 px-3" name="status">
-                            <option <?php if ($e_user['status'] === '1') echo 'selected="selected"'; ?> value="1">Active</option>
-                            <option <?php if ($e_user['status'] === '0') echo 'selected="selected"'; ?> value="0">Inactive</option>
-                        </select>
-                    </div>
+<div class="mb-4">
+    <label for="status" class="block text-gray-700 text-sm font-bold mb-2">Status</label>
+    <?php if ($e_user['user_level'] == 1) : ?>
+        <!-- Non-editable display for Level 1 users -->
+        <input type="text" class="form-control border rounded w-full py-2 px-3 bg-gray-200 cursor-not-allowed" 
+            value="Active" disabled>
+        <input type="hidden" name="status" value="1"> <!-- Ensure value is posted as hidden -->
+    <?php else : ?>
+        <!-- Editable dropdown for other users -->
+        <select class="form-control border rounded w-full py-2 px-3" name="status">
+            <option <?php if ($e_user['status'] === '1') echo 'selected="selected"'; ?> value="1">Active</option>
+            <option <?php if ($e_user['status'] === '0') echo 'selected="selected"'; ?> value="0">Inactive</option>
+        </select>
+    <?php endif; ?>
+</div>
+
 
                     <div class="flex justify-center">
                         <button type="submit" name="update" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">

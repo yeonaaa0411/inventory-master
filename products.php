@@ -4,22 +4,31 @@ require_once('includes/load.php');
 // Check what level user has permission to view this page
 page_require_level(2);
 
-$all_categories = find_all('categories');
-
 // Initialize products as an empty array
 $products = [];
 
-// Check if the form is submitted and a category is selected
-if (isset($_POST['update_category']) && !empty($_POST['product-category'])) {
-    $products = find_products_by_category((int)$_POST['product-category']);
+// Handle the search query (if any)
+$searchQuery = isset($_GET['searchInput']) ? $_GET['searchInput'] : '';
+if ($searchQuery != '') {
+    $products = search_products($searchQuery);  // Function to search products by name
 } else {
-    $products = join_product_table();
+    $products = join_product_table();  // Get all products if no search query
 }
 
 // Sort the products alphabetically by name
 usort($products, function($a, $b) {
-    return strcmp($a['name'], $b['name']); // Compare product names
+    return strcmp($a['name'], $b['name']);
 });
+
+// Pagination logic
+$limit = 100; // Products per page
+$totalProducts = count($products); // Total number of products
+$totalPages = ceil($totalProducts / $limit); // Calculate total pages
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Current page (default is 1)
+$offset = ($page - 1) * $limit; // Calculate the offset for SQL query
+
+// Slice the products array to show only the products for the current page
+$products = array_slice($products, $offset, $limit);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,26 +48,42 @@ usort($products, function($a, $b) {
         th,
         td {
             padding: 20px;
-            border: 1px solid #e2e8f0; /* Change border to 1px for better visibility */
+            border: 1px solid #e2e8f0;
         }
 
         th {
-            background-color: #eaf5e9;
+            background-color: rgba(236, 253, 245, 1); /* Applying bg-green-50 */
         }
 
         table {
-            border-collapse: collapse; /* Ensure borders collapse */
-            width: 100%; /* Ensure table takes full width */
+            border-collapse: collapse;
+            width: 100%;
         }
 
         tr:hover {
-            background-color: #f7fafc; /* Light hover effect for rows */
+            background-color: #f7fafc;
         }
 
         .header-bg {
-            background-color: #eaf5e9; /* Light green color */
+            background-color: rgba(236, 253, 245, 1); /* bg-green-50 applied */
         }
     </style>
+
+    <script>
+        function filterProducts() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const tableRows = document.querySelectorAll('#productTable tbody tr');
+
+            tableRows.forEach(row => {
+                const productName = row.querySelector('.product-name').textContent.toLowerCase();
+                if (productName.includes(searchInput)) {
+                    row.style.display = '';  // Show row
+                } else {
+                    row.style.display = 'none';  // Hide row
+                }
+            });
+        }
+    </script>
 </head>
 
 <body class="bg-gray-100">
@@ -75,30 +100,17 @@ usort($products, function($a, $b) {
         <div class="bg-white shadow-md rounded-lg">
             <div class="flex justify-between items-center p-4 header-bg">
                 <strong class="text-3xl font-bold">
-                    <i class="fas fa-box mr-2"></i> <!-- Icon for products -->
-                    <?php
-                    if (isset($_POST['update_category'])) {
-                        echo "Products by Category";
-                    } else {
-                        echo "All Products";
-                    }
-                    ?>
+                    <i class="fas fa-box mr-2"></i>
+                    <?php echo "All Products"; ?>
                 </strong>
             </div>
             <div class="p-4">
-                <form method="post" action="">
-                    <div class="flex space-x-4">
-                    <select class="form-control border border-gray-300 rounded-md px-4 py-2 w-full" name="product-category">
-                        <?php foreach ($all_categories as $cat): ?>
-                            <option value="<?php echo (int)$cat['id'] ?>">
-                                <?php echo remove_junk($cat['name']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-
-                        <button type="submit" name="update_category" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Filter Category</button>
-                    </div>
-                </form>
+                <!-- Search Input -->
+                <div class="mb-4">
+                    <input type="text" id="searchInput" name="searchInput" class="border border-gray-300 rounded-md px-4 py-2 w-full"
+                        placeholder="Search by product name..." value="<?php echo isset($_GET['searchInput']) ? htmlspecialchars($_GET['searchInput']) : ''; ?>"
+                        onkeyup="filterProducts()">
+                </div>
             </div>
         </div>
     </div>
@@ -106,18 +118,18 @@ usort($products, function($a, $b) {
     <div class="grid grid-cols-1 mt-6 mx-5">
         <div class="bg-white shadow-md rounded-lg">
             <div class="p-4">
-                <table class="min-w-full border-collapse">
+                <table id="productTable" class="min-w-full border-collapse">
                     <thead>
                         <tr>
-                            <th class="text-center border px-4 py-2" style="width: 50px;">#</th>
-                            <th class="text-center border px-4 py-2" style="width: 10%;">Category</th>
+                            <th class="text-center border px-4 py-2">#</th>
+                            <th class="text-center border px-4 py-2">Category</th>
                             <th class="text-center border px-4 py-2">Product Name</th>
                             <th class="text-center border px-4 py-2">Photo</th>
-                            <th class="text-center border px-4 py-2" style="width: 10%;">Available Stock</th>
-                            <th class="text-center border px-4 py-2" style="width: 10%;">Cost Price</th>
-                            <th class="text-center border px-4 py-2" style="width: 10%;">Sale Price</th>
-                            <th class="text-center border px-4 py-2" style="width: 10%;">Product Added</th>
-                            <th class="text-center border px-4 py-2" style="width: 100px;">Actions</th>
+                            <th class="text-center border px-4 py-2">Available Stock</th>
+                            <th class="text-center border px-4 py-2">Cost Price</th>
+                            <th class="text-center border px-4 py-2">Sale Price</th>
+                            <th class="text-center border px-4 py-2">Product Added</th>
+                            <th class="text-center border px-4 py-2">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -126,11 +138,12 @@ usort($products, function($a, $b) {
                                 <tr>
                                     <td class="text-center"><?php echo count_id(); ?></td>
                                     <td class="text-center"><?php echo remove_junk($product['category']); ?></td>
-                                    <td class="text-center">
-                                        <a href="view_product.php?id=<?php echo (int)$product['id']; ?>">
-                                            <?php echo remove_junk($product['name']); ?>
+                                    <td class="text-center product-name">
+                                        <a href="view_product.php?id=<?php echo (int)$product['id']; ?>&searchInput=<?php echo urlencode($product['name']); ?>">
+                                            <?php echo $product['name']; ?>
                                         </a>
                                     </td>
+
                                     <td class="text-center">
                                         <div class="flex justify-center">
                                             <?php if ($product['media_id'] === '0'): ?>
@@ -168,11 +181,48 @@ usort($products, function($a, $b) {
                         <?php endif; ?>
                     </tbody>
                 </table>
+
+                <div class="flex justify-center mt-4">
+                    <nav aria-label="Page navigation">
+                        <ul class="inline-flex items-center space-x-2">
+                            <!-- Previous Page Link -->
+                            <li>
+                                <a href="?page=1&searchInput=<?php echo urlencode($searchQuery); ?>" class="px-4 py-2 bg-blue-500 text-white rounded <?php echo ($page == 1) ? 'opacity-50 cursor-not-allowed' : ''; ?>" <?php echo ($page == 1) ? 'disabled' : ''; ?>>
+                                    First
+                                </a>
+                            </li>
+                            <li>
+                                <a href="?page=<?php echo ($page > 1) ? $page - 1 : 1; ?>&searchInput=<?php echo urlencode($searchQuery); ?>" class="px-4 py-2 bg-blue-500 text-white rounded <?php echo ($page == 1) ? 'opacity-50 cursor-not-allowed' : ''; ?>" <?php echo ($page == 1) ? 'disabled' : ''; ?>>
+                                    Previous
+                                </a>
+                            </li>
+                            <!-- Page Number Links -->
+                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                <li>
+                                    <a href="?page=<?php echo $i; ?>&searchInput=<?php echo urlencode($searchQuery); ?>" class="px-4 py-2 <?php echo ($i == $page) ? 'bg-blue-500 text-white' : 'bg-white text-blue-500'; ?> rounded">
+                                        <?php echo $i; ?>
+                                    </a>
+                                </li>
+                            <?php endfor; ?>
+                            <!-- Next Page Link -->
+                            <li>
+                                <a href="?page=<?php echo ($page < $totalPages) ? $page + 1 : $totalPages; ?>&searchInput=<?php echo urlencode($searchQuery); ?>" class="px-4 py-2 bg-blue-500 text-white rounded <?php echo ($page == $totalPages) ? 'opacity-50 cursor-not-allowed' : ''; ?>" <?php echo ($page == $totalPages) ? 'disabled' : ''; ?>>
+                                    Next
+                                </a>
+                            </li>
+                            <!-- Last Page Link -->
+                            <li>
+                                <a href="?page=<?php echo $totalPages; ?>&searchInput=<?php echo urlencode($searchQuery); ?>" class="px-4 py-2 bg-blue-500 text-white rounded <?php echo ($page == $totalPages) ? 'opacity-50 cursor-not-allowed' : ''; ?>" <?php echo ($page == $totalPages) ? 'disabled' : ''; ?>>
+                                    Last
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
 
-    <?php include_once('layouts/footer.php'); ?>
 </body>
 
 </html>

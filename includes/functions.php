@@ -47,20 +47,28 @@ function validate_fields($var){
 /* Function for Display Session Message
    Ex echo displayt_msg($message);
 /*--------------------------------------------------------------*/
-function display_msg($msg = ''){
-   $output = array();
-   if(!empty($msg)) {
-      foreach ($msg as $key => $value) {
-         $output  = "<div class=\"alert alert-{$key}\">";
-         $output .= "<a href=\"#\" class=\"close\" data-dismiss=\"alert\">&times;</a>";
-         $output .= remove_junk(first_character($value));
-         $output .= "</div>";
-      }
-      return $output;
-   } else {
-     return "" ;
-   }
+function display_msg($msg = '') {
+  $output = ''; // Initialize the output variable as a string.
+  if(!empty($msg)) {
+     // Check if $msg is an array
+     if (is_array($msg)) {
+        foreach ($msg as $key => $value) {
+           $output .= "<div class=\"alert alert-{$key}\">";
+           $output .= "<a href=\"#\" class=\"close\" data-dismiss=\"alert\">&times;</a>";
+           $output .= remove_junk(first_character($value));
+           $output .= "</div>";
+        }
+     } else {
+        // If $msg is a string, just display it in a default alert
+        $output = "<div class=\"alert alert-info\">";
+        $output .= "<a href=\"#\" class=\"close\" data-dismiss=\"alert\">&times;</a>";
+        $output .= remove_junk(first_character($msg));
+        $output .= "</div>";
+     }
+  }
+  return $output;
 }
+
 
 /*--------------------------------------------------------------*/
 /* Function for redirect
@@ -170,6 +178,26 @@ function get_sales_forecast($months = 2) {
   }
 
   return $forecast;
+}
+
+function find_user_by_id($id) {
+  global $db;
+  $sql = "SELECT * FROM users WHERE id = '{$id}' LIMIT 1";
+  $result = $db->query($sql);
+  return $result->fetch_assoc();  // Or return the appropriate data.
+}
+function search_products($query) {
+  global $db;
+  $sql = "SELECT * FROM products WHERE name LIKE ?";
+  $stmt = $db->prepare($sql);
+  $stmt->execute(['%' . $query . '%']);
+  return $stmt->fetchAll();
+}
+
+function find_products_by_name($name) {
+    global $db;
+    $sql  = "SELECT * FROM products WHERE name LIKE '%" . $db->escape($name) . "%'";
+    return $db->query($sql);
 }
 
 

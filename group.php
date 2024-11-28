@@ -23,99 +23,100 @@ if (!$all_groups) {
   <!-- Tailwind CSS -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
   <style>
-    /* Custom styles */
-    .custom-class { color: #eaf5e9; }
     th, td {
-      padding: 20px;
-      border-bottom: 1px solid #e2e8f0;
-      white-space: nowrap; /* Prevent text wrapping */
-      overflow: hidden; /* Hide overflow */
-      text-overflow: ellipsis; /* Show ellipsis for long text */
+      padding-top: 1.25rem;
+      padding-bottom: 1.25rem;
     }
+
     th {
-      background-color: #eaf5e9; /* Light green color */
+      background-color: #f4fafb;
     }
-    .header-section {
-      background-color: #eaf5e9; /* Apply Light green color to the header */
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
     }
+
+    tr:hover {
+      background-color: #f9fafb;
+    }
+
+    .header-bg {
+      background-color: #f4fafb;
+    }
+
+    .table-row-height th, .table-row-height td {
+      padding-top: 1.25rem;
+      padding-bottom: 1.25rem;
+    }
+
     .table-cell-wrap {
-      max-width: 150px; /* Set a maximum width for long content */
+      max-width: 150px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
-</style>
 
+    .custom-class {
+      color: #eaf5e9;
+    }
+  </style>
 </head>
-<body class="bg-gray-100">
 
-<?php include_once('layouts/header.php'); ?>
+<body class="bg-gray-50">
+  <?php include_once('layouts/header.php'); ?>
 
-<div class="flex justify-center">
-   <div class="w-11/12 md:w-2/3">
-     <?php echo display_msg($msg); ?>
-   </div>
-</div>
+  <div class="w-full px-4 py-6">
+    <?php echo display_msg($msg); ?>
 
-<!-- Groups Panel -->
-<div class="grid grid-cols-1 mt-6 mx-5">
-  <div class="bg-white shadow-md rounded-lg">
-      <div class="flex justify-between items-center p-4 border-b header-section">
-      <h2 class="text-3xl font-bold">
-        <span class="glyphicon glyphicon-th" style="font-size: 20px;"></span>
-        Groups
-      </h2>
-      <a href="add_group.php" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add New Group</a>
-    </div>
-
-    <div class="p-4">
-      <table class="min-w-full border-collapse">
-        <thead>
-          <tr>
-            <th class="text-center border px-4 py-2" style="width: 50px;">#</th>
-            <th class="border px-4 py-2">Group Name</th>
-            <th class="text-center border px-4 py-2" style="width: 20%;">Group Level</th>
-            <th class="text-center border px-4 py-2" style="width: 15%;">Status</th>
-            <th class="text-center border px-4 py-2" style="width: 100px;">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-        <?php if (count($all_groups) > 0): ?>
-          <?php foreach($all_groups as $a_group): ?>
-            <tr>
-             <td class="text-center border px-4 py-2"><?php echo count_id(); ?></td>
-             <td class="border px-4 py-2 table-cell-wrap"><?php echo remove_junk(ucwords($a_group['group_name'])); ?></td>
-             <td class="text-center border px-4 py-2">
-               <?php echo remove_junk(ucwords($a_group['group_level'])); ?>
-             </td>
-             <td class="text-center border px-4 py-2">
-             <?php if($a_group['group_status'] === '1'): ?>
-              <span class="bg-green-500 text-white px-2 py-1 rounded">Active</span>
-            <?php else: ?>
-              <span class="bg-red-500 text-white px-2 py-1 rounded">Deactive</span>
-            <?php endif; ?>
-             </td>
-             <td class="text-center border px-4 py-2">
-               <div class="flex justify-center space-x-2">
-                  <a href="edit_group.php?id=<?php echo (int)$a_group['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" data-toggle="tooltip" title="Edit">
-                    <i class="glyphicon glyphicon-pencil"></i>
-                  </a>
-                  <a href="delete_group.php?id=<?php echo (int)$a_group['id']; ?>" onClick="return confirm('Are you sure you want to delete this group?');" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" data-toggle="tooltip" title="Delete">
-                    <i class="glyphicon glyphicon-trash"></i>
-                  </a>
-               </div>
-             </td>
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <div class="flex justify-between items-center p-6 bg-green-50">
+        <h2 class="text-2xl font-semibold text-gray-800">
+          <i class="fas fa-th mr-2"></i> All Groups
+        </h2>
+      </div>
+      <div class="overflow-x-auto px-6 py-4">
+        <table class="min-w-full table-auto border-collapse table-row-height">
+          <thead>
+            <tr class="border-b bg-gray-100">
+              <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">#</th>
+              <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Group Name</th>
+              <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Group Level</th>
+              <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Actions</th>
             </tr>
-          <?php endforeach; ?>
-        <?php else: ?>
-          <tr>
-            <td colspan="5" class="text-center border px-4 py-2">No groups found</td>
-          </tr>
-        <?php endif; ?>
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            <?php if (count($all_groups) > 0): ?>
+              <?php foreach($all_groups as $a_group): ?>
+                <tr class="hover:bg-gray-50">
+                  <td class="text-center px-4 py-3"><?php echo count_id(); ?></td>
+                  <td class="text-center px-4 py-3 table-cell-wrap"><?php echo remove_junk(ucwords($a_group['group_name'])); ?></td>
+                  <td class="text-center px-4 py-3"><?php echo remove_junk(ucwords($a_group['group_level'])); ?></td>
+                  <td class="text-center px-4 py-3">
+                    <div class="flex justify-center space-x-2">
+                      <!-- Edit Button -->
+                      <a href="edit_group.php?id=<?php echo (int)$a_group['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Edit">
+                        <i class="fas fa-pencil-alt"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <tr>
+                <td colspan="4" class="text-center py-4 text-gray-500">No groups found.</td>
+              </tr>
+            <?php endif; ?>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-</div>
 
-<?php include_once('layouts/footer.php'); ?>
+  <?php include_once('layouts/footer.php'); ?>
 </body>
 </html>

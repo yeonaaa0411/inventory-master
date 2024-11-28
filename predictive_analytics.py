@@ -144,6 +144,28 @@ def predict_sales():
             'year': date.year
         })
 
+    # Calculate predicted sales for December (1 month prediction)
+    december_forecast_qty = model_fit.forecast(steps=1)[0]  # 1 month prediction
+    december_forecast_sales_count = sales_count_model_fit.forecast(steps=1)[0]  # 1 month prediction
+
+    # Calculate predicted revenue for December
+    december_revenue = 0
+    for product_pred in product_predictions:
+        product_qty = product_pred['predicted_qty'][0]  # For 1 month ahead
+        price = df[df['product_name'] == product_pred['product_name']]['price'].iloc[0]
+        price = float(price)
+        december_revenue += product_qty * price
+
+    # Add December forecast to the result
+    result['predictions'].append({
+        'date': '2024-12-31',  # Static date for December forecast
+        'predicted_qty': december_forecast_qty,
+        'predicted_sales_count': december_forecast_sales_count,
+        'predicted_revenue': december_revenue,
+        'quarter': 4,  # December is in Q4
+        'year': 2024
+    })
+
     # Sort the products based on predicted revenue and quantity
     top_10_revenue_products = sorted(product_revenue_predictions, key=lambda x: sum(x['predicted_revenue']), reverse=True)[:10]
     top_10_qty_products = sorted(product_predictions, key=lambda x: sum(x['predicted_qty']), reverse=True)[:10]
@@ -152,14 +174,21 @@ def predict_sales():
     result['top_10_revenue_products'] = [{'product_name': product['product_name'], 'predicted_revenue': sum(product['predicted_revenue'])} for product in top_10_revenue_products]
     result['top_10_qty_products'] = [{'product_name': product['product_name'], 'predicted_qty': sum(product['predicted_qty'])} for product in top_10_qty_products]
 
-    # Close the database connection
-    cursor.close()
-    connection.close()
+    # Slow-moving products detection: Products with predicted qty below a certain threshold (e.g., 10 units per quarter)
+    slow_moving_threshold = 20
+    slow_moving_products = []
+    for product_pred in product_predictions:
+        if sum(product_pred['predicted_qty']) < slow_moving_threshold:
+            slow_moving_products.append({
+                'product_name': product_pred['product_name'],
+                'predicted_qty': sum(product_pred['predicted_qty'])
+            })
 
-    # Convert all values to native types
-    result = convert_to_native_types(result)
+    # Add slow-moving products to the result
+    result['slow_moving_products'] = slow_moving_products
 
-    return jsonify(result)
+    # Return JSON response with the result
+    return jsonify(convert_to_native_types(result))
 
 if __name__ == '__main__':
     app.run(debug=True)

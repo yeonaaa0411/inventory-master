@@ -101,21 +101,49 @@ function tableExists($table) {
   /* coming from the login_v2.php form.
   /* If you used this method then remove authenticate function.
  /*--------------------------------------------------------------*/
-   function authenticate_v2($username='', $password='') {
-     global $db;
-     $username = $db->escape($username);
-     $password = $db->escape($password);
-     $sql  = sprintf("SELECT id,username,password,user_level FROM users WHERE username ='%s' LIMIT 1", $username);
-     $result = $db->query($sql);
-     if($db->num_rows($result)){
-       $user = $db->fetch_assoc($result);
-       $password_request = sha1($password);
-       if($password_request === $user['password'] ){
-         return $user;
-       }
-     }
+ function authenticate_v2($username='', $password='') {
+  global $db;
+  $username = $db->escape($username);
+  $password = $db->escape($password);
+  $sql  = sprintf("SELECT id,username,password,user_level FROM users WHERE username ='%s' LIMIT 1", $username);
+  $result = $db->query($sql);
+  if($db->num_rows($result)){
+    $user = $db->fetch_assoc($result);
+    $password_request = sha1($password);
+    if($password_request === $user['password'] ){
+      return $user;
+    }
+  }
+ return false;
+}
+function authenticate($username = '', $password = '') {
+    global $db;
+
+    // Sanitize inputs
+    $username = $db->escape($username);
+    $password = $db->escape($password);
+
+    // SQL query to fetch the user data
+    $sql = sprintf("SELECT id, username, password, user_level FROM users WHERE username = '%s' LIMIT 1", $username);
+    $result = $db->query($sql);
+
+    // Check if user exists
+    if($db->num_rows($result)) {
+        $user = $db->fetch_assoc($result);
+
+        // Compare entered password with the stored hashed password
+        $password_request = sha1($password);
+
+        // If passwords match, return user data
+        if($password_request === $user['password']) {
+            return $user;  // Return the entire user array, not just the id
+        }
+    }
+
+    // Return false if authentication fails
     return false;
-   }
+}
+
 
 
   /*--------------------------------------------------------------*/
@@ -136,17 +164,18 @@ function tableExists($table) {
   /* Find all user by
   /* Joining users table and user gropus table
   /*--------------------------------------------------------------*/
-  function find_all_user(){
-      global $db;
-      $results = array();
-      $sql = "SELECT u.id,u.name,u.username,u.user_level,u.status,u.last_login,";
-      $sql .="g.group_name ";
-      $sql .="FROM users u ";
-      $sql .="LEFT JOIN user_groups g ";
-      $sql .="ON g.group_level=u.user_level ORDER BY u.name ASC";
-      $result = find_by_sql($sql);
-      return $result;
-  }
+function find_all_user() {
+    global $db;
+    $results = array();
+    $sql = "SELECT u.id, u.name, u.username, u.user_level, u.status, u.last_login, "; // Added last_login
+    $sql .= "g.group_name "; // Fixed the missing space
+    $sql .= "FROM users u ";
+    $sql .= "LEFT JOIN user_groups g ON g.group_level = u.user_level ORDER BY u.name ASC";
+    $result = find_by_sql($sql);
+    return $result;
+}
+
+
   /*--------------------------------------------------------------*/
   /* Function to update the last log in of a user
   /*--------------------------------------------------------------*/
@@ -159,6 +188,7 @@ function tableExists($table) {
     $result = $db->query($sql);
     return ($result && $db->affected_rows() === 1 ? true : false);
 	}
+
 
   /*--------------------------------------------------------------*/
   /* Function to log the action of a user
@@ -224,15 +254,15 @@ function tableExists($table) {
     // if group status is deactivated (0) and login_level is not null
     elseif ($login_level && $login_level['group_status'] === '0') {
         $session->msg('d', 'This level user has been banned!');
-        redirect('home.php', false);
+        redirect('admin.php', false);
     }
     // checking if user level is less than or equal to the required level
     elseif ($current_user['user_level'] <= (int)$require_level) {
         return true;
     } else {
         $session->msg("d", "Sorry! You don't have permission to view the page.");
-        redirect('home.php', false);
-    }
+        redirect('add_order.php', false);
+    } 
 }
 
 

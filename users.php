@@ -79,20 +79,23 @@
              <?php if($a_user['status'] === '1'): ?>
               <span class="bg-green-500 text-white px-2 py-1 rounded"><?php echo "Active"; ?></span>
              <?php else: ?>
-              <span class="bg-red-500 text-white px-2 py-1 rounded"><?php echo "Deactive"; ?></span>
+              <span class="bg-red-500 text-white px-2 py-1 rounded"><?php echo "Inactive"; ?></span>
              <?php endif;?>
            </td>
            <td class="border px-4 py-2"><?php echo read_date($a_user['last_login'])?></td>
            <td class="text-center border px-4 py-2">
-             <div class="flex justify-center space-x-2">
-                <a href="edit_user.php?id=<?php echo (int)$a_user['id'];?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" data-toggle="tooltip" title="Edit">
-                  <i class="glyphicon glyphicon-pencil"></i>
-                </a>
+            <div class="flex justify-center space-x-2">
+              <a href="edit_user.php?id=<?php echo (int)$a_user['id'];?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" data-toggle="tooltip" title="Edit">
+                <i class="glyphicon glyphicon-pencil"></i>
+              </a>
+              <?php if ((int)$a_user['user_level'] !== 1): ?>
                 <a href="delete_user.php?id=<?php echo (int)$a_user['id'];?>" onClick="return confirm('Are you sure you want to delete this user?');" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" data-toggle="tooltip" title="Delete">
                   <i class="glyphicon glyphicon-trash"></i>
                 </a>
-             </div>
-           </td>
+              <?php endif; ?>
+            </div>
+          </td>
+
           </tr>
         <?php endforeach; ?>
         </tbody>
@@ -104,4 +107,3 @@
 <?php include_once('layouts/footer.php'); ?>
 </body>
 </html>
-

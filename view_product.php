@@ -30,11 +30,30 @@ include_once('layouts/header.php');
 <style>
     .header-bg {
         background-color: #eaf5e9 !important;
-    
     }
     .thead {
         background-color: #eaf5e9 !important;
-    
+    }
+    th, td {
+        padding-top: 1.25rem;
+        padding-bottom: 1.25rem;
+    }
+    th {
+        background-color: #f4fafb;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    tr:hover {
+        background-color: #f9fafb;
+    }
+    .table-row-height th, .table-row-height td {
+        padding-top: 1.25rem;
+        padding-bottom: 1.25rem;
+    }
+    .panel-heading {
+        background-color: #d1fae5 !important; /* Apply background color only to the header */
     }
 </style>
 
@@ -83,16 +102,16 @@ include_once('layouts/header.php');
                     <div class="col-md-10">
                         <div class="panel-body">
                             <table class="table table-bordered">
-                            <thead class="thead">
-                                <tr>
-                                    <th class="text-center" style="width: 10%;">Category</th>
-                                    <th class="text-center" style="width: 10%;">Stock</th>
-                                    <th class="text-center" style="width: 15%;">Cost Price</th>
-                                    <th class="text-center" style="width: 15%;">Sale Price</th>
-                                    <th class="text-center" style="width: 15%;">Product Added</th>
-                                    <th class="text-center" style="width: 50px;">Actions</th>
-                                </tr>
-                            </thead>
+                                <thead class="thead">
+                                    <tr>
+                                        <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Category</th>
+                                        <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Stock</th>
+                                        <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Cost Price</th>
+                                        <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Sale Price</th>
+                                        <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Product Added</th>
+                                        <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Actions</th>
+                                    </tr>
+                                </thead>
 
                                 <tbody>
                                     <tr>

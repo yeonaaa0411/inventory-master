@@ -20,39 +20,100 @@ page_require_level(2);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
+        /* Header Background Color */
         .custom-header {
-            background-color: #eaf5e9; /* Light green color */
+            background-color: rgba(236, 253, 245, 1); /* Light green background */
+        }
+
+        /* Card Styling */
+        .card {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Button Styling */
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+
+        /* Table Styling */
+        table th, table td {
+            padding: 0.75rem;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        table th {
+            background-color: #f9fafb;
+            font-weight: bold;
+        }
+
+        table tbody tr:hover {
+            background-color: #f3f4f6;
+        }
+
+        /* Form Input Styling */
+        .form-input {
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            width: 100%;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
         }
     </style>
 </head>
 
 <body class="bg-gray-100">
+
     <?php include_once('layouts/header.php'); ?>
 
-    <div class="flex justify-left mt-10">
-        <div class="w-full sm:w-2/3 lg:w-1/3">
-            <div class="bg-white shadow-md rounded-lg">
+    <div class="flex justify-center mt-10">
+        <div class="w-full sm:w-2/3 lg:w-1/2">
+            <div class="card">
                 <div class="custom-header p-6 border-b">
                     <div class="flex items-center">
-                        <i class="fas fa-chart-bar mr-2" style="font-size: 20px;"></i>
-                        <strong class="text-3xl font-bold">Generate Report</strong>
+                        <i class="fas fa-chart-bar mr-3 text-2xl text-green-600"></i>
+                        <strong class="text-3xl font-semibold text-gray-800">Generate Report</strong>
                     </div>
                 </div>
+
                 <div class="p-6">
                     <?php echo display_msg($msg); ?>
-                    <form method="post" action="sale_report_process.php" class="clearfix">
-                        <div class="mb-4">
-                            <label for="start-date" class="block text-gray-700 font-bold mb-2">Start Date</label>
-                            <input type="date" class="form-control border border-gray-300 rounded-md px-4 py-2 w-full" name="start-date" required>
+
+                    <form method="post" action="sale_report_process.php">
+                        <div class="mb-6">
+                            <label for="start-date" class="form-label">Start Date</label>
+                            <input type="date" id="start-date" class="form-input" name="start-date" required>
                         </div>
 
-                        <div class="mb-4">
-                            <label for="end-date" class="block text-gray-700 font-bold mb-2">End Date</label>
-                            <input type="date" class="form-control border border-gray-300 rounded-md px-4 py-2 w-full" name="end-date" required>
+                        <div class="mb-6">
+                            <label for="end-date" class="form-label">End Date</label>
+                            <input type="date" id="end-date" class="form-input" name="end-date" required>
                         </div>
 
-                        <div class="flex justify-center">
-                            <button type="submit" name="submit" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">Generate Report</button>
+                        <div class="flex justify-center mt-6">
+                            <button type="submit" name="submit" class="btn-primary">Generate Report</button>
                         </div>
                     </form>
 
@@ -66,14 +127,14 @@ page_require_level(2);
                         $sales_data = find_product_sales_by_month(null, $start_date, $end_date);
 
                         if (empty($sales_data)) {
-                            echo "<p class='text-center mt-4 font-bold text-red-600'>No sales data</p>";
+                            echo "<p class='text-center mt-4 font-semibold text-red-600'>No sales data found for the selected range.</p>";
                         } else {
-                            echo "<table class='mt-4 w-full text-center'>";
-                            echo "<tr><th>Month</th><th>Total Sales</th></tr>";
+                            echo "<table class='mt-4 w-full text-sm text-gray-700'>";
+                            echo "<thead><tr><th>Month</th><th>Total Sales</th></tr></thead><tbody>";
                             foreach ($sales_data as $month => $total_sales) {
                                 echo "<tr><td>{$month}</td><td>₱ {$total_sales}</td></tr>";
                             }
-                            echo "</table>";
+                            echo "</tbody></table>";
                         }
                     }
                     ?>

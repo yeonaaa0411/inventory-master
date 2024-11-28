@@ -5,34 +5,33 @@ page_require_level(2);
 
 // Handle form submission for adding a category
 if (isset($_POST['add_cat'])) {
-    $req_field = array('category-name');
-    validate_fields($req_field);
-    
-    $cat_name = remove_junk($db->escape($_POST['category-name']));
-    
-    // Check if the category already exists
-    $sql = "SELECT * FROM categories WHERE name = '{$cat_name}' LIMIT 1";
-    $result = $db->query($sql);
+  $req_field = ['category-name'];
+  validate_fields($req_field);
 
-    if ($db->num_rows($result) > 0) {
-        // Category already exists
-        $session->msg('d', "Category '{$cat_name}' already exists. Please choose a different name.");
-        redirect('categories.php', false);
-    } elseif (empty($errors)) {
-        // Insert the new category
-        $insert_sql = "INSERT INTO categories (name) VALUES ('{$cat_name}')";
-        if ($db->query($insert_sql)) {
-            $session->msg('s', "Category added successfully.");
-            redirect('categories.php', false);
-        } else {
-            $session->msg('d', 'Failed to add the category.');
-            redirect('categories.php', false);
-        }
-    } else {
-        $session->msg("d", $errors);
-        redirect('categories.php', false);
-    }
+  $cat_name = remove_junk($db->escape($_POST['category-name']));
+
+  // Check if the category already exists
+  $sql = "SELECT * FROM categories WHERE name = '{$cat_name}' LIMIT 1";
+  $result = $db->query($sql);
+
+  if ($db->num_rows($result) > 0) {
+      $session->msg('d', "Category '{$cat_name}' already exists. Please choose a different name.");
+      redirect('categories.php', false);
+  } elseif (empty($errors)) {
+      // Insert the new category
+      $insert_sql = "INSERT INTO categories (name) VALUES ('{$cat_name}')";
+      if ($db->query($insert_sql)) {
+          $session->msg('s', "Category added successfully.");
+      } else {
+          $session->msg('d', 'Failed to add the category.');
+      }
+      redirect('categories.php', false);
+  } else {
+      $session->msg("d", $errors);
+      redirect('categories.php', false);
+  }
 }
+
 
 // Handle form submission for editing a category
 if (isset($_POST['edit_cat'])) {
@@ -61,150 +60,182 @@ if (isset($_POST['edit_cat'])) {
     }
 }
 
-$all_categories = find_all('categories');
+// Fetch all categories
+$sql = "SELECT * FROM categories";
+$all_categories = $db->query($sql);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?php echo isset($page_title) ? remove_junk($page_title) : "Admin"; ?></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo isset($page_title) ? remove_junk($page_title) : "Admin"; ?></title>
 
-  <!-- Tailwind CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-  <!-- Font Awesome CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-  <style>
-    th, td { padding: 20px; border-bottom: 1px solid #e2e8f0; }
-    th { background-color: #eaf5e9; }
+    <style>
+        th, td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
 
-    .header-bg {
-        background-color: #eaf5e9; /* Light green color */
-    }
+        th {
+            background-color: #f4fafb;
+            color: #374151;
+            font-weight: bold;
+        }
 
-    /* Highlight the row on hover */
-    tr:hover {
-        background-color: #f4f4f9; /* Light gray color */
-        cursor: pointer;
-    }
+        tr:hover {
+            background-color: #f9fafb;
+        }
 
-    /* Modal style */
-    .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 50; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.5); }
-    .modal-content { background-color: #fff; padding: 20px; border-radius: 8px; max-width: 500px; width: 100%; }
-    .modal.active { display: flex; }
-  </style>
+        .header-bg {
+            background-color: #f4fafb;
+        }
+
+        .table-container {
+            overflow-x-auto;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 50;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+    </style>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-50">
+    <?php include_once('layouts/header.php'); ?>
 
-<?php include_once('layouts/header.php'); ?>
+    <div class="w-full px-4 py-6">
+        <?php echo display_msg($msg); ?>
 
-<div class="flex justify-center">
-  <div class="w-11/12 md:w-2/3">
-    <?php echo display_msg($msg); ?>
-  </div>
-</div>
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <div class="flex justify-between items-center p-6 bg-green-50">
+                <h2 class="text-2xl font-semibold text-gray-800">
+                    <i class="fas fa-tag mr-2"></i> Categories
+                </h2>
+                <button id="openModal" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Category</button>
+            </div>
+            <div class="table-container px-6 py-4">
+                <table class="min-w-full table-auto border-collapse">
+                    <thead>
+                        <tr>
+                            <th class="text-center px-4 py-2 bg-green-50">#</th>
+                            <th class="text-left px-4 py-2 bg-green-50">Category Name</th>
+                            <th class="text-center px-4 py-2 bg-green-50">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($all_categories as $cat): ?>
+                            <tr class="hover:bg-gray-50">
+                                <td class="text-center px-4 py-3"><?php echo $cat['id']; ?></td>
+                                <td class="text-left px-4 py-3"><?php echo remove_junk(ucfirst($cat['name'])); ?></td>
+                                <td class="text-center px-4 py-3">
+                                    <div class="flex justify-center space-x-2">
+<!-- Edit Button -->
+<a href="javascript:void(0);" 
+   class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600"
+   onclick="editCategory(<?php echo $cat['id']; ?>, '<?php echo addslashes($cat['name']); ?>')">
+    <i class="fas fa-pencil-alt"></i>
+</a>
 
-<div class="grid grid-cols-1 mt-6 mx-5">
-  <div class="bg-white shadow-md rounded-lg">
-    <div class="flex justify-between items-center p-4 header-bg">
-      <h2 class="text-3xl font-bold">
-        <i class="fas fa-tag mr-2"></i>
-        Categories
-      </h2>
-      <!-- Button to trigger the modal -->
-      <button id="openModal" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Category</button>
+                                        <!-- Delete Button -->
+                                        <a href="delete_category.php?id=<?php echo $cat['id']; ?>" onClick="return confirm('Are you sure?')" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- Modal for adding a category -->
+<!-- Modal for adding/editing a category -->
 <div id="categoryModal" class="modal">
-  <div class="modal-content">
-    <h3 class="text-xl font-bold mb-4" id="modalTitle">Add Category</h3>
-    <form method="post" action="categories.php">
-      <input type="hidden" name="category-id" id="category-id">
-      <input type="text" name="category-name" id="category-name" placeholder="Category Name" class="form-control border border-gray-300 rounded-md px-4 py-2 w-full mb-4" required>
-      <div class="flex justify-end">
-        <button type="submit" name="add_cat" id="addCategoryButton" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Category</button>
-        <button type="button" id="closeModal" class="bg-red-500 text-white px-4 py-2 rounded ml-2 hover:bg-red-600">Cancel</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<div class="grid grid-cols-1 mt-6 mx-5">
-  <div class="bg-white shadow-md rounded-lg">
-    <div class="p-4">
-      <div class="overflow-x-auto">
-        <table class="min-w-full border-collapse">
-          <thead>
-            <tr>
-              <th class="text-center border px-4 py-2" style="width: 50px;">#</th>
-              <th class="border px-4 py-2">Category Name</th>
-              <th class="text-center border px-4 py-2" style="width: 100px;">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-          <?php foreach($all_categories as $cat): ?>
-            <tr>
-              <td class="text-center border px-4 py-2"><?php echo count_id(); ?></td>
-              <td class="border px-4 py-2"><?php echo remove_junk(ucfirst($cat['name'])); ?></td>
-              <td class="text-center border px-4 py-2">
-                <div class="flex justify-center space-x-2">
-                  <button class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Edit"
-                          onclick="openEditModal(<?php echo $cat['id']; ?>, '<?php echo $cat['name']; ?>')">
-                    <i class="fas fa-pencil-alt"></i>
-                  </button>
-                  <a href="delete_category.php?id=<?php echo (int)$cat['id']; ?>" onClick="return confirm('Are you sure you want to delete?');" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" title="Delete">
-                    <i class="fas fa-trash-alt"></i>
-                  </a>
-                </div>
-              </td>
-            </tr>
-          <?php endforeach; ?>
-          </tbody>
-        </table>
-      </div>
+    <div class="modal-content">
+        <h3 class="text-xl font-bold mb-4" id="modalTitle">Add Category</h3>
+        <form method="post" action="categories.php">
+            <!-- Hidden field for category ID, set only when editing -->
+            <input type="hidden" name="category-id" id="category-id" value="<?php echo isset($category) ? $category['id'] : ''; ?>">
+            <input type="text" name="category-name" id="category-name" 
+                placeholder="Category Name" class="form-control border border-gray-300 rounded-md px-4 py-2 w-full mb-4" 
+                value="<?php echo isset($category) ? remove_junk(ucfirst($category['name'])) : ''; ?>" required>
+            <div class="flex justify-end">
+                <button type="submit" name="<?php echo isset($category) ? 'edit_cat' : 'add_cat'; ?>" id="formSubmitButton" 
+                        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    <?php echo isset($category) ? 'Update Category' : 'Add Category'; ?>
+                </button>
+                <button type="button" id="closeModal" class="bg-red-500 text-white px-4 py-2 rounded ml-2 hover:bg-red-600">Cancel</button>
+            </div>
+        </form>
     </div>
-  </div>
 </div>
 
-<?php include_once('layouts/footer.php'); ?>
 
-<!-- JavaScript to manage the modal -->
-<script>
-  // Get modal and buttons
-  const modal = document.getElementById('categoryModal');
-  const openModalButton = document.getElementById('openModal');
-  const closeModalButton = document.getElementById('closeModal');
-  const addCategoryButton = document.getElementById('addCategoryButton');
-  const modalTitle = document.getElementById('modalTitle');
+    <script>
+const openModal = document.getElementById('openModal');
+const closeModal = document.getElementById('closeModal');
+const categoryModal = document.getElementById('categoryModal');
+const categoryInput = document.getElementById('category-name');
+const formSubmitButton = document.getElementById('formSubmitButton');
 
-  // Open modal when "Add Category" button is clicked
-  openModalButton.addEventListener('click', () => {
-    modal.classList.add('active');
-    modalTitle.textContent = "Add Category";
-    addCategoryButton.textContent = "Add Category";
-  });
+openModal.addEventListener('click', () => {
+    categoryModal.classList.add('active');
+    categoryInput.value = ''; // Clear input for adding new category
+    document.getElementById('category-id').value = ''; // Ensure ID is empty for new category
+    formSubmitButton.setAttribute('name', 'add_cat'); // Set form action to add new category
+    document.getElementById('modalTitle').textContent = 'Add Category'; // Change modal title
+});
 
-  // Close modal when "Cancel" button is clicked
-  closeModalButton.addEventListener('click', () => {
-    modal.classList.remove('active');
-  });
+closeModal.addEventListener('click', () => {
+    categoryModal.classList.remove('active');
+});
 
-  // Function to open modal for editing category
-  function openEditModal(catId, catName) {
-    document.getElementById('category-id').value = catId;
-    document.getElementById('category-name').value = catName;
-    modal.classList.add('active');
-    modalTitle.textContent = "Edit Category";
-    addCategoryButton.textContent = "Update Category";
-  }
-</script>
+// Edit category function (called when edit button is clicked)
+// Edit category function (called when edit button is clicked)
+function editCategory(id, name) {
+    categoryModal.classList.add('active');
+    document.getElementById('category-id').value = id;
+    categoryInput.value = name;
+    formSubmitButton.setAttribute('name', 'edit_cat'); // Set form action to edit category
+    document.getElementById('modalTitle').textContent = 'Edit Category'; // Change modal title
+}
 
+
+
+    </script>
+    <?php include_once('layouts/footer.php'); ?>
 </body>
+
 </html>

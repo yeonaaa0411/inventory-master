@@ -38,9 +38,9 @@
    </ul>
   </li>
   <li>
-    <a href="stock.php" class="submenu-toggle">
+    <a href="inventory.php" class="submenu-toggle">
       <i class="glyphicon glyphicon-th-large"></i>
-      <span>Stock</span>
+      <span>Inventory Log</span>
     </a>
   </li>
   <li>

@@ -44,7 +44,7 @@ if (isset($_POST['product'])) {
             $session->msg('s', "Product updated ");
             redirect('products.php', false);
         } else {
-            $session->msg('d', ' Sorry failed to update!');
+            $session->msg('d', ' Failed to update, No changes were made');
             redirect('edit_product.php?id=' . $product['id'], false);
         }
     } else {
@@ -71,7 +71,7 @@ if (isset($_POST['product'])) {
             border: 1px solid #e2e8f0;
         }
         th {
-            background-color: #eaf5e9;
+            background-color: rgba(236, 253, 245, 1); /* Apply the bg-green-50 color */
         }
         table {
             border-collapse: collapse;
@@ -81,8 +81,61 @@ if (isset($_POST['product'])) {
             background-color: #f7fafc;
         }
         .custom-header {
-            background-color: #eaf5e9; /* Light green color */
+            background-color: rgba(236, 253, 245, 1); /* Light green color */
         }
+        
+        /* Card Styling */
+        .card {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Button Styling */
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+
+        /* Form Input Styling */
+        .form-input {
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            width: 100%;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-bg {
+            background-color: #d1fae5; /* Light green color */
+        }
+
+        /* Dropdown and Select Styling */
+        select.form-input {
+            padding: 0.75rem;
+            font-size: 1rem;
+            width: 100%;
+        }
+
     </style>
 </head>
 <body class="bg-gray-100">
@@ -107,41 +160,47 @@ if (isset($_POST['product'])) {
                                 <span class="input-group-addon">
                                     <i class="glyphicon glyphicon-th-large"></i>
                                 </span>
-                                <input type="text" class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="product-title" value="<?php echo remove_junk($product['name']); ?>" placeholder="Product Name" required>
+                                <input type="text" class="form-input" name="product-title" value="<?php echo remove_junk($product['name']); ?>" placeholder="Product Name" required>
                             </div>
                         </div>
 
                         <div class="mb-8 flex space-x-4"> <!-- Increased bottom margin -->
-
                             <!-- Product Category Dropdown -->
-                            <select class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="product-category" required>
-                                <?php foreach ($all_categories as $cat): ?>
-                                    <option value="<?php echo (int)$cat['id'] ?>" <?php if ($cat['id'] === $product['category_id']) echo 'selected'; ?>>
-                                        <?php echo $cat['name'] ?>
+                            <select class="form-input" name="product-category" required>
+                                <?php foreach ($all_categories as $category) : ?>
+                                    <option value="<?php echo $category['id']; ?>"
+                                        <?php echo $category['id'] == $product['category_id'] ? 'selected' : ''; ?>>
+                                        <?php echo ucwords($category['name']); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
 
-                            <!-- Product Photo Dropdown -->
-                            <select class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="product-photo">
-                                <?php foreach ($all_photo as $photo): ?>
-                                    <option value="<?php echo (int)$photo['id'] ?>" <?php if ($photo['id'] === $product['media_id']) echo 'selected'; ?>>
-                                        <?php echo $photo['file_name'] ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-
-                            </div>
-
-
-                        <div class="mb-8 flex space-x-4"> <!-- Increased bottom margin -->
-                            <input type="number" class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="product-quantity" value="<?php echo remove_junk($product['quantity']); ?>" placeholder="Product Quantity" required>
-                            <input type="number" step="0.01" class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="cost-price" value="<?php echo remove_junk($product['buy_price']); ?>" placeholder="Cost Price" required>
-                            <input type="number" step="0.01" class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="sale-price" value="<?php echo remove_junk($product['sale_price']); ?>" placeholder="Sale Price" required>
+                            <!-- Product Quantity -->
+                            <input type="number" class="form-input" name="product-quantity" value="<?php echo remove_junk($product['quantity']); ?>" placeholder="Quantity" required>
                         </div>
 
-                        <div class="text-right">
-                            <button type="submit" name="product" class="bg-blue-500 text-white px-6 py-4 rounded hover:bg-blue-600">Update Product</button>
+                        <div class="mb-8 flex space-x-4"> <!-- Increased bottom margin -->
+                            <!-- Cost Price -->
+                            <input type="number" step="0.01" class="form-input" name="cost-price" value="<?php echo remove_junk($product['buy_price']); ?>" placeholder="Cost Price" required>
+
+                            <!-- Sale Price -->
+                            <input type="number" step="0.01" class="form-input" name="sale-price" value="<?php echo remove_junk($product['sale_price']); ?>" placeholder="Sale Price" required>
+                        </div>
+
+                        <div class="mb-8">
+                            <label for="product-photo" class="form-label">Product Photo</label>
+                            <select class="form-input" name="product-photo">
+                                <option value="">Select Photo</option>
+                                <?php foreach ($all_photo as $photo) : ?>
+                                    <option value="<?php echo $photo['id']; ?>" <?php echo $photo['id'] == $product['media_id'] ? 'selected' : ''; ?>>
+                                        <?php echo $photo['file_name']; ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="flex justify-center">
+                            <button type="submit" name="product" class="btn-primary">Update Product</button>
                         </div>
                     </form>
                 </div>
@@ -151,5 +210,6 @@ if (isset($_POST['product'])) {
 
     <!-- Include footer -->
     <?php include_once('layouts/footer.php'); ?>
+
 </body>
 </html>

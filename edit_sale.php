@@ -111,8 +111,9 @@ if (isset($_POST['update_sale'])) {
         }
 
         .header-bg {
-            background-color: #eaf5e9;
-        }
+    background-color: #eaf5e9; /* A similar light green color */
+}
+
     </style>
 
     <script>
@@ -137,57 +138,63 @@ if (isset($_POST['update_sale'])) {
 
     <div class="grid grid-cols-1 mt-6 mx-5">
         <div class="bg-white shadow-md rounded-lg">
-            <div class="flex justify-between items-center p-6 header-bg border-b">
-                <strong class="text-3xl font-bold">
-                    <i class="fas fa-edit mr-2"></i>
-                    Edit Sale
-                </strong>
-                <div class="pull-right">
-                    <a href="sales.php" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Show All Sales</a>
-                </div>
-            </div>
+        <div class="flex justify-between items-center p-6 bg-green-50 border-b">
+    <strong class="text-3xl font-bold">
+        <i class="fas fa-edit mr-2"></i>
+        Edit Sale
+    </strong>
+    <div class="pull-right">
+        <a href="sales.php" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Show All Sales</a>
+    </div>
+</div>
+
             <div class="p-4">
                 <form method="post" action="edit_sale.php?id=<?php echo (int)$sale['id']; ?>">
-                    <table class="min-w-full border-collapse">
-                        <thead>
-                            <tr>
-                                <th class="text-center border px-4 py-2">Order #</th>
-                                <th class="text-center border px-4 py-2">Product Title</th>
-                                <th class="text-center border px-4 py-2">Quantity</th>
-                                <th class="text-center border px-4 py-2">Price</th>
-                                <th class="text-center border px-4 py-2">Total</th>
-                                <th class="text-center border px-4 py-2">Date</th>
-                                <th class="text-center border px-4 py-2">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <input type="text" class="form-control" name="order_id" value="<?php echo remove_junk($order['id']); ?>" readonly>
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" id="sug_input" name="title" value="<?php echo remove_junk($product['name']); ?>" readonly>
-                                </td>
-                                <td>
-                                    <input type="number" class="form-control" name="quantity" value="<?php echo (int)$sale['qty']; ?>" min="1" required onchange="updateTotal()">
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" name="price" value="<?php echo remove_junk($product['sale_price']); ?>" readonly>
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" name="total" value="<?php echo remove_junk($sale['price']); ?>" readonly>
-                                </td>
-                                <td>
-                                    <input type="date" class="form-control" name="date" value="<?php echo remove_junk($sale['date']); ?>" required>
-                                </td>
-                                <td>
-                                    <button type="submit" name="update_sale" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-                                        <i class="fas fa-save"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <table class="min-w-full border-collapse">
+                <thead class="bg-green-50">
+    <tr>
+        <th class="text-center border px-4 py-2">Order #</th>
+        <th class="text-center border px-4 py-2">Product Title</th>
+        <th class="text-center border px-4 py-2">Quantity</th>
+        <th class="text-center border px-4 py-2">Price</th>
+        <th class="text-center border px-4 py-2">Total</th>
+        <th class="text-center border px-4 py-2">Date</th>
+        <th class="text-center border px-4 py-2">Action</th>
+    </tr>
+</thead>
+
+
+
+    <tbody>
+        <tr>
+            <td>
+                <input type="text" class="form-control" name="order_id" value="<?php echo remove_junk($order['id']); ?>" readonly>
+            </td>
+            <td>
+                <input type="text" class="form-control" id="sug_input" name="title" value="<?php echo remove_junk($product['name']); ?>" readonly>
+            </td>
+            <td>
+                <input type="number" class="form-control" name="quantity" value="<?php echo (int)$sale['qty']; ?>" min="1" required onchange="updateTotal()">
+            </td>
+            <td>
+                <input type="text" class="form-control" name="price" value="<?php echo remove_junk($product['sale_price']); ?>" readonly>
+            </td>
+            <td>
+                <input type="text" class="form-control" name="total" value="<?php echo remove_junk($sale['price']); ?>" readonly>
+            </td>
+            <td>
+                <input type="date" class="form-control" name="date" value="<?php echo remove_junk($sale['date']); ?>" required>
+            </td>
+            <td>
+                <button type="submit" name="update_sale" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+                    <i class="fas fa-save"></i>
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
                 </form>
             </div>
         </div>

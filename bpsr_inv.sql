@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 24, 2024 at 09:27 PM
+-- Generation Time: Nov 28, 2024 at 12:14 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -98,8 +98,7 @@ INSERT INTO `media` (`id`, `file_name`, `file_type`) VALUES
 (16, 'AquariumWaterTreatment.jpg', 'image/jpeg'),
 (17, 'PetCare.jpg', 'image/jpeg'),
 (18, 'PetSnake.jpg', 'image/jpeg'),
-(19, 'SmallMammalAccessories.jpg', 'image/jpeg'),
-(27, 'EI Wallpaper.png', 'image/png');
+(19, 'SmallMammalAccessories.jpg', 'image/jpeg');
 
 -- --------------------------------------------------------
 
@@ -20061,7 +20060,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `username`, `password`, `user_level`, `image`, `status`, `last_login`) VALUES
-(1, 'Admin User', 'Admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 1, 'mgtu7mae1.png', 1, '2024-11-25 03:30:06'),
+(1, 'Admin User', 'Admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 1, 'mgtu7mae1.png', 1, '2024-11-28 17:57:15'),
 (12, 'Employee User', 'employee', '6ccb4b7c39a6e77f76ecfa935a855c6c46ad5611', 2, 'no_image.jpg', 1, '2024-11-21 17:51:09'),
 (14, 'Marvin', 'marvin', 'a4cac82164ef67d9d07d379b5d5d8c4abe1e02ff', 2, 'no_image.jpg', 1, '2024-11-25 03:24:56');
 
@@ -20163,7 +20162,7 @@ ALTER TABLE `user_groups`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `log`
@@ -20175,7 +20174,7 @@ ALTER TABLE `log`
 -- AUTO_INCREMENT for table `media`
 --
 ALTER TABLE `media`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `orders`

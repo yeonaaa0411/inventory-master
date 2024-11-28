@@ -21,7 +21,7 @@ if (isset($_POST['add_stock'])) {
     $product_id = remove_junk($db->escape($_POST['product_id']));
     $quantity = remove_junk($db->escape($_POST['quantity']));
     $comments = remove_junk($db->escape($_POST['comments']));
-    
+
     // Check if comments are empty, and set to "No Comment" if true
     if (empty($comments)) {
         $comments = "No Comment";
@@ -36,7 +36,7 @@ if (isset($_POST['add_stock'])) {
         if ($result && $db->affected_rows() === 1) {
             increase_product_qty($quantity, $product_id);
             $session->msg("s", "Successfully Added");
-            redirect('stock.php', false);
+            redirect('inventory.php', false);
         } else {
             $session->msg("d", "Sorry, failed to insert.");
             redirect('add_stock.php?id=' . $product_id_from_url, false);
@@ -46,7 +46,6 @@ if (isset($_POST['add_stock'])) {
         redirect('add_stock.php?id=' . $product_id_from_url, false);
     }
 }
-
 
 include_once('layouts/header.php');
 ?>
@@ -62,7 +61,50 @@ include_once('layouts/header.php');
     <!-- Custom CSS -->
     <style>
         .custom-header {
-            background-color: #eaf5e9; /* Light green color */
+            background-color: #d1fae5; /* bg-green-50 */
+        }
+        /* Form Input Styling */
+        .form-input {
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            width: 100%;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Button Styling */
+    /* Button Styling */
+    .btn-primary {
+        background-color: #51aded; /* Set background color */
+        border-color: #3d8fd8; /* Set border color */
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+        border: 1px solid #3d8fd8; /* Add border */
+    }
+
+    .btn-primary:hover {
+        background-color: #45a049; /* Hover effect - you can modify this if you want a different hover effect */
+        border-color: #3d8fd8; /* Keep border color consistent on hover */
+    }
+
+        .card {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -70,40 +112,38 @@ include_once('layouts/header.php');
 
 <div class="mt-6 ml-6">
     <div class="w-2/6">
-        <div class="bg-white shadow-md rounded-lg">
+        <div class="card">
             <div class="custom-header p-4">
                 <div class="flex items-center">
-                    <span class="glyphicon glyphicon-th" style="font-size: 20px;"></span>
                     <h2 class="text-3xl font-bold ml-2">Add Stock</h2>
                 </div>
             </div>
             <div class="p-4">
                 <?php echo display_msg($msg); ?>
                 <form method="post" action="">
-                <div class="mb-4">
-                    <label for="product_id" class="block text-gray-700 text-sm font-bold mb-2">Select Product</label>
-                    <select class="form-control border rounded w-full py-2 px-3" name="product_id" id="product_id" required>
-                        <?php foreach ($all_products as $product): ?>
-                            <option value="<?php echo $product['id']; ?>" <?php echo ($product['id'] == $product_id_from_url) ? 'selected' : ''; ?>>
-                                <?php echo $product['name']; ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-
                     <div class="mb-4">
-                        <label for="quantity" class="block text-gray-700 text-sm font-bold mb-2">Product Quantity</label>
-                        <input type="number" class="form-control border rounded w-full py-2 px-3" name="quantity" placeholder="Product Quantity" required>
+                        <label for="product_id" class="form-label">Select Product</label>
+                        <select class="form-input" name="product_id" id="product_id" required>
+                            <?php foreach ($all_products as $product): ?>
+                                <option value="<?php echo $product['id']; ?>" <?php echo ($product['id'] == $product_id_from_url) ? 'selected' : ''; ?>>
+                                    <?php echo $product['name']; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
 
                     <div class="mb-4">
-                        <label for="comments" class="block text-gray-700 text-sm font-bold mb-2">Comments</label>
-                        <input type="text" class="form-control border rounded w-full py-2 px-3" name="comments" placeholder="Comments">
+                        <label for="quantity" class="form-label">Product Quantity</label>
+                        <input type="number" class="form-input" name="quantity" placeholder="Product Quantity" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="comments" class="form-label">Comments</label>
+                        <input type="text" class="form-input" name="comments" placeholder="Comments">
                     </div>
 
                     <div class="flex justify-center">
-                        <button type="submit" name="add_stock" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                        <button type="submit" name="add_stock" class="btn-primary">
                             Add to Inventory
                         </button>
                     </div>

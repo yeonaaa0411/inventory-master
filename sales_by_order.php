@@ -36,7 +36,7 @@ $order = find_by_id("orders", $order_id);
         }
 
         th {
-            background-color: #eaf5e9;
+            background-color: rgba(236, 253, 245, 1); /* Applying bg-green-50 color */
         }
 
         table {
@@ -50,7 +50,7 @@ $order = find_by_id("orders", $order_id);
         }
 
         .header-bg {
-            background-color: #eaf5e9;
+            background-color: rgba(236, 253, 245, 1); /* Applying bg-green-50 color */
         }
     </style>
 </head>
@@ -74,18 +74,17 @@ $order = find_by_id("orders", $order_id);
                 </strong>
                 <!-- Back Button -->
                 <a href="add_order.php" class="bg-blue-500 text-white px-10 py-2 rounded hover:bg-blue-600">Back</a>
-
             </div>
             <div class="p-4">
                 <table class="min-w-full border-collapse">
                     <thead>
                         <tr>
-                            <th class="text-center border px-4 py-2">#</th>
-                            <th class="text-center border px-4 py-2">Customer</th>
-                            <th class="text-center border px-4 py-2">Pay Method</th>
-                            <th class="text-center border px-4 py-2">Notes</th>
-                            <th class="text-center border px-4 py-2">Date</th>
-                            <th class="text-center border px-4 py-2">Actions</th>
+                            <th class="text-center border px-4 py-2 bg-green-50">#</th> <!-- Applying bg-green-50 -->
+                            <th class="text-center border px-4 py-2 bg-green-50">Customer</th> <!-- Applying bg-green-50 -->
+                            <th class="text-center border px-4 py-2 bg-green-50">Pay Method</th> <!-- Applying bg-green-50 -->
+                            <th class="text-center border px-4 py-2 bg-green-50">Notes</th> <!-- Applying bg-green-50 -->
+                            <th class="text-center border px-4 py-2 bg-green-50">Date</th> <!-- Applying bg-green-50 -->
+                            <th class="text-center border px-4 py-2 bg-green-50">Actions</th> <!-- Applying bg-green-50 -->
                         </tr>
                     </thead>
                     <tbody>
@@ -125,12 +124,12 @@ $order = find_by_id("orders", $order_id);
                 <table class="min-w-full border-collapse">
                     <thead>
                         <tr>
-                            <th class="text-center border px-4 py-2">#</th>
-                            <th class="text-center border px-4 py-2">Product Name</th>
-                            <th class="text-center border px-4 py-2">Quantity</th>
-                            <th class="text-center border px-4 py-2">Total</th>
-                            <th class="text-center border px-4 py-2">Date</th>
-                            <th class="text-center border px-4 py-2">Actions</th>
+                            <th class="text-center border px-4 py-2 bg-green-50">#</th> <!-- Applying bg-green-50 -->
+                            <th class="text-center border px-4 py-2 bg-green-50">Product Name</th> <!-- Applying bg-green-50 -->
+                            <th class="text-center border px-4 py-2 bg-green-50">Quantity</th> <!-- Applying bg-green-50 -->
+                            <th class="text-center border px-4 py-2 bg-green-50">Total</th> <!-- Applying bg-green-50 -->
+                            <th class="text-center border px-4 py-2 bg-green-50">Date</th> <!-- Applying bg-green-50 -->
+                            <th class="text-center border px-4 py-2 bg-green-50">Actions</th> <!-- Applying bg-green-50 -->
                         </tr>
                     </thead>
                     <tbody>

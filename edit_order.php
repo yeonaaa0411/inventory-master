@@ -50,59 +50,122 @@ if (isset($_POST['edit_order'])) {
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Custom CSS -->
     <style>
-        .header-bg {
-            background-color: #eaf5e9; /* Light green color */
+        th, td {
+            padding: 20px;
+            border: 1px solid #e2e8f0;
         }
+        th {
+            background-color: rgba(236, 253, 245, 1); /* Light green color */
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        tr:hover {
+            background-color: #f7fafc;
+        }
+        .custom-header {
+            background-color: rgba(236, 253, 245, 1); /* Light green color */
+        }
+
+        /* Card Styling */
+        .card {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Button Styling */
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+
+        /* Form Input Styling */
+        .form-input {
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            width: 100%;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-bg {
+            background-color: #d1fae5; /* Light green color */
+        }
+
+        /* Dropdown and Select Styling */
+        select.form-input {
+            padding: 0.75rem;
+            font-size: 1rem;
+            width: 100%;
+        }
+
     </style>
 </head>
 <body class="bg-gray-100">
 
+<!-- Include header -->
 <?php include_once('layouts/header.php'); ?>
 
 <div class="flex justify-left mt-6">
     <div class="w-full md:w-1/2 lg:w-1/3">
         <?php echo display_msg($msg); ?>
         <div class="bg-white shadow-md rounded-lg">
-            <div class="header-bg p-6 border-b rounded-t-lg">
+            <div class="custom-header p-10 border-b">
                 <div class="flex items-center">
                     <i class="fas fa-edit mr-2" style="font-size: 20px;"></i>
                     <strong class="text-3xl font-bold">Edit Order</strong>
                 </div>
             </div>
-            <div class="p-6">
+            <div class="p-10"> <!-- Increased padding for more vertical space -->
                 <div class="text-center mb-4">
                     <h3 class="text-3xl font-semibold">#<?php echo remove_junk($order['id']); ?></h3>
                 </div>
                 <form method="post" action="edit_order.php?id=<?php echo (int)$order['id']; ?>">
-                <div class="mb-4">
-                    <label for="customer" class="block text-gray-700 text-sm font-bold mb-2">Customer</label>
-                    <input type="text" class="form-control border border-gray-300 rounded-md px-4 py-2 w-full bg-gray-200" name="customer" value="<?php echo remove_junk(ucfirst($order['customer'])); ?>" readonly>
-                </div>
-
-
-                    <div class="mb-4">
-                        <label for="paymethod" class="block text-gray-700 text-sm font-bold mb-2">Payment Method</label>
-                        <select class="form-control border rounded w-full py-2 px-3" name="paymethod">
-                            <option value="Cash" <?php if ($order['paymethod'] === "Cash") echo "selected"; ?>>Cash</option>
-                            <option value="Gcash" <?php if ($order['paymethod'] === "Gcash") echo "selected"; ?>>Gcash</option>
-                        </select>
+                    <div class="mb-8">
+                        <label for="customer" class="form-label">Customer</label>
+                        <input type="text" class="form-input" name="customer" value="<?php echo remove_junk(ucfirst($order['customer'])); ?>" required>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="notes" class="block text-gray-700 text-sm font-bold mb-2">Notes</label>
-                        <input type="text" class="form-control border rounded w-full py-2 px-3" name="notes" value="<?php echo remove_junk(ucfirst($order['notes'])); ?>" placeholder="Notes">
+                    <div class="mb-8">
+                        <label for="paymethod" class="form-label">Payment Method</label>
+                        <input type="text" class="form-input" name="paymethod" value="<?php echo remove_junk(ucfirst($order['paymethod'])); ?>" required>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="date" class="block text-gray-700 text-sm font-bold mb-2">Date</label>
-                        <input type="date" class="form-control border rounded w-full py-2 px-3" name="date" value="<?php echo remove_junk($order['date']); ?>">
+                    <div class="mb-8">
+                        <label for="notes" class="form-label">Notes</label>
+                        <textarea class="form-input" name="notes"><?php echo remove_junk($order['notes']); ?></textarea>
+                    </div>
+
+                    <div class="mb-8">
+                        <label for="date" class="form-label">Order Date</label>
+                        <input type="text" class="form-input" name="date" value="<?php echo remove_junk($order['date']); ?>" required>
                     </div>
 
                     <div class="flex justify-center">
-                        <button type="submit" name="edit_order" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                            Update Order
-                        </button>
+                        <button type="submit" name="edit_order" class="btn-primary">Update Order</button>
                     </div>
                 </form>
             </div>
@@ -110,6 +173,8 @@ if (isset($_POST['edit_order'])) {
     </div>
 </div>
 
+<!-- Include footer -->
 <?php include_once('layouts/footer.php'); ?>
+
 </body>
 </html>

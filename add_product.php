@@ -16,6 +16,7 @@ if (isset($_POST['add_product'])) {
         $p_buy   = remove_junk($db->escape($_POST['cost-price']));
         $p_sale  = remove_junk($db->escape($_POST['sale-price']));
         $media_id = (is_null($_POST['product-photo']) || $_POST['product-photo'] === "") ? '0' : remove_junk($db->escape($_POST['product-photo']));
+
         $date    = make_date();
 
         // Check if the product already exists by name
@@ -73,29 +74,77 @@ if (isset($_POST['add_product'])) {
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    <!-- Custom CSS -->
     <style>
-        th,
-        td {
-            padding: 20px;
-            border: 1px solid #e2e8f0;
-        }
-
-        th {
-            background-color: #eaf5e9;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        tr:hover {
-            background-color: #f7fafc;
-        }
-
+        /* Custom Header Background */
         .custom-header {
-            background-color: #eaf5e9; /* Light green color */
+            background-color: #d1fae5; /* bg-green-50 */
+        }
+
+        /* Card Styling */
+        .card {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Button Styling */
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+
+        /* Form Input Styling */
+        .form-input {
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            width: 100%;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Table Styling */
+        table th, table td {
+            padding: 0.75rem;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        table th {
+            background-color: #f9fafb;
+            font-weight: bold;
+        }
+
+        table tbody tr:hover {
+            background-color: #f3f4f6;
+        }
+
+        /* Select Box Styling */
+        select.form-control {
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            width: 100%;
+            background-color: #f9fafb;
+            font-size: 1rem;
         }
     </style>
 </head>
@@ -104,57 +153,64 @@ if (isset($_POST['add_product'])) {
     <!-- Include header -->
     <?php include_once('layouts/header.php'); ?>
 
-    <div class="flex justify-start mt-10">
-        <div class="w-full sm:w-3/5 lg:w-3/5">
-            <div class="bg-white shadow-md rounded-lg">
-                <div class="custom-header p-10 border-b">
+    <div class="flex justify-left mt-10">
+        <div class="w-full sm:w-2/3 lg:w-1/3">
+            <div class="card">
+                <!-- Custom Header Section -->
+                <div class="custom-header p-6 border-b">
                     <div class="flex items-center">
                         <i class="fas fa-box mr-2" style="font-size: 20px;"></i>
                         <strong class="text-3xl font-bold">Add New Product</strong>
                     </div>
                 </div>
-                <div class="p-10"> <!-- Increased padding for more vertical space -->
+
+                <!-- Content Section -->
+                <div class="p-6">
                     <?php echo display_msg($msg); ?>
+
                     <form method="post" action="add_product.php" class="clearfix">
-                        <div class="mb-8"> <!-- Increased bottom margin -->
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                    <i class="glyphicon glyphicon-th-large"></i>
-                                </span>
-                                <!-- Increase vertical padding -->
-                                <input type="text" class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="product-title" placeholder="Product Name" required>
-                            </div>
+                        <!-- Product Name -->
+                        <div class="mb-4">
+                            <input type="text" class="form-input" name="product-title" placeholder="Product Name" required>
                         </div>
 
-                        <div class="mb-8 flex space-x-4"> <!-- Increased bottom margin -->
-                        <select class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="product-category" required>
-                            <?php foreach ($all_categories as $cat): ?>
-                                <option value="<?php echo (int)$cat['id'] ?>">
-                                    <?php echo $cat['name'] ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-
-                        <select class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="product-photo">
-                            <?php foreach ($all_photo as $photo): ?>
-                                <option value="<?php echo (int)$photo['id'] ?>">
-                                    <?php echo $photo['file_name'] ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-
+                        <!-- Product Category -->
+                        <div class="mb-4">
+                            <select class="form-input" name="product-category" required>
+                                <?php foreach ($all_categories as $cat): ?>
+                                    <option value="<?php echo (int)$cat['id']; ?>"><?php echo remove_junk($cat['name']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
 
-                        <div class="mb-8 flex space-x-4"> <!-- Increased bottom margin -->
-                            <input type="number" class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="product-quantity" placeholder="Product Quantity" required>
-
-                            <input type="number" step="0.01" class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="cost-price" placeholder="Cost Price" required>
-
-                            <input type="number" step="0.01" class="form-control border border-gray-300 rounded-md px-4 py-4 w-full" name="sale-price" placeholder="Sale Price" required>
+                        <!-- Product Quantity -->
+                        <div class="mb-4">
+                            <input type="number" class="form-input" name="product-quantity" placeholder="Quantity" required>
                         </div>
 
-                        <div class="text-right">
-                            <button type="submit" name="add_product" class="bg-blue-500 text-white px-6 py-4 rounded hover:bg-blue-600">Add Product</button>
+                        <!-- Cost Price -->
+                        <div class="mb-4">
+                            <input type="number" step="0.01" class="form-input" name="cost-price" placeholder="Cost Price" required>
+                        </div>
+
+                        <!-- Sale Price -->
+                        <div class="mb-4">
+                            <input type="number" step="0.01" class="form-input" name="sale-price" placeholder="Sale Price" required>
+                        </div>
+
+                        <!-- Product Photo -->
+                        <div class="mb-4">
+                            <select class="form-input" name="product-photo">
+                                <option value="0">Select Photo</option>
+                                <?php foreach ($all_photo as $photo): ?>
+                                    <option value="<?php echo (int)$photo['id']; ?>"><?php echo remove_junk($photo['file_name']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="flex justify-center">
+                            <button type="submit" name="add_product" class="btn-primary">Add Product</button>
                         </div>
                     </form>
                 </div>

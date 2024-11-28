@@ -1,4 +1,4 @@
-<?php
+<?php 
 $page_title = 'Sales Report';
 $results = '';
 require_once('includes/load.php');
@@ -178,8 +178,10 @@ if (isset($_POST['submit'])) {
                 <tbody>
                     <?php
                     $total_quantity = 0; // Initialize total quantity sold
+                    $sales_count = 0; // Initialize sales count
                     foreach ($results as $result): 
                         $total_quantity += $result['total_sales']; // Sum up quantities sold
+                        $sales_count++; // Increment sales count for each result
                     ?>
                         <tr>
                             <td class="px-4 py-2"><?php echo remove_junk($result['date']); ?></td>
@@ -199,6 +201,10 @@ if (isset($_POST['submit'])) {
                     <tr class="font-semibold">
                         <td colspan="4" class="px-4 py-2 text-right">Total Quantity Sold</td>
                         <td colspan="2" class="px-4 py-2 text-right"><?php echo number_format($total_quantity); ?></td>
+                    </tr>
+                    <tr class="font-semibold">
+                        <td colspan="4" class="px-4 py-2 text-right">Total Sales Count</td>
+                        <td colspan="2" class="px-4 py-2 text-right"><?php echo number_format($sales_count); ?></td>
                     </tr>
                     <tr class="font-semibold">
                         <td colspan="4" class="px-4 py-2 text-right">Profit</td>

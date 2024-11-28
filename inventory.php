@@ -1,21 +1,22 @@
 <?php
-$page_title = 'All Orders';
+$page_title = 'All Stock';
 require_once('includes/load.php');
 // Check what level user has permission to view this page
 page_require_level(2);
 
-// Fetch all orders
-$all_orders = find_all('orders');
+// Fetch all stock and products
+$all_stock = find_all('stock');
+$all_products = find_all('products');
 
 // Pagination variables
 $limit = 50; // Limit the number of records per page
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Current page
 $offset = ($page - 1) * $limit; // Offset for pagination
 
-// Slice the orders array to simulate pagination
-$orders_for_page = array_slice($all_orders, $offset, $limit);
-$total_orders = count($all_orders); // Total records
-$total_pages = ceil($total_orders / $limit); // Total pages
+// Slice array to simulate pagination
+$stock_for_page = array_slice($all_stock, $offset, $limit);
+$total_stock = count($all_stock); // Total records
+$total_pages = ceil($total_stock / $limit); // Total pages
 ?>
 
 <!DOCTYPE html>
@@ -28,6 +29,7 @@ $total_pages = ceil($total_orders / $limit); // Total pages
 
     <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
@@ -38,7 +40,7 @@ $total_pages = ceil($total_orders / $limit); // Total pages
         }
 
         th {
-            background-color: #f4fafb;
+            background-color: rgba(236, 253, 245, 1); /* .bg-green-50 */
         }
 
         table {
@@ -51,7 +53,7 @@ $total_pages = ceil($total_orders / $limit); // Total pages
         }
 
         .header-bg {
-            background-color: #f4fafb;
+            background-color: rgba(236, 253, 245, 1); /* .bg-green-50 */
         }
 
         .table-row-height th, .table-row-height td {
@@ -63,51 +65,56 @@ $total_pages = ceil($total_orders / $limit); // Total pages
 
 <body class="bg-gray-50">
     <?php include_once('layouts/header.php'); ?>
+    
+    <div class="flex justify-center">
+        <div class="w-11/12 md:w-2/3">
+            <?php echo display_msg($msg); ?>
+        </div>
+    </div>
 
-    <div class="w-full px-4 py-6">
-        <?php echo display_msg($msg); ?>
-
-        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-            <div class="flex justify-between items-center p-6 bg-green-50">
-                <h2 class="text-2xl font-semibold text-gray-800">
-                    <i class="fas fa-th mr-2"></i> All Orders
-                </h2>
+    <div class="grid grid-cols-1 mt-6 mx-5">
+        <div class="bg-white shadow-md rounded-lg">
+            <div class="flex justify-between items-center p-6 header-bg border-b">
+                <strong class="text-3xl font-bold">
+                    <i class="fas fa-box mr-2"></i>
+                    Inventory Log
+                </strong>
             </div>
-            <div class="overflow-x-auto px-6 py-4">
+            <div class="p-4">
                 <table class="min-w-full table-auto border-collapse table-row-height">
                     <thead>
-                        <tr class="border-b bg-gray-100">
-                            <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">#</th>
-                            <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Customer</th>
-                            <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Pay Method</th>
-                            <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Notes</th>
-                            <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Date</th>
-                            <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Actions</th>
+                        <tr class="border-b header-bg">
+                            <th class="text-center px-4 py-2 font-medium text-gray-600">#</th>
+                            <th class="text-center px-4 py-2 font-medium text-gray-600">Product</th>
+                            <th class="text-center px-4 py-2 font-medium text-gray-600">Quantity</th>
+                            <th class="text-center px-4 py-2 font-medium text-gray-600">Comments</th>
+                            <th class="text-center px-4 py-2 font-medium text-gray-600">Date</th>
+                            <th class="text-center px-4 py-2 font-medium text-gray-600">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (!empty($orders_for_page)): ?>
-                            <?php foreach ($orders_for_page as $index => $order): ?>
+                        <?php if (is_array($stock_for_page) && count($stock_for_page) > 0): ?>
+                            <?php foreach ($stock_for_page as $index => $stock): ?>
                                 <tr class="hover:bg-gray-50">
+                                    <td class="text-center px-4 py-3"><?php echo ($index + 1) + (($page - 1) * $limit); ?></td>
                                     <td class="text-center px-4 py-3">
-                                        <a href="sales_by_order.php?id=<?php echo (int)$order['id']; ?>">
-                                            <?php echo (int)$order['id']; ?>
+                                        <a href="view_product.php?id=<?php echo (int)$stock['product_id']; ?>">
+                                            <?php
+                                            foreach ($all_products as $product) {
+                                                if ($stock['product_id'] == $product['id']) {
+                                                    echo remove_junk($product['name']);
+                                                }
+                                            }
+                                            ?>
                                         </a>
                                     </td>
-                                    <td class="text-center px-4 py-3"><?php echo remove_junk(ucfirst($order['customer'])); ?></td>
-                                    <td class="text-center px-4 py-3"><?php echo remove_junk(ucfirst($order['paymethod'])); ?></td>
-                                    <td class="text-center px-4 py-3"><?php echo remove_junk(ucfirst($order['notes'])); ?></td>
-                                    <td class="text-center px-4 py-3"><?php echo remove_junk(ucfirst($order['date'])); ?></td>
+                                    <td class="text-center px-4 py-3"><?php echo remove_junk(ucfirst($stock['quantity'])); ?></td>
+                                    <td class="text-center px-4 py-3"><?php echo remove_junk(ucfirst($stock['comments'])); ?></td>
+                                    <td class="text-center px-4 py-3"><?php echo remove_junk(ucfirst($stock['date'])); ?></td>
                                     <td class="text-center px-4 py-3">
                                         <div class="flex justify-center space-x-2">
-                                            <!-- Edit Button -->
-                                            <a href="edit_order.php?id=<?php echo (int)$order['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Edit">
+                                            <a href="edit_stock.php?id=<?php echo (int)$stock['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Edit">
                                                 <i class="fas fa-pencil-alt"></i>
-                                            </a>
-                                            
-                                            <!-- Delete Button -->
-                                            <a href="delete_order.php?id=<?php echo (int)$order['id']; ?>" onClick="return confirm('Are you sure you want to delete?')" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" title="Remove">
-                                                <i class="fas fa-trash-alt"></i>
                                             </a>
                                         </div>
                                     </td>
@@ -115,7 +122,7 @@ $total_pages = ceil($total_orders / $limit); // Total pages
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="6" class="text-center py-4 text-gray-500">No orders found.</td>
+                                <td colspan="6" class="text-center py-4 text-gray-500">No stock records found.</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>
