@@ -1,4 +1,5 @@
 
+<?php include_once('layouts/header.php'); ?>
 <?php
   require_once('includes/load.php');
   $page_title = 'Edit Account';
@@ -109,7 +110,7 @@
 <?php endif; ?>
 
 
-<?php include_once('layouts/header.php'); ?>
+
 
 <div class="container mx-auto mt-10 px-4">
   <div class="flex flex-wrap justify-center -mx-4">
