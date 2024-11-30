@@ -1,5 +1,5 @@
 <?php
- session_start();
+// Ensure session_start is at the very top of the file, before any HTML or other code.
 
 class Session {
 

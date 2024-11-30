@@ -1,91 +1,195 @@
 <?php
-  $page_title = 'All orders';
-  require_once('includes/load.php');
-  // Checkin What level user has permission to view this page
-  page_require_level(2);
-  
-  $all_orders = find_all('orders');
-  $order_id = last_id('orders');
-  $new_order_id = $order_id['id'] + 1;
+$page_title = 'Add Order';
+require_once('includes/load.php');
+page_require_level(2);
 
-?>
+// Check if it's a new day and reset counts if needed
+$current_date = date('Y-m-d'); // Get the current date in 'Y-m-d' format
 
-<?php
- if(isset($_POST['add_order'])){
-   $customer = remove_junk($db->escape($_POST['customer']));
-   $paymethod = remove_junk($db->escape($_POST['paymethod']));
-   $notes = remove_junk($db->escape($_POST['notes']));
-   $current_date = make_date();
+// Fetch the last order date from the database
+$last_order_date_query = $db->query("SELECT MAX(date) AS last_order_date FROM orders");
+$last_order_date_result = $db->fetch_assoc($last_order_date_query);
+$last_order_date = $last_order_date_result['last_order_date'] ?? '0000-00-00';
 
-   if(empty($errors)){
-      $sql  = "INSERT INTO orders (id,customer,paymethod,notes,date)";
-      $sql .= " VALUES ('{$new_order_id}','{$customer}','{$paymethod}','{$notes}','{$current_date}')";
-      
-      if($db->query($sql)){
-        $session->msg("s", "Successfully Added order");
-        redirect('add_sale_to_order.php?id=' . $new_order_id, false);
-      } else {
-        $session->msg("d", "Sorry Failed to insert.");
+if ($last_order_date != $current_date) {
+    // It's a new day, so reset the order and customer count
+    $new_customer_num = 1;
+    $new_order_id = 1;
+} else {
+    // It's the same day, so increment based on the last record
+    $last_customer_query = $db->query("SELECT MAX(CAST(SUBSTRING(customer, 10) AS UNSIGNED)) AS last_customer_num FROM orders");
+    $last_customer_num = $db->fetch_assoc($last_customer_query)['last_customer_num'] ?? 0;
+    $new_customer_num = $last_customer_num + 1;
+
+    $last_order_id = last_id('orders')['id'];
+    $new_order_id = $last_order_id + 1;
+}
+
+$new_customer_name = 'Customer ' . $new_customer_num;
+
+if (isset($_POST['add_order'])) {
+    $customer = $new_customer_name; // Automatically set customer name
+    $paymethod = remove_junk($db->escape($_POST['paymethod']));
+    $notes = remove_junk($db->escape($_POST['notes']));
+
+    if (empty($errors)) {
+        $sql  = "INSERT INTO orders (id, customer, paymethod, notes, date)";
+        $sql .= " VALUES ('{$new_order_id}', '{$customer}', '{$paymethod}', '{$notes}', '{$current_date}')";
+
+        if ($db->query($sql)) {
+            $session->msg("s", "Successfully Added Order as {$customer}");
+            redirect('add_sale_to_order.php?id=' . $new_order_id, false);
+        } else {
+            $session->msg("d", "Sorry, Failed to Insert.");
+            redirect('add_order.php', false);
+        }
+    } else {
+        $session->msg("d", $errors);
         redirect('add_order.php', false);
-      }
-   } else {
-     $session->msg("d", $errors);
-     redirect('add_order.php', false);
-   }
- }
+    }
+}
 ?>
 
-<?php include_once('layouts/header.php'); ?>
+<!DOCTYPE html>
+<html lang="en">
 
-<div class="login-page">
-    <div class="text-center">
-       <h2>Add Order</h2>
-       <h3>#<?php echo $new_order_id;?></h3>
-     </div>
-     <?php echo display_msg($msg); ?>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo isset($page_title) ? remove_junk($page_title) : "Admin"; ?></title>
 
-      <form method="post" action="" class="clearfix">
-        <div class="form-group">
-        </div>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-        <div class="form-group">
-              <label for="name" class="control-label">Customer Name</label>
-              <input type="text" class="form-control" name="customer" value="" placeholder="Customer">
-        </div>
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-<<<<<<< Updated upstream
-        <div class="form-group">
-          <select class="form-control" name="paymethod">
-              <option value="">Select Payment Method</option>
-              <option value="Cash">Cash</option>
-              <option value="Check">Check</option>
-              <option value="Credit">Credit</option>
-              <option value="Charge">Charge to Account</option>
-          </select>
-        </div>
-=======
-            <div class="form-group">
-              <label for="paymethod" class="control-label">Payment Method</label>
-              <select class="form-control" name="paymethod" required>
-                <option value="">Select Payment Method</option>
-                <option value="Cash">Cash</option>
-                <option value="Check">Check</option>
-                <option value="Credit">Credit</option>
-                <option value="Charge">Charge to Account</option>
-              </select>
+    <style>
+        /* Custom Header Background */
+        .custom-header {
+            background-color: #d1fae5; /* bg-green-50 */
+        }
+
+        /* Card Styling */
+        .card {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Button Styling */
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+
+        /* Form Input Styling */
+        .form-input {
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            width: 100%;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Table Styling */
+        table th, table td {
+            padding: 0.75rem;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        table th {
+            background-color: #f9fafb;
+            font-weight: bold;
+        }
+
+        table tbody tr:hover {
+            background-color: #f3f4f6;
+        }
+
+        /* Select Box Styling */
+        select.form-control {
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            width: 100%;
+            background-color: #f9fafb;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <?php include_once('layouts/header.php'); ?>
+
+    <div class="flex justify-left mt-10">
+        <div class="w-full sm:w-2/3 lg:w-1/3">
+            <div class="card">
+                <!-- Custom Header Section -->
+                <div class="custom-header p-6 border-b">
+                    <div class="flex items-center">
+                        <i class="fas fa-list-alt mr-2" style="font-size: 20px;"></i>
+                        <strong class="text-3xl font-bold">Add Order</strong>
+                    </div>
+                </div>
+
+                <!-- Content Section -->
+                <div class="p-6">
+                    <?php echo display_msg($msg); ?>
+                    <div class="text-center mb-4">
+                        <h3 class="text-3xl font-semibold">#<?php echo $new_order_id; ?></h3>
+                    </div>
+
+                    <form method="post" action="add_order.php" class="clearfix">
+                        <!-- Display Customer Name (Read-only) -->
+                        <div class="mb-4">
+                            <input type="text" class="form-input" name="customer" value="<?php echo $new_customer_name; ?>" readonly>
+                        </div>
+
+                        <!-- Payment Method Selection -->
+                        <div class="mb-4">
+                            <select class="form-input" name="paymethod" required>
+                                <option value="Cash" selected>Cash</option>
+                                <option value="Gcash">Gcash</option>
+                            </select>
+                        </div>
+
+                        <!-- Notes Field -->
+                        <div class="mb-4">
+                            <input type="text" class="form-input" name="notes" placeholder="Notes">
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="flex justify-center">
+                            <button type="submit" name="add_order" class="btn-primary">Start Order</button>
+                        </div>
+                    </form>
+                </div>
             </div>
->>>>>>> Stashed changes
-
-        <div class="form-group">
-          <input type="text" class="form-control" name="notes" value="" placeholder="Notes">
         </div>
+    </div>
 
-        <div class="form-group clearfix">
-         <div class="pull-right">
-                <button type="submit" name="add_order" class="btn btn-info">Start Order</button>
-        </div>
-        </div>
-    </form>
-</div>
+    <?php include_once('layouts/footer.php'); ?>
+</body>
 
-<?php include_once('layouts/footer.php'); ?>
+</html>

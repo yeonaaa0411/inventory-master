@@ -8,7 +8,7 @@
 
   if(!$d_stock){
     $session->msg("d","Missing stock id.");
-    redirect('stock.php');
+    redirect('inventory.php');
   }
 
 // for each sale
@@ -22,10 +22,10 @@
   if($delete_id)
   {
       $session->msg("s","stock deleted.");
-      redirect('stock.php');
+      redirect('inventory.php');
   } else {
       $session->msg("d","stock deletion failed.");
-      redirect('stock.php');
+      redirect('inventory.php');
   }
 
 ?>

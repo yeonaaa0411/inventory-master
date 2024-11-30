@@ -26,22 +26,52 @@ include_once('layouts/header.php');
 <!-- Include Chart.js from CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<!-- Custom Styling -->
+<style>
+    .header-bg {
+        background-color: #eaf5e9 !important;
+    }
+    .thead {
+        background-color: #eaf5e9 !important;
+    }
+    th, td {
+        padding-top: 1.25rem;
+        padding-bottom: 1.25rem;
+    }
+    th {
+        background-color: #f4fafb;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    tr:hover {
+        background-color: #f9fafb;
+    }
+    .table-row-height th, .table-row-height td {
+        padding-top: 1.25rem;
+        padding-bottom: 1.25rem;
+    }
+    .panel-heading {
+        background-color: #d1fae5 !important; /* Apply background color only to the header */
+    }
+</style>
+
 <div class="row">
     <div class="col-md-6">
         <?php echo display_msg($msg); ?>
     </div>
 </div>
 
-<div class="row">
+<div class="row header-bg">
     <div class="col-md-12">
         <div class="panel panel-default">
-            <div class="panel-heading clearfix">
+            <div class="panel-heading clearfix header-bg">
                 <strong>
                     <span class="glyphicon glyphicon-th"></span>
                     <span>Product Detail</span>
                 </strong>
             </div>
-
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-1"></div>
@@ -59,7 +89,7 @@ include_once('layouts/header.php');
                         foreach ($all_photo as $photo) {
                             if ($product['media_id'] == $photo['id']) {
                         ?>
-                                <img class="img-thumbnail" src="uploads/products/<?php echo $photo['file_name']; ?>" alt="">
+                                <img class="img-thumbnail" src="uploads/products/<?php echo $photo['file_name']; ?>" alt="Product Image">
                         <?php
                             }
                         }
@@ -72,16 +102,17 @@ include_once('layouts/header.php');
                     <div class="col-md-10">
                         <div class="panel-body">
                             <table class="table table-bordered">
-                                <thead>
+                                <thead class="thead">
                                     <tr>
-                                        <th class="text-center" style="width: 10%;">Category</th>
-                                        <th class="text-center" style="width: 10%;">Stock</th>
-                                        <th class="text-center" style="width: 15%;">Cost Price</th>
-                                        <th class="text-center" style="width: 15%;">Sale Price</th>
-                                        <th class="text-center" style="width: 15%;">Product Added</th>
-                                        <th class="text-center" style="width: 50px;">Actions</th>
+                                        <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Category</th>
+                                        <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Stock</th>
+                                        <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Cost Price</th>
+                                        <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Sale Price</th>
+                                        <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Product Added</th>
+                                        <th class="text-center px-4 py-2 font-medium text-gray-600 bg-green-50">Actions</th>
                                     </tr>
                                 </thead>
+
                                 <tbody>
                                     <tr>
                                         <?php

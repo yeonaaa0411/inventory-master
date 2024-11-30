@@ -11,15 +11,34 @@ body{
   text-decoration: none;
 }.padding-top{
   padding-top: 20px;
-}.login-page{
-  width: 350px;
-  margin: 7% auto;
+}.login-page {
+  width: 90%; /* Use percentage width for responsiveness */
+  max-width: 350px; /* Set a max-width to maintain the desired width on larger screens */
+  margin: 80px auto; /* Center horizontally and keep the top margin */
+  margin-right: 45%;
   padding: 0 20px;
   background-color: #f9f9f9;
   border: 1px solid #f2f2f2;
-}.login-page .text-center{
+  border-radius: 10px;
+}
+
+.login-page .text-center {
   margin-bottom: 10px;
-}.box{
+}
+
+.login-form .btn {
+  width: 100%; 
+  padding: 10px; 
+  font-size: 16px; 
+  border-radius: 5px; 
+  transition: background-color 0.3s; 
+}
+
+.login-form .btn:hover {
+  background-color: #007bff; 
+  color: white; 
+}
+.box{
   padding: 20px;
   background-color: #f9f9f9;
   border: 1px solid #f2f2f2;
@@ -48,6 +67,7 @@ body{
 }
 
 .panel-default >.panel-heading{
+  
   background-color: #f5f5f5;
   border-bottom: 2px solid #3498DB;
   font-size: 15px;
@@ -111,27 +131,40 @@ body{
   color: #000;
   margin-left: 20px;
 }
-.info-menu{
+.info-menu {
   height: 60px;
   margin: 0;
-  line-height: 60px;
   padding: 0 15px;
-}.info-menu li.profile {
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Center align items vertically */
+  background: #f9f9f9; /* Optional: background for visibility */
+}
+
+.info-menu li.profile {
   position: relative;
-}.profile a.toggle{
+  display: flex; /* Ensure the profile li is also a flex container */
+  align-items: center; /* Center align items vertically */
+}
+
+.profile a.toggle {
   text-decoration: none;
   text-align: center;
   font-size: 14px;
   color: rgba(150, 150, 158, 1.0);
-  position: relative;
-  padding: 10px 10px 10px 0;
+  position: relative; /* Adjust padding for consistency */
   margin: 0;
   background: #f9f9f9;
   border-radius: 30px;
-}.info-menu li.profile a img{
+  display: flex; /* Allow icon and text to align properly */
+  align-items: center; /* Center icon vertically */
+}
+
+.info-menu li.profile a img {
   width: 30px;
   height: 30px;
-}.dropdown-menu{
+  margin-right: 5px; /* Add spacing between image and text */
+}
+.dropdown-menu{
   margin-top: 4px;
   border-color: #fefefe;
   border-radius: 0;
@@ -315,5 +348,3 @@ input[type=file]{
   width: 125px;
   height: 125px;
 }
-
-

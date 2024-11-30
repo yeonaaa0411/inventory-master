@@ -1,15 +1,16 @@
 <?php
- $errors = array();
+$errors = array();
 
- /*--------------------------------------------------------------*/
- /* Function for Remove escapes special
- /* characters in a string for use in an SQL statement
- /*--------------------------------------------------------------*/
+/*--------------------------------------------------------------*/
+/* Function for Remove escapes special
+/* characters in a string for use in an SQL statement
+/*--------------------------------------------------------------*/
 function real_escape($str){
   global $con;
-  $escape = mysqli_real_escape_string($con,$str);
+  $escape = mysqli_real_escape_string($con, $str);
   return $escape;
 }
+
 /*--------------------------------------------------------------*/
 /* Function for Remove html characters
 /*--------------------------------------------------------------*/
@@ -18,14 +19,16 @@ function remove_junk($str){
   $str = htmlspecialchars(strip_tags($str, ENT_QUOTES));
   return $str;
 }
+
 /*--------------------------------------------------------------*/
 /* Function for Uppercase first character
 /*--------------------------------------------------------------*/
 function first_character($str){
-  $val = str_replace('-'," ",$str);
+  $val = str_replace('-', " ", $str);
   $val = ucfirst($val);
   return $val;
 }
+
 /*--------------------------------------------------------------*/
 /* Function for Checking input fields not empty
 /*--------------------------------------------------------------*/
@@ -33,30 +36,40 @@ function validate_fields($var){
   global $errors;
   foreach ($var as $field) {
     $val = remove_junk($_POST[$field]);
-    if(isset($val) && $val==''){
+    if(isset($val) && $val == ''){
       $errors = $field ." can't be blank.";
       return $errors;
     }
   }
 }
+
 /*--------------------------------------------------------------*/
 /* Function for Display Session Message
    Ex echo displayt_msg($message);
 /*--------------------------------------------------------------*/
-function display_msg($msg =''){
-   $output = array();
-   if(!empty($msg)) {
-      foreach ($msg as $key => $value) {
-         $output  = "<div class=\"alert alert-{$key}\">";
-         $output .= "<a href=\"#\" class=\"close\" data-dismiss=\"alert\">&times;</a>";
-         $output .= remove_junk(first_character($value));
-         $output .= "</div>";
-      }
-      return $output;
-   } else {
-     return "" ;
-   }
+function display_msg($msg = '') {
+  $output = ''; // Initialize the output variable as a string.
+  if(!empty($msg)) {
+     // Check if $msg is an array
+     if (is_array($msg)) {
+        foreach ($msg as $key => $value) {
+           $output .= "<div class=\"alert alert-{$key}\">";
+           $output .= "<a href=\"#\" class=\"close\" data-dismiss=\"alert\">&times;</a>";
+           $output .= remove_junk(first_character($value));
+           $output .= "</div>";
+        }
+     } else {
+        // If $msg is a string, just display it in a default alert
+        $output = "<div class=\"alert alert-info\">";
+        $output .= "<a href=\"#\" class=\"close\" data-dismiss=\"alert\">&times;</a>";
+        $output .= remove_junk(first_character($msg));
+        $output .= "</div>";
+     }
+  }
+  return $output;
 }
+
+
 /*--------------------------------------------------------------*/
 /* Function for redirect
 /*--------------------------------------------------------------*/
@@ -69,35 +82,41 @@ function redirect($url, $permanent = false)
 
     exit();
 }
+
 /*--------------------------------------------------------------*/
 /* Function for find out total sale price, cost price and profit
 /*--------------------------------------------------------------*/
 function total_price($totals){
-   $sum = 0;
-   $sub = 0;
-   foreach($totals as $total ){
-     $sum += $total['total_saleing_price'];
-     $sub += $total['total_buying_price'];
-     $profit = $sum - $sub;
-   }
-   return array($sum,$profit);
+  $sum = 0;
+  $sub = 0;
+  $profit = 0;  // Initialize $profit
+  foreach($totals as $total ){
+    $sum += $total['total_saleing_price'];
+    $sub += $total['total_buying_price'];
+    $profit = $sum - $sub;
+  }
+  return array($sum, $profit);
 }
+
+
 /*--------------------------------------------------------------*/
 /* Function for Readable date time
 /*--------------------------------------------------------------*/
 function read_date($str){
      if($str)
-//      return date('F j, Y, g:i:s a', strtotime($str));
       return date('M j, Y, g:i:s a', strtotime($str));
      else
       return null;
-  }
+}
+
 /*--------------------------------------------------------------*/
 /* Function for  Readable Make date time
 /*--------------------------------------------------------------*/
-function make_date(){
-  return strftime("%Y-%m-%d %H:%M:%S", time());
+function make_date() {
+  return date("Y-m-d H:i:s");
 }
+date_default_timezone_set('Asia/Manila');
+
 /*--------------------------------------------------------------*/
 /* Function for  Readable date time
 /*--------------------------------------------------------------*/
@@ -105,18 +124,23 @@ function count_id(){
   static $count = 1;
   return $count++;
 }
+
 /*--------------------------------------------------------------*/
 /* Function for Creting random string
 /*--------------------------------------------------------------*/
 function randString($length = 5)
 {
-  $str='';
+  $str = '';
   $cha = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-  for($x=0; $x<$length; $x++)
-   $str .= $cha[mt_rand(0,strlen($cha))];
+  for($x = 0; $x < $length; $x++)
+    $str .= $cha[mt_rand(0, strlen($cha))];
   return $str;
 }
+
+/*--------------------------------------------------------------*/
+/* Function for Find product sales by month
+/*--------------------------------------------------------------*/
 function find_product_sales_by_month($product_id, $start_date, $end_date) {
   global $db;
   $sql = "SELECT DATE_FORMAT(date, '%Y-%m') as sale_month, SUM(qty) as total_sales ";
@@ -133,6 +157,47 @@ function find_product_sales_by_month($product_id, $start_date, $end_date) {
   }
 
   return $sales_data;
+}
+// This is a placeholder for your predictive analytics function.
+// Replace with actual data fetching or calculations.
+function get_sales_forecast($months = 2) {
+  // Predict total sales for the next $months (e.g., 2 months)
+  // Fetch past sales data from the database to calculate predictions
+  $forecast = [];
+
+  // Example: Use a predictive model or statistics for total sales prediction
+  // Let's assume the model predicted a total sales value for the next 2 months.
+  $predicted_sales = rand(50000, 100000);  // Randomized total sales prediction for 2 months
+
+  // Predict for 2 months
+  for ($i = 0; $i < $months; $i++) {
+      $forecast[] = [
+          'month' => date('F Y', strtotime("+$i month")), // Current month + i months
+          'predicted_sales' => $predicted_sales,
+      ];
+  }
+
+  return $forecast;
+}
+
+function find_user_by_id($id) {
+  global $db;
+  $sql = "SELECT * FROM users WHERE id = '{$id}' LIMIT 1";
+  $result = $db->query($sql);
+  return $result->fetch_assoc();  // Or return the appropriate data.
+}
+function search_products($query) {
+  global $db;
+  $sql = "SELECT * FROM products WHERE name LIKE ?";
+  $stmt = $db->prepare($sql);
+  $stmt->execute(['%' . $query . '%']);
+  return $stmt->fetchAll();
+}
+
+function find_products_by_name($name) {
+    global $db;
+    $sql  = "SELECT * FROM products WHERE name LIKE '%" . $db->escape($name) . "%'";
+    return $db->query($sql);
 }
 
 
