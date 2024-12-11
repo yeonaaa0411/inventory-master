@@ -1,17 +1,23 @@
-# Use the official Python image as the base image
-FROM python:3.10-slim
+# Use the official PHP image with Apache from Docker Hub
+FROM php:8.1-apache
 
 # Set the working directory inside the container
-WORKDIR /app
+WORKDIR /var/www/html
 
-# Copy the Flask application and requirements file into the container
-COPY . /app
+# Copy the current directory contents into the container at /var/www/html
+COPY . .
 
-# Install necessary Python dependencies from the requirements.txt file
-RUN pip install --no-cache-dir -r requirements.txt
+# Install necessary PHP extensions
+RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-# Expose the port Flask will run on
-EXPOSE 5000
+# Set appropriate permissions for the web server user
+RUN chown -R www-data:www-data /var/www/html
 
-# Set the command to run the Flask app
-CMD ["python", "predictive_analytics.py"]
+# Enable the Apache mod_rewrite module for URL rewriting
+RUN a2enmod rewrite
+
+# Expose port 80 to the outside world
+EXPOSE 80
+
+# Optional: Set the command to run when starting the container
+CMD ["apache2-foreground"]
