@@ -12,7 +12,7 @@ WORKDIR /var/www/html
 COPY . /var/www/html
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -r requirement.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Configure Apache
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
