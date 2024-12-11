@@ -1,29 +1,23 @@
-# Base image for Python 3.10
-FROM python:3.10-slim
+# Use the official PHP image with Apache from Docker Hub
+FROM php:8.1-apache
 
-# Install necessary Linux packages
-RUN apt-get update && apt-get install -y \
-    apache2 \
-    libapache2-mod-wsgi-py3 \
-    && apt-get clean
-
-# Copy application code
+# Set the working directory inside the container
 WORKDIR /var/www/html
-COPY . /var/www/html
 
-# Install Python dependencies
-RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+# Copy the current directory contents into the container at /var/www/html
+COPY . .
 
-# Configure Apache
-COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
-RUN a2enmod wsgi
+# Install necessary PHP extensions
+RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-# Start script to launch both Apache and Flask
-COPY start.sh /usr/local/bin/start.sh
-RUN chmod +x /usr/local/bin/start.sh
+# Set appropriate permissions for the web server user
+RUN chown -R www-data:www-data /var/www/html
 
-# Expose necessary ports
+# Enable the Apache mod_rewrite module for URL rewriting
+RUN a2enmod rewrite
+
+# Expose port 80 to the outside world
 EXPOSE 80
 
-# Command to run the start script
-CMD ["/usr/local/bin/start.sh"]
+# Optional: Set the command to run when starting the container
+CMD ["apache2-foreground"]
