@@ -4,8 +4,6 @@ import mysql.connector
 from statsmodels.tsa.arima.model import ARIMA
 from sklearn.metrics import mean_absolute_percentage_error, mean_absolute_error, mean_squared_error, r2_score
 import numpy as np
-import threading
-import time
 
 app = Flask(__name__)
 
@@ -19,9 +17,9 @@ def convert_to_native_types(obj):
         return [convert_to_native_types(v) for v in obj]
     return obj  # Return other types as is
 
-# Function to fetch and process data for predictive analytics
-def run_predictive_analytics():
-    # Database configuration
+@app.route('/predict_sales', methods=['GET'])
+def predict_sales():
+    # Updated database configuration
     db_config = {
         'host': 'sql12.freemysqlhosting.net',
         'user': 'sql12751409',
@@ -155,6 +153,18 @@ def run_predictive_analytics():
             'year': date.year
         })
 
+    # Calculate predicted sales for December (1 month prediction)
+    december_forecast_qty = model_fit.forecast(steps=1)[0]  # 1 month prediction
+    december_forecast_sales_count = sales_count_model_fit.forecast(steps=1)[0]  # 1 month prediction
+
+    # Calculate predicted revenue for December
+    december_revenue = 0
+    for product_pred in product_predictions:
+        product_qty = product_pred['predicted_qty'][0]  # For 1 month ahead
+        price = df[df['product_name'] == product_pred['product_name']]['price'].iloc[0]
+        price = float(price)
+        december_revenue += product_qty * price
+
     # Add December forecast to the result
     result['predictions'].append({
         'date': '2024-12-31',  # Static date for December forecast
@@ -176,6 +186,17 @@ def run_predictive_analytics():
     # Slow-moving products detection: Products with low predicted quantity
     slow_moving_products = [{'product_name': product['product_name'], 'predicted_qty': sum(product['predicted_qty'])} for product in product_predictions if sum(product['predicted_qty']) < 100]
 
+    # Slow-moving products detection: Products with predicted qty below a threshold
+    slow_moving_threshold = 50  # Example threshold for slow-moving products
+    slow_moving_products = []
+    for product_pred in product_predictions:
+        total_qty = sum(product_pred['predicted_qty'])
+        if total_qty < slow_moving_threshold:
+            slow_moving_products.append({
+                'product_name': product_pred['product_name'],
+                'predicted_qty': total_qty
+            })
+
     # Add slow-moving products to the result
     result['slow_moving_products'] = slow_moving_products
 
@@ -186,19 +207,5 @@ def run_predictive_analytics():
     # Convert numpy types to native Python types before returning the response
     return jsonify(convert_to_native_types(result))
 
-@app.route('/predict_sales', methods=['GET'])
-def predict_sales():
-    return run_predictive_analytics()
-
-# Schedule the script to run periodically
-def schedule_predictive_analytics():
-    while True:
-        # Run the predictive analytics every 24 hours (86400 seconds)
-        run_predictive_analytics()
-        time.sleep(86400)
-
-# Run the scheduling in a separate thread
-threading.Thread(target=schedule_predictive_analytics, daemon=True).start()
-
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)  # Ensure the app is accessible on all interfaces
+    app.run(debug=True)
