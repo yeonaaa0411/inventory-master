@@ -3,7 +3,7 @@ name: Run Predictive Analytics
 on:
   push:
     branches:
-      - main  # Adjust if necessary
+      - main  # Make sure this matches your branch name
 
 jobs:
   run_predictive_analytics:
@@ -12,11 +12,11 @@ jobs:
     steps:
       # Step 1: Checkout the code from GitHub
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3  # Using the latest version of checkout action
 
       # Step 2: Set up Python (Choose the version of Python you want to use)
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3  # Using the latest version of the setup-python action
         with:
           python-version: '3.8'
 
@@ -29,4 +29,4 @@ jobs:
       # Step 4: Run your predictive analytics script
       - name: Run Predictive Analytics
         run: |
-          python path/to/your/predictive_analytics.py  # Adjust path if needed
+          python -m predictive_analytics  # Run the script using `python -m`
