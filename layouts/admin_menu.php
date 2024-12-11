@@ -53,9 +53,17 @@
          <li><a href="orders.php">Manage Orders</a> </li>        
          <li><a href="sales.php">Manage Sales</a> </li>
          <li><a href="daily_sales.php">Daily sales</a> </li>
-        <li><a href="monthly_sales.php">Monthly sales</a></li>
-        <li><a href="sales_report.php">Sales Report </a></li>
+         <li><a href="monthly_sales.php">Monthly sales</a></li>
+         <li><a href="sales_report.php">Sales Report</a></li>
      </ul>
   </li>
+  <li>
+    <a href="#" class="submenu-toggle">
 
+      <ul class="nav submenu">      
+        <li><a href="daily_sales.php">Daily sales</a> </li>
+        <li><a href="monthly_sales.php">Monthly sales</a></li>
+        <li><a href="sales_report.php">Sales by dates </a></li>
+      </ul>
+  </li>
 </ul>
