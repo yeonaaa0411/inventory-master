@@ -180,32 +180,24 @@ def predict_sales():
     top_10_qty_products = sorted(product_predictions, key=lambda x: sum(x['predicted_qty']), reverse=True)[:10]
 
     # Add top 10 products by revenue and quantity to the result
-    result['top_10_revenue_products'] = [{'product_name': product['product_name'], 'predicted_revenue': sum(product['predicted_revenue'])} for product in top_10_revenue_products]
-    result['top_10_qty_products'] = [{'product_name': product['product_name'], 'predicted_qty': sum(product['predicted_qty'])} for product in top_10_qty_products]
+    result['top_10_revenue_products'] = convert_to_native_types(top_10_revenue_products)
+    result['top_10_qty_products'] = convert_to_native_types(top_10_qty_products)
 
-    # Slow-moving products detection: Products with low predicted quantity
-    slow_moving_products = [{'product_name': product['product_name'], 'predicted_qty': sum(product['predicted_qty'])} for product in product_predictions if sum(product['predicted_qty']) < 100]
-
-    # Slow-moving products detection: Products with predicted qty below a threshold
-    slow_moving_threshold = 50  # Example threshold for slow-moving products
+    # Calculate slow-moving products (e.g., products with quantity forecast below 50)
     slow_moving_products = []
     for product_pred in product_predictions:
-        total_qty = sum(product_pred['predicted_qty'])
-        if total_qty < slow_moving_threshold:
-            slow_moving_products.append({
-                'product_name': product_pred['product_name'],
-                'predicted_qty': total_qty
-            })
+        if np.mean(product_pred['predicted_qty']) < 50:
+            slow_moving_products.append(product_pred)
 
-    # Add slow-moving products to the result
-    result['slow_moving_products'] = slow_moving_products
+    result['slow_moving_products'] = convert_to_native_types(slow_moving_products)
 
-    # Close database connection
+    # Close the database connection
     cursor.close()
     connection.close()
 
-    # Convert numpy types to native Python types before returning the response
-    return jsonify(convert_to_native_types(result))
+    # Return predictions as JSON
+    return jsonify(result)
+
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True)
