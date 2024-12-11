@@ -95,7 +95,7 @@ foreach ($sales_forecast['top_10_revenue_products'] as $product) {
     }
 }
 
-define('THRESHOLD', 10);  // Adjust the threshold value as needed
+define('THRESHOLD', 100);  // Adjust the threshold value as needed
 
 // Extracting the slowest moving products (those with the lowest predicted quantities)
 $slow_moving_products = [];
@@ -524,7 +524,7 @@ const salesForecastChart = new Chart(salesForecastCtx, {
     labels: <?php echo json_encode($quarters); ?>,
     datasets: [
       {
-        label: 'Predicted Quantity Sold',
+        label: 'Predicted Sales Quantity',
         data: <?php echo json_encode($predicted_sales); ?>,
         borderColor: '#2D9CDB',
         backgroundColor: 'rgba(45, 156, 219, 0.2)',
@@ -649,7 +649,7 @@ var top10QtyProductsChart = new Chart(ctx1, {
   data: {
     labels: <?php echo json_encode($top_10_qty_product_names); ?>,
     datasets: [{
-      label: 'Top 10 Products Predicted Quantity Sold',
+      label: 'Top 10 Products Predicted Quantity Sales',
       data: <?php echo json_encode($top_10_qty_products); ?>,
       borderColor: '#4B5563',
       backgroundColor: 'rgba(75, 85, 99, 0.2)',
@@ -726,13 +726,26 @@ applyHoverEffect(top10RevenueProductsChart);
 
 // Slow Moving Products Chart with shadow and hover effect
 var ctx = document.getElementById('slowMovingProductsChart').getContext('2d');
+
+// Get the data and sort it from fewest to largest
+var productsData = <?php echo json_encode(array_map(null, $slow_moving_product_names, $slow_moving_quantities)); ?>;
+
+// Sort by quantities (ascending order)
+productsData.sort(function(a, b) {
+  return a[1] - b[1]; // Sort by the second element (quantities) in ascending order
+});
+
+// Slice to get top 5 products
+var top5ProductNames = productsData.slice(0, 5).map(function(item) { return item[0]; });
+var top5Quantities = productsData.slice(0, 5).map(function(item) { return item[1]; });
+
 var slowMovingProductsChart = new Chart(ctx, {
-  type: 'bar', // Set the chart type to bar
+  type: 'bar', // Use 'bar' type for a horizontal bar chart
   data: {
-    labels: <?php echo json_encode($slow_moving_product_names); ?>, // Use the sorted product names
+    labels: top5ProductNames, // Top 5 sorted product names
     datasets: [{
       label: 'Slow-Moving Products',
-      data: <?php echo json_encode($slow_moving_quantities); ?>, // Use the sorted quantities
+      data: top5Quantities, // Top 5 sorted quantities
       borderColor: '#2B8A3E',
       backgroundColor: 'rgba(43, 138, 62, 0.2)',
       borderWidth: 2,
@@ -742,13 +755,14 @@ var slowMovingProductsChart = new Chart(ctx, {
   },
   options: {
     ...commonOptions,
+    indexAxis: 'y', // This makes the chart horizontal
     scales: {
       ...commonOptions.scales,
       x: {
         ...commonOptions.scales.x,
         title: {
           display: true,
-          text: 'Products', // Custom x-axis title for this chart
+          text: 'Sales Count (Quarter)', // Custom x-axis title for this chart
           font: { size: 14, weight: 'bold' },
         }
       },
@@ -756,14 +770,16 @@ var slowMovingProductsChart = new Chart(ctx, {
         ...commonOptions.scales.y,
         title: {
           display: true,
-          text: 'Sales Count (Quarter)', // Adjusted y-axis title
+          text: 'Products', // Custom y-axis title for this chart
           font: { size: 14, weight: 'bold' },
         }
       }
     }
   }
 });
+
 applyHoverEffect(slowMovingProductsChart);
+
 
 
 

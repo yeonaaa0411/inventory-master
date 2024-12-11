@@ -322,6 +322,11 @@ function find_all_user() {
     return find_by_sql($sql);
    }
 
+   function find_all_categories() {
+    global $db; // Ensure the database connection variable is available
+    $sql = "SELECT id, name FROM categories ORDER BY name ASC"; // Query to fetch all categories sorted alphabetically
+    return find_by_sql($sql); // Use a utility function to execute the query and fetch results
+}
 
 
 

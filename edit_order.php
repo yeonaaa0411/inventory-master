@@ -144,25 +144,26 @@ if (isset($_POST['edit_order'])) {
                     <h3 class="text-3xl font-semibold">#<?php echo remove_junk($order['id']); ?></h3>
                 </div>
                 <form method="post" action="edit_order.php?id=<?php echo (int)$order['id']; ?>">
-                    <div class="mb-8">
-                        <label for="customer" class="form-label">Customer</label>
-                        <input type="text" class="form-input" name="customer" value="<?php echo remove_junk(ucfirst($order['customer'])); ?>" required>
-                    </div>
+                <div class="mb-8">
+    <label for="customer" class="form-label">Customer</label>
+    <input type="text" class="form-input" name="customer" value="<?php echo remove_junk(ucfirst($order['customer'])); ?>" readonly>
+</div>
 
-                    <div class="mb-8">
-                        <label for="paymethod" class="form-label">Payment Method</label>
-                        <input type="text" class="form-input" name="paymethod" value="<?php echo remove_junk(ucfirst($order['paymethod'])); ?>" required>
-                    </div>
+<div class="mb-8">
+    <label for="paymethod" class="form-label">Payment Method</label>
+    <input type="text" class="form-input" name="paymethod" value="<?php echo remove_junk(ucfirst($order['paymethod'])); ?>" readonly>
+</div>
 
-                    <div class="mb-8">
-                        <label for="notes" class="form-label">Notes</label>
-                        <textarea class="form-input" name="notes"><?php echo remove_junk($order['notes']); ?></textarea>
-                    </div>
+<div class="mb-8">
+    <label for="notes" class="form-label">Notes</label>
+    <textarea class="form-input" name="notes"><?php echo remove_junk($order['notes']); ?></textarea>
+</div>
 
-                    <div class="mb-8">
-                        <label for="date" class="form-label">Order Date</label>
-                        <input type="text" class="form-input" name="date" value="<?php echo remove_junk($order['date']); ?>" required>
-                    </div>
+<div class="mb-8">
+    <label for="date" class="form-label">Order Date</label>
+    <input type="text" class="form-input" name="date" value="<?php echo remove_junk($order['date']); ?>" readonly>
+</div>
+
 
                     <div class="flex justify-center">
                         <button type="submit" name="edit_order" class="btn-primary">Update Order</button>

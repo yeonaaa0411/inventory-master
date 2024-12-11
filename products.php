@@ -29,6 +29,22 @@ $offset = ($page - 1) * $limit; // Calculate the offset for SQL query
 
 // Slice the products array to show only the products for the current page
 $products = array_slice($products, $offset, $limit);
+
+// Fetch distinct categories
+$categories = find_all_categories();  // Add a function to get categories if not already existing
+$selectedCategory = isset($_GET['category']) ? $_GET['category'] : '';
+
+// Handle the search and category filter
+if ($searchQuery != '' && $selectedCategory != '') {
+    $products = search_products_by_category($searchQuery, $selectedCategory);
+} elseif ($searchQuery != '') {
+    $products = search_products($searchQuery);
+} elseif ($selectedCategory != '') {
+    $products = filter_products_by_category($selectedCategory);
+} else {
+    $products = join_product_table();
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -106,10 +122,13 @@ $products = array_slice($products, $offset, $limit);
             </div>
             <div class="p-4">
                 <!-- Search Input -->
-                <div class="mb-4">
+                <div class="mb-4 flex items-center space-x-4">
                     <input type="text" id="searchInput" name="searchInput" class="border border-gray-300 rounded-md px-4 py-2 w-full"
                         placeholder="Search by product name..." value="<?php echo isset($_GET['searchInput']) ? htmlspecialchars($_GET['searchInput']) : ''; ?>"
                         onkeyup="filterProducts()">
+                    <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                        Search
+                    </button>
                 </div>
             </div>
         </div>
@@ -118,6 +137,25 @@ $products = array_slice($products, $offset, $limit);
     <div class="grid grid-cols-1 mt-6 mx-5">
         <div class="bg-white shadow-md rounded-lg">
             <div class="p-4">
+                <!-- Category Filter (Positioned to the right) -->
+                <form method="GET" action="" class="mb-4 flex justify-end">
+                    <div class="flex items-center space-x-4">
+                        <label for="category" class="mr-2 font-semibold">Filter by Category:</label>
+                        <select id="category" name="category" class="border border-gray-300 rounded-md px-4 py-2 w-70">
+                            <option value="">All Categories</option>
+                            <?php foreach ($categories as $category): ?>
+                                <option value="<?php echo $category['id']; ?>" <?php echo ($selectedCategory == $category['id']) ? 'selected' : ''; ?>>
+                                    <?php echo remove_junk($category['name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                            Filter
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Table -->
                 <table id="productTable" class="min-w-full border-collapse">
                     <thead>
                         <tr>
@@ -143,7 +181,6 @@ $products = array_slice($products, $offset, $limit);
                                             <?php echo $product['name']; ?>
                                         </a>
                                     </td>
-
                                     <td class="text-center">
                                         <div class="flex justify-center">
                                             <?php if ($product['media_id'] === '0'): ?>
@@ -159,68 +196,56 @@ $products = array_slice($products, $offset, $limit);
                                     <td class="text-center"><?php echo remove_junk($product['buy_price']); ?></td>
                                     <td class="text-center"><?php echo remove_junk($product['sale_price']); ?></td>
                                     <td class="text-center"><?php echo read_date($product['date']); ?></td>
-                                    <td class="text-center">
-                                        <div class="flex justify-center space-x-2">
-                                            <a href="add_stock.php?id=<?php echo (int)$product['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Add">
-                                                <i class="fas fa-plus"></i>
-                                            </a>
-                                            <a href="edit_product.php?id=<?php echo (int)$product['id']; ?>" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600" title="Edit">
-                                                <i class="fas fa-pencil-alt"></i>
-                                            </a>
-                                            <a href="delete_product.php?id=<?php echo (int)$product['id']; ?>" onClick="return confirm('Are you sure you want to delete?')" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" title="Delete">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </a>
-                                        </div>
-                                    </td>
+<td class="text-center">
+    <div class="flex justify-center space-x-2">
+        <!-- Add Stock Button with Icon -->
+        <a href="add_stock.php?id=<?php echo (int)$product['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600" title="Add">
+            <i class="fas fa-plus"></i>
+        </a>
+        
+        <!-- Edit Button with Icon -->
+        <a href="edit_product.php?id=<?php echo (int)$product['id']; ?>" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600" title="Edit">
+            <i class="fas fa-pencil-alt"></i>
+        </a>
+        
+        <!-- Delete Button with Icon -->
+        <a href="delete_product.php?id=<?php echo (int)$product['id']; ?>" onClick="return confirm('Are you sure you want to delete?')" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" title="Delete">
+            <i class="fas fa-trash-alt"></i>
+        </a>
+    </div>
+</td>
+
                                 </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="9" class="text-center">No products found</td>
+                                <td class="text-center" colspan="9">No product found.</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
-
-                <div class="flex justify-center mt-4">
-                    <nav aria-label="Page navigation">
-                        <ul class="inline-flex items-center space-x-2">
-                            <!-- Previous Page Link -->
-                            <li>
-                                <a href="?page=1&searchInput=<?php echo urlencode($searchQuery); ?>" class="px-4 py-2 bg-blue-500 text-white rounded <?php echo ($page == 1) ? 'opacity-50 cursor-not-allowed' : ''; ?>" <?php echo ($page == 1) ? 'disabled' : ''; ?>>
-                                    First
-                                </a>
-                            </li>
-                            <li>
-                                <a href="?page=<?php echo ($page > 1) ? $page - 1 : 1; ?>&searchInput=<?php echo urlencode($searchQuery); ?>" class="px-4 py-2 bg-blue-500 text-white rounded <?php echo ($page == 1) ? 'opacity-50 cursor-not-allowed' : ''; ?>" <?php echo ($page == 1) ? 'disabled' : ''; ?>>
-                                    Previous
-                                </a>
-                            </li>
-                            <!-- Page Number Links -->
-                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                                <li>
-                                    <a href="?page=<?php echo $i; ?>&searchInput=<?php echo urlencode($searchQuery); ?>" class="px-4 py-2 <?php echo ($i == $page) ? 'bg-blue-500 text-white' : 'bg-white text-blue-500'; ?> rounded">
-                                        <?php echo $i; ?>
-                                    </a>
-                                </li>
-                            <?php endfor; ?>
-                            <!-- Next Page Link -->
-                            <li>
-                                <a href="?page=<?php echo ($page < $totalPages) ? $page + 1 : $totalPages; ?>&searchInput=<?php echo urlencode($searchQuery); ?>" class="px-4 py-2 bg-blue-500 text-white rounded <?php echo ($page == $totalPages) ? 'opacity-50 cursor-not-allowed' : ''; ?>" <?php echo ($page == $totalPages) ? 'disabled' : ''; ?>>
-                                    Next
-                                </a>
-                            </li>
-                            <!-- Last Page Link -->
-                            <li>
-                                <a href="?page=<?php echo $totalPages; ?>&searchInput=<?php echo urlencode($searchQuery); ?>" class="px-4 py-2 bg-blue-500 text-white rounded <?php echo ($page == $totalPages) ? 'opacity-50 cursor-not-allowed' : ''; ?>" <?php echo ($page == $totalPages) ? 'disabled' : ''; ?>>
-                                    Last
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
             </div>
         </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex justify-center mt-6">
+        <nav>
+            <ul class="flex space-x-4">
+                <li>
+                    <a href="?page=1" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">First</a>
+                </li>
+                <li>
+                    <a href="?page=<?php echo max(1, $page - 1); ?>" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Prev</a>
+                </li>
+                <li>
+                    <a href="?page=<?php echo min($totalPages, $page + 1); ?>" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Next</a>
+                </li>
+                <li>
+                    <a href="?page=<?php echo $totalPages; ?>" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Last</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 
 </body>
