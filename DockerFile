@@ -1,23 +1,17 @@
-# Use the official PHP image with Apache from Docker Hub
-FROM php:8.1-apache
+# Use the official Python image as the base image
+FROM python:3.10-slim
 
 # Set the working directory inside the container
-WORKDIR /var/www/html
+WORKDIR /app
 
-# Copy the current directory contents into the container at /var/www/html
-COPY . .
+# Copy the Flask application and requirements file into the container
+COPY . /app
 
-# Install necessary PHP extensions
-RUN docker-php-ext-install mysqli pdo pdo_mysql
+# Install necessary Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Set appropriate permissions for the web server user
-RUN chown -R www-data:www-data /var/www/html
+# Expose the port the Flask app will run on
+EXPOSE 5000
 
-# Enable the Apache mod_rewrite module for URL rewriting
-RUN a2enmod rewrite
-
-# Expose port 80 to the outside world
-EXPOSE 80
-
-# Optional: Set the command to run when starting the container
-CMD ["apache2-foreground"]
+# Set the command to run the Flask app
+CMD ["python", "app.py"]

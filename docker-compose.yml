@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  php-apache:
+    build:
+      context: .
+      dockerfile: Dockerfile.php  # Name of your existing PHP Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html
+    networks:
+      - webnet
+
+  flask-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.flask  # Name of the Flask Dockerfile
+    ports:
+      - "5000:5000"  # Flask will run on port 5000
+    networks:
+      - webnet
+    depends_on:
+      - php-apache  # Flask service starts after PHP service is up
+
+networks:
+  webnet:
+    driver: bridge
