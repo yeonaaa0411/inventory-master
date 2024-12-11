@@ -3,7 +3,7 @@ name: Run Predictive Analytics
 on:
   push:
     branches:
-      - main  # Make sure this matches your branch name
+      - main  # Ensure this is the correct branch name
 
 jobs:
   run_predictive_analytics:
@@ -12,11 +12,11 @@ jobs:
     steps:
       # Step 1: Checkout the code from GitHub
       - name: Checkout code
-        uses: actions/checkout@v3  # Using the latest version of checkout action
+        uses: actions/checkout@v3  # Checkout code from repository
 
-      # Step 2: Set up Python (Choose the version of Python you want to use)
+      # Step 2: Set up Python
       - name: Set up Python
-        uses: actions/setup-python@v3  # Using the latest version of the setup-python action
+        uses: actions/setup-python@v3
         with:
           python-version: '3.8'
 
@@ -26,7 +26,8 @@ jobs:
           pip install --upgrade pip
           pip install --no-cache-dir -r requirements.txt
 
-      # Step 4: Run your predictive analytics script
+      # Step 4: Run your predictive analytics script (no Flask server)
       - name: Run Predictive Analytics
         run: |
-          python -m predictive_analytics  # Run the script using `python -m`
+          export FLASK_ENV=production  # Avoid Flask server starting
+          python predictive_analytics.py  # Run the predictive script directly
