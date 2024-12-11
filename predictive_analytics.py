@@ -19,16 +19,18 @@ def convert_to_native_types(obj):
 
 @app.route('/predict_sales', methods=['GET'])
 def predict_sales():
-    # Database configuration
+    # Fetching environment variables for MySQL configuration
     db_config = {
-        'host': 'localhost',
-        'user': 'root',
-        'password': '',
-        'database': 'bpsr_inv'
+        'host': os.getenv('DB_HOST'),
+        'user': os.getenv('DB_USER'),
+        'password': os.getenv('DB_PASSWORD'),
+        'database': os.getenv('DB_NAME')
     }
 
     connection = mysql.connector.connect(**db_config)
     cursor = connection.cursor()
+
+
 
     # Fetch sales data
     query = """
