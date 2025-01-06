@@ -102,11 +102,37 @@ $total_pages = ceil($total_sales / $limit); // Total pages
         <?php echo display_msg($msg); ?>
         
         <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-            <div class="flex justify-between items-center p-6 bg-green-50">
-                <h2 class="text-2xl font-semibold text-gray-800">
-                    <i class="fas fa-chart-line mr-2"></i> Monthly Sales Overview
-                </h2>
-            </div>
+    <div class="flex justify-between items-center p-6 bg-green-50">
+        <h2 class="text-2xl font-semibold text-gray-800">
+            <i class="fas fa-calendar-alt mr-2"></i> Monthly Sales Overview
+        </h2>
+        <div class="flex space-x-4">
+            <!-- Toggle Buttons -->
+            <a href="sales.php" class="px-6 py-3 rounded-full text-lg font-medium transition-colors duration-200 <?php echo basename($_SERVER['PHP_SELF']) == 'sales.php' ? 'bg-blue-700 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-blue-500 hover:text-white'; ?>">
+                Sales
+            </a>
+            <a href="daily_sales.php" class="px-6 py-3 rounded-full text-lg font-medium transition-colors duration-200 <?php echo basename($_SERVER['PHP_SELF']) == 'daily_sales.php' ? 'bg-blue-700 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-blue-500 hover:text-white'; ?>">
+                Daily Sales
+            </a>
+            <a href="monthly_sales.php" class="px-6 py-3 rounded-full text-lg font-medium transition-colors duration-200 <?php echo basename($_SERVER['PHP_SELF']) == 'monthly_sales.php' ? 'bg-blue-700 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-blue-500 hover:text-white'; ?>">
+                Monthly Sales
+            </a>
+            <a href="sales_report.php" class="px-6 py-3 rounded-full text-lg font-medium transition-colors duration-200 <?php echo basename($_SERVER['PHP_SELF']) == 'sales_report.php' ? 'bg-blue-700 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-blue-500 hover:text-white'; ?>">
+                Sales Report
+            </a>
+            <!-- Print Report Button -->
+            <form action="sale_report_process.php" method="POST" target="_blank" class="inline-block">
+                <input type="hidden" name="start-date" value="<?php echo date('Y-m-01'); ?>">
+                <input type="hidden" name="end-date" value="<?php echo date('Y-m-t'); ?>">
+                <button type="submit" name="submit" class="px-6 py-3 bg-blue-700 text-white rounded-full text-lg font-medium hover:bg-blue-800 transition-colors duration-200">
+                    <i class="fas fa-print"></i> Print Report
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+</div>
             <div class="overflow-x-auto px-6 py-4">
                 <table class="min-w-full table-auto border-collapse table-row-height">
                 <thead>

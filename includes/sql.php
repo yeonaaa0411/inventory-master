@@ -482,3 +482,13 @@ function monthlySales($year){
   $sql .= " ORDER BY date_format(s.date, '%c') ASC";
   return find_by_sql($sql);
 }
+function filter_products_by_category($categoryId) {
+  global $db; // Ensure the database connection variable is available
+  $sql  = "SELECT p.id, p.name, p.quantity, p.buy_price, p.sale_price, p.media_id, p.date, c.name AS category, m.file_name AS image ";
+  $sql .= "FROM products p ";
+  $sql .= "LEFT JOIN categories c ON c.id = p.category_id ";
+  $sql .= "LEFT JOIN media m ON m.id = p.media_id ";
+  $sql .= "WHERE c.id = '{$categoryId}' ";
+  $sql .= "ORDER BY p.id ASC";
+  return find_by_sql($sql);
+}

@@ -97,11 +97,28 @@ if ($page == 1) {
         <?php echo display_msg($msg); ?>
 
         <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-            <div class="flex justify-between items-center p-6 bg-green-50">
-                <h2 class="text-2xl font-semibold text-gray-800">
-                    <i class="fas fa-th-list mr-2"></i> All Sales
-                </h2>
-            </div>
+    <div class="flex justify-between items-center p-6 bg-green-50">
+        <h2 class="text-2xl font-semibold text-gray-800">
+            <i class="fas fa-th-list mr-2"></i> All Sales
+        </h2>
+        <!-- Toggle Buttons -->
+        <div class="flex space-x-4">
+            <a href="sales.php" class="px-6 py-3 rounded-full text-lg font-medium transition-colors duration-200 <?php echo basename($_SERVER['PHP_SELF']) == 'sales.php' ? 'bg-blue-700 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-blue-500 hover:text-white'; ?>">
+                Sales
+            </a>
+            <a href="daily_sales.php" class="px-6 py-3 rounded-full text-lg font-medium transition-colors duration-200 <?php echo basename($_SERVER['PHP_SELF']) == 'daily_sales.php' ? 'bg-blue-700 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-blue-500 hover:text-white'; ?>">
+                Daily Sales
+            </a>
+            <a href="monthly_sales.php" class="px-6 py-3 rounded-full text-lg font-medium transition-colors duration-200 <?php echo basename($_SERVER['PHP_SELF']) == 'monthly_sales.php' ? 'bg-blue-700 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-blue-500 hover:text-white'; ?>">
+                Monthly Sales
+            </a>
+            <a href="sales_report.php" class="px-6 py-3 rounded-full text-lg font-medium transition-colors duration-200 <?php echo basename($_SERVER['PHP_SELF']) == 'sales_report.php' ? 'bg-blue-700 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-blue-500 hover:text-white'; ?>">
+                Sales Report
+            </a>
+        </div>
+    </div>
+</div>
+
             <div class="overflow-x-auto px-6 py-4">
                 <table class="min-w-full table-auto border-collapse table-row-height">
                     <thead>
