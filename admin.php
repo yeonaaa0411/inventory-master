@@ -271,7 +271,7 @@
         </div>
         <!-- Top 1 Product by Quantity -->
         <div class="bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-700 p-6 rounded-xl shadow-lg text-white text-center transform transition duration-300 hover:scale-105 hover:shadow-xl">
-            <h3 class="text-2xl font-bold">Top 1 Product Most Sold (Year)</h3>
+            <h3 class="text-2xl font-bold">Top 1 Product Must Sold (Year)</h3>
             <p class="text-2xl font-semibold mt-2">Super Worm</p>
             <p class="text-4xl font-semibold mt-2">41,226 Units</p>
         </div>
@@ -353,7 +353,7 @@ const salesForecastChart1 = new Chart(salesForecastCtx1, {
             },
             {
                 label: 'Actual Quantity Sold',
-                data: [10343000, 10972000, 10432000, 8413000, 2],
+                data: [10343000, 10972000, 10432000, 8413000, 24],
                 borderColor: '#FF5733',
                 backgroundColor: 'rgba(255, 87, 51, 0.2)',
                 fill: true,
@@ -409,7 +409,7 @@ const salesForecastChart2 = new Chart(salesForecastCtx2, {
             },
             {
                 label: 'Actual Sales Count',
-                data: [1275, 1347, 1404, 1523, 1],
+                data: [1275, 1347, 1404, 1523, 8],
                 borderColor: '#FF5733',
                 backgroundColor: 'rgba(255, 87, 51, 0.2)',
                 fill: true,
@@ -466,7 +466,7 @@ const salesForecastChart3 = new Chart(salesForecastCtx3, {
             },
             {
                 label: 'Actual Revenue',
-                data: [318662, 342858, 338469, 385790, 350],
+                data: [318662, 342858, 338469, 385790, 3486],
                 borderColor: '#FF5733',
                 backgroundColor: 'rgba(255, 87, 51, 0.2)',
                 fill: true,
