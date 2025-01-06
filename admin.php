@@ -271,7 +271,7 @@
         </div>
         <!-- Top 1 Product by Quantity -->
         <div class="bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-700 p-6 rounded-xl shadow-lg text-white text-center transform transition duration-300 hover:scale-105 hover:shadow-xl">
-            <h3 class="text-2xl font-bold">Top 1 Product Must Sold (Year)</h3>
+            <h3 class="text-2xl font-bold">Top 1 Product Most Sold (Year)</h3>
             <p class="text-2xl font-semibold mt-2">Super Worm</p>
             <p class="text-4xl font-semibold mt-2">41,226 Units</p>
         </div>
