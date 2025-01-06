@@ -2,7 +2,7 @@
   $page_title = 'Admin Home Page';
   require_once('includes/load.php');
   page_require_level(1);
-
+  sleep(7);
   // Run the Flask API to fetch the sales forecast
   $ch = curl_init();
   curl_setopt($ch, CURLOPT_URL, "http://localhost:5000/predict_sales"); // Ensure this URL is correct
@@ -13,20 +13,7 @@
 
 
   ?>
-<!-- Loader -->
-<div id="loader">
-    <div class="spinner"></div>
-</div>
 
-<script>
-    // Delay page load to display the loader
-    window.addEventListener('load', function () {
-        setTimeout(() => {
-            document.getElementById('loader').classList.add('hidden');
-            document.body.classList.add('loaded');
-        }, 18000); // Adjust the time (in milliseconds) if needed
-    });
-</script>
   <!DOCTYPE html>
   <html lang="en">
   <head>
