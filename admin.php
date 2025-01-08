@@ -353,7 +353,7 @@ const salesForecastChart1 = new Chart(salesForecastCtx1, {
             },
             {
                 label: 'Actual Quantity Sold',
-                data: [10343000, 10972000, 10432000, 8413000, 29],
+                data: [10343000, 10972000, 10432000, 8413000, 94],
                 borderColor: '#FF5733',
                 backgroundColor: 'rgba(255, 87, 51, 0.2)',
                 fill: true,
@@ -466,7 +466,7 @@ const salesForecastChart3 = new Chart(salesForecastCtx3, {
             },
             {
                 label: 'Actual Revenue',
-                data: [318662, 342858, 338469, 385790, 3486],
+                data: [318662, 342858, 338469, 385790, 10380],
                 borderColor: '#FF5733',
                 backgroundColor: 'rgba(255, 87, 51, 0.2)',
                 fill: true,
