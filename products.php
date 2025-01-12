@@ -131,8 +131,7 @@ if ($searchQuery != '' && $selectedCategory != '') {
                     </button>
                 </div>
             </div>
-        </div>
-    </div>
+
 
     <div class="grid grid-cols-1 mt-6 mx-5">
         <div class="bg-white shadow-md rounded-lg">
