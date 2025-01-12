@@ -456,32 +456,39 @@ function find_sale_by_dates($start_date,$end_date){
 /*--------------------------------------------------------------*/
 /* Function for Generate Daily sales report
 /*--------------------------------------------------------------*/
-function  dailySales($year,$month){
+function dailySales($year, $month) {
   global $db;
+  
+  // Modify the SQL to remove aggregation by date and ensure each sale is recorded separately
   $sql  = "SELECT s.qty,";
-  $sql .= " DATE_FORMAT(s.date, '%Y-%m-%e') AS date,p.name,";
-  $sql .= "SUM(p.sale_price * s.qty) AS total_saleing_price";
+  $sql .= " DATE_FORMAT(s.date, '%Y-%m-%e') AS date, p.name,";
+  $sql .= " (p.sale_price * s.qty) AS total_saleing_price"; // Calculate total saleing price for each transaction
   $sql .= " FROM sales s";
   $sql .= " LEFT JOIN products p ON s.product_id = p.id";
-  $sql .= " WHERE DATE_FORMAT(s.date, '%Y-%m' ) = '{$year}-{$month}'";
-  $sql .= " GROUP BY DATE_FORMAT( s.date,  '%e' ),s.product_id";
+  $sql .= " WHERE DATE_FORMAT(s.date, '%Y-%m') = '{$year}-{$month}'";
+  $sql .= " ORDER BY s.date ASC, p.name"; // Order by date and product name for clarity
+  
   return find_by_sql($sql);
 }
+
 /*--------------------------------------------------------------*/
 /* Function for Generate Monthly sales report
 /*--------------------------------------------------------------*/
-function monthlySales($year){
+function monthlySales($year) {
   global $db;
+  
+  // Modify the SQL to remove aggregation and calculate total sale price per transaction
   $sql  = "SELECT s.qty,";
   $sql .= " DATE_FORMAT(s.date, '%Y-%m-%e') AS date, p.name, s.product_id,";
-  $sql .= " SUM(p.sale_price * s.qty) AS total_saleing_price";
+  $sql .= " (p.sale_price * s.qty) AS total_saleing_price"; // Calculate total sale price for each transaction
   $sql .= " FROM sales s";
   $sql .= " LEFT JOIN products p ON s.product_id = p.id";
-  $sql .= " WHERE DATE_FORMAT(s.date, '%Y' ) = '{$year}'";
-  $sql .= " GROUP BY DATE_FORMAT(s.date, '%c'), s.product_id";
-  $sql .= " ORDER BY date_format(s.date, '%c') ASC";
+  $sql .= " WHERE DATE_FORMAT(s.date, '%Y') = '{$year}'";
+  $sql .= " ORDER BY s.date ASC, p.name"; // Order by date and product name for clarity
+  
   return find_by_sql($sql);
 }
+
 function filter_products_by_category($categoryId) {
   global $db; // Ensure the database connection variable is available
   $sql  = "SELECT p.id, p.name, p.quantity, p.buy_price, p.sale_price, p.media_id, p.date, c.name AS category, m.file_name AS image ";
