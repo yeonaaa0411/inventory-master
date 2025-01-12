@@ -117,7 +117,7 @@ if ($page == 1) {
             </a>
         </div>
     </div>
-</div>
+
 
             <div class="overflow-x-auto px-6 py-4">
                 <table class="min-w-full table-auto border-collapse table-row-height">

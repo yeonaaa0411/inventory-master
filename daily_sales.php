@@ -105,7 +105,7 @@ $total_pages = ceil($total_sales / $limit); // Total pages
             </form>
         </div>
     </div>
-</div>
+
 
 
         <div class="overflow-x-auto px-6 py-4">

@@ -3,37 +3,24 @@ $page_title = 'Add Order';
 require_once('includes/load.php');
 page_require_level(2);
 
-// Check if it's a new day and reset counts if needed
-$current_date = date('Y-m-d'); // Get the current date in 'Y-m-d' format
-
-// Fetch the last order date from the database
-$last_order_date_query = $db->query("SELECT MAX(date) AS last_order_date FROM orders");
-$last_order_date_result = $db->fetch_assoc($last_order_date_query);
-$last_order_date = $last_order_date_result['last_order_date'] ?? '0000-00-00';
-
-if ($last_order_date != $current_date) {
-    // It's a new day, so reset the order and customer count
-    $new_customer_num = 1;
-    $new_order_id = 1;
-} else {
-    // It's the same day, so increment based on the last record
-    $last_customer_query = $db->query("SELECT MAX(CAST(SUBSTRING(customer, 10) AS UNSIGNED)) AS last_customer_num FROM orders");
-    $last_customer_num = $db->fetch_assoc($last_customer_query)['last_customer_num'] ?? 0;
-    $new_customer_num = $last_customer_num + 1;
-
-    $last_order_id = last_id('orders')['id'];
-    $new_order_id = $last_order_id + 1;
-}
-
+// Automatically generate a new customer name
+$last_customer_query = $db->query("SELECT MAX(CAST(SUBSTRING(customer, 10) AS UNSIGNED)) AS last_customer_num FROM orders");
+$last_customer_num = $db->fetch_assoc($last_customer_query)['last_customer_num'] ?? 0;
+$new_customer_num = $last_customer_num + 1;
 $new_customer_name = 'Customer ' . $new_customer_num;
+
+// Fetch the last order ID directly from the database to ensure continuation
+$last_order_id = last_id('orders')['id'] ?? 0;
+$new_order_id = $last_order_id + 1;
 
 if (isset($_POST['add_order'])) {
     $customer = $new_customer_name; // Automatically set customer name
     $paymethod = remove_junk($db->escape($_POST['paymethod']));
     $notes = remove_junk($db->escape($_POST['notes']));
+    $current_date = date('Y-m-d'); // Get current date
 
     if (empty($errors)) {
-        $sql  = "INSERT INTO orders (id, customer, paymethod, notes, date)";
+        $sql = "INSERT INTO orders (id, customer, paymethod, notes, date)";
         $sql .= " VALUES ('{$new_order_id}', '{$customer}', '{$paymethod}', '{$notes}', '{$current_date}')";
 
         if ($db->query($sql)) {
