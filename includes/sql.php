@@ -410,16 +410,15 @@ function find_all_user() {
  /* Function for find sales by order_id
  /*--------------------------------------------------------------*/
  function find_sales_by_order_id($id) {
-  global $db;
-  $sql  = "SELECT s.id,s.qty,s.price,s.date,p.name";
-  $sql .= " FROM sales s";
-  $sql .= " LEFT JOIN orders o ON s.order_id = o.id";
-  $sql .= " LEFT JOIN products p ON s.product_id = p.id";
-  $sql .= " WHERE s.order_id = " . $db->escape((int)$id);
-  $sql .= " ORDER BY s.date DESC";
-  return find_by_sql($sql);
-}
-
+   global $db;
+   $sql  = "SELECT s.id,s.qty,s.price,s.date,p.name";
+   $sql .= " FROM sales s";
+   $sql .= " LEFT JOIN orders o ON s.order_id = o.id";
+   $sql .= " LEFT JOIN products p ON s.product_id = p.id";
+   $sql .= " WHERE s.order_id = " . $db->escape((int)$id);
+   $sql .= " ORDER BY s.date DESC";
+   return find_by_sql($sql);
+ }
 
 
 

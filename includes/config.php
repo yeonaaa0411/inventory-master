@@ -6,7 +6,7 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
     define( 'DB_HOST', 'localhost' );          // Set database host for local
     define( 'DB_USER', 'root' );               // Set database user for local
     define( 'DB_PASS', 'p1r4sp' );             // Set database password for local
-    define( 'DB_NAME', 'sql12755959' );        // Set database name for local
+    define( 'DB_NAME', 'bpsr_inv' );        // Set database name for local
 } else {
     // Deployed environment configuration using environment variables
     define( 'DB_HOST', getenv('DB_HOST') );    // Use environment variable for DB host
