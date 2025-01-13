@@ -456,19 +456,23 @@ function find_sale_by_dates($start_date,$end_date){
 /*--------------------------------------------------------------*/
 /* Function for Generate Daily sales report
 /*--------------------------------------------------------------*/
+
 function dailySales($year, $month) {
-  global $db;
-  
-  // Modify the SQL to remove aggregation by date and ensure each sale is recorded separately
-  $sql  = "SELECT s.qty,";
-  $sql .= " DATE_FORMAT(s.date, '%Y-%m-%e') AS date, p.name,";
-  $sql .= " (p.sale_price * s.qty) AS total_saleing_price"; // Calculate total saleing price for each transaction
-  $sql .= " FROM sales s";
-  $sql .= " LEFT JOIN products p ON s.product_id = p.id";
-  $sql .= " WHERE DATE_FORMAT(s.date, '%Y-%m') = '{$year}-{$month}'";
-  $sql .= " ORDER BY s.date ASC, p.name"; // Order by date and product name for clarity
-  
-  return find_by_sql($sql);
+    global $db;
+    
+    // Get the current date
+    $currentDate = date('Y-m-d');
+    
+    // Modify the SQL to filter sales for the current date
+    $sql  = "SELECT s.qty,";
+    $sql .= " DATE_FORMAT(s.date, '%Y-%m-%d') AS date, p.name,";
+    $sql .= " (p.sale_price * s.qty) AS total_saleing_price"; // Calculate total sale price for each transaction
+    $sql .= " FROM sales s";
+    $sql .= " LEFT JOIN products p ON s.product_id = p.id";
+    $sql .= " WHERE DATE(s.date) = '{$currentDate}'"; // Filter by the current date
+    $sql .= " ORDER BY s.date ASC, p.name"; // Order by date and product name for clarity
+    
+    return find_by_sql($sql);
 }
 
 /*--------------------------------------------------------------*/
